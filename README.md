@@ -2,6 +2,6 @@
 ## Grupo Acebo
 
 ### Integrantes:
-    - Anton Marcos
-    - Gambaro Jesús
-    - Agustín Recabarren
+- Anton Marcos
+- Gambaro Jesús
+- Agustín Recabarren
