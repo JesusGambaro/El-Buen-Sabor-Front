@@ -23,6 +23,7 @@ import {
 import SideIcon from "./SideIcon/SideIcon";
 import Landing from "../Landing/Landing";
 import Clients from "../Clients/Clients";
+import { Footer } from "@components/Footer/Footer";
 
 const SideBar = () => {
   let tabChangeTransition = "all 0.2s cubic-bezier(.08,.52,.52,1)";
@@ -82,6 +83,7 @@ const SideBar = () => {
             <p>four!</p>
           </TabPanel>
           {/*<ScaleFade initialScale={0.9} in=></ScaleFade>*/}
+          <Footer/>
         </TabPanels>
       </Tabs>
     </Box>
