@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {API_SPRING} from "../../../utils";
+import {API_SPRING} from "../../utils/utils";
 import "./clients.scss";
 import axios from "axios";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 const Clients = () => {
   const [clients, setClients] = useState([]);
-  useEffect(() => {
+ /*  useEffect(() => {
     axios
       .get(API_SPRING)
       .then(({data}) => {
@@ -25,7 +25,7 @@ const Clients = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, []); */
 
   return (
     <div className="clients-container">

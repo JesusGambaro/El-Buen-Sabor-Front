@@ -1,0 +1,44 @@
+{
+    "cartItems": [
+        {
+            "id": 1,
+            "name": "Grand Tasty Turbo Bacon Doble",
+            "price": 2760.99,
+            "discount": 10,
+            "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
+            "quantity": 1
+        },
+        {
+            "id": 4,
+            "name": "Pancho Doble",
+            "price": 800,
+            "discount": 5,
+            "img": "https://images.deliveryhero.io/image/pedidosya/products/3a6f7af9-03ba-4b6a-ab5d-facf0c52f467.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+            "quantity": 2
+        },
+        {
+            "id": 5,
+            "name": "Pancho Simple",
+            "price": 350,
+            "discount": 0,
+            "img": "https://images.deliveryhero.io/image/pedidosya/products/08846a0d-f926-4a08-8103-593a9e716139.jpeg?quality=90&width=1680&webp=1&dpi=1.5",
+            "quantity": 5
+        },
+        {
+            "id": 3,
+            "name": "Torta Cremoso de Chocolate",
+            "price": 900,
+            "discount": 0,
+            "img": "https://images.deliveryhero.io/image/pedidosya/products/7d0f1c7b-02cb-4f73-ad04-3a9601241b19.jpeg?quality=90&width=1680&webp=1&dpi=1.5",
+            "quantity": 1
+        },
+        {
+            "id": 2,
+            "name": "Torta Carrot Cake",
+            "price": 900,
+            "discount": 25,
+            "img": "https://images.deliveryhero.io/image/pedidosya/products/5764d4f6-ff33-47d7-9e75-8715f825000c.jpeg?quality=90&width=1680&webp=1&dpi=1.5",
+            "quantity": 10
+        }
+    ]
+}

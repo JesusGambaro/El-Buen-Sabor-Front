@@ -1,6 +1,6 @@
 import React from "react";
 import "./sidebar.scss";
-import { mainColor } from "../../../utils";
+import {mainColor} from "../../utils/utils";
 import {
   Box,
   Flex,
@@ -23,9 +23,10 @@ import {
 import SideIcon from "./SideIcon/SideIcon";
 import Landing from "../Landing/Landing";
 import Clients from "../Clients/Clients";
+
 const SideBar = () => {
   let tabChangeTransition = "all 0.2s cubic-bezier(.08,.52,.52,1)";
-  const { isOpen, onToggle } = useDisclosure();
+  const {isOpen, onToggle} = useDisclosure();
 
   let shadow = useColorModeValue(
     "14px 17px 40px 4px rgba(112, 144, 176, 0.08)",
@@ -35,7 +36,7 @@ const SideBar = () => {
   let sidebarBg = useColorModeValue("white", "navy.800");
 
   return (
-    <Box display={{ sm: "none", xl: "block" }} minH="100%" w="80%">
+    <Box display={{sm: "none", xl: "block"}} minH="100%" w="100%">
       <Tabs
         defaultIndex={0}
         orientation="vertical"

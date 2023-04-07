@@ -1,4 +1,4 @@
-import HomeLanding from "./components/Home/Home";
+import HomeLanding from "@components/Home/Home";
 function App() {
   return (
     <div className="App">

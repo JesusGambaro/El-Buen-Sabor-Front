@@ -1,6 +1,6 @@
 import React from "react";
 import {Tab, Tooltip} from "@chakra-ui/react";
-import {mainColor} from "../../../../utils";
+import {mainColor} from "../../../utils/utils";
 const SideIcon = ({label}) => {
   const customIconsProps = {
     height: "3rem",
