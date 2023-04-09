@@ -15,6 +15,7 @@ import SideIcon from "./SideIcon/SideIcon";
 import Landing from "../Landing/Landing";
 import Clients from "../Clients/Clients";
 import { Footer } from "@components/Footer/Footer";
+import { UserConfig } from "@components/UserConfig/UserConfig";
 
 const SideBar = () => {
   let tabChangeTransition = "all 0.2s cubic-bezier(.08,.52,.52,1)";
@@ -79,7 +80,7 @@ const SideBar = () => {
             <p>three!</p>
           </TabPanel>
           <TabPanel>
-            <p>four!</p>
+            <UserConfig/>
           </TabPanel>
           <Footer />
         </TabPanels>
