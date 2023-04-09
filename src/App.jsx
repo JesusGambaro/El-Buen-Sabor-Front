@@ -1,9 +1,16 @@
 import HomeLanding from "@components/Home/Home";
+import ErrorBoundary from "@components/ErrorBoundary/ErrorBoundary";
+import { Provider } from 'react-redux';
+import store from './redux/store';
 function App() {
   return (
-    <div className="App">
-      <HomeLanding />
-    </div>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <div className="App">
+          <HomeLanding />
+        </div>
+      </Provider>
+    </ErrorBoundary>
   );
 }
 

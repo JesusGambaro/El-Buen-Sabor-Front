@@ -1,18 +1,18 @@
 import React from "react";
-import {Tab, Tooltip} from "@chakra-ui/react";
-import {mainColor} from "../../../utils/utils";
-const SideIcon = ({label}) => {
+import { Tab, Tooltip } from "@chakra-ui/react";
+
+const SideIcon = ({ label }) => {
   const customIconsProps = {
     height: "3rem",
     width: "3rem",
     borderRadius: "50%",
     fontSize: "1.2rem",
     _selected: {
-      bg: mainColor,
+      bg: 'orange',
       color: "white",
     },
     _hover: {
-      bg: mainColor,
+      bg: 'orange',
       boxShadow: "0rem 0rem 0rem .2rem #ffb701",
       color: "white",
     },

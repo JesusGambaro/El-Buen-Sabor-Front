@@ -1,22 +1,13 @@
 import React from "react";
 import "./sidebar.scss";
-import {mainColor} from "../../utils/utils";
 import {
   Box,
   Flex,
-  Drawer,
-  DrawerBody,
-  Icon,
   useColorModeValue,
-  DrawerOverlay,
   useDisclosure,
-  Collapse,
-  ScaleFade,
   Tabs,
   TabList,
   TabPanels,
-  Tab,
-  Tooltip,
   TabPanel,
   Button,
 } from "@chakra-ui/react";
@@ -27,7 +18,7 @@ import { Footer } from "@components/Footer/Footer";
 
 const SideBar = () => {
   let tabChangeTransition = "all 0.2s cubic-bezier(.08,.52,.52,1)";
-  const {isOpen, onToggle} = useDisclosure();
+  const { isOpen, onToggle } = useDisclosure();
 
   let shadow = useColorModeValue(
     "14px 17px 40px 4px rgba(112, 144, 176, 0.08)",
@@ -37,7 +28,8 @@ const SideBar = () => {
   let sidebarBg = useColorModeValue("white", "navy.800");
 
   return (
-    <Box display={{sm: "none", xl: "block"}} minH="100%" w="100%">
+    <Box w="100%" h="calc(100vh - 5.5rem)" pos="relative" top="5.5rem"
+    >
       <Tabs
         defaultIndex={0}
         orientation="vertical"
@@ -46,7 +38,7 @@ const SideBar = () => {
         transition={tabChangeTransition}
       >
         <TabList
-          h="100%"
+          h='calc(100vh - 5.5rem)'
           w="8rem"
           display="flex"
           flexDirection="column"
@@ -65,15 +57,22 @@ const SideBar = () => {
             <SideIcon label="Carrito" />
             <SideIcon label="Configuración" />
           </Flex>
-          <Button bg={mainColor} color="white" w="100%" h="3rem">
-            <i className="fa-solid fa-right-from-bracket"></i>{" "}
+          <Button bg='orange' color="white" w="100%" h="3rem" borderRadius="0">
+            <i className="fa-solid fa-right-from-bracket"></i>
           </Button>
+
         </TabList>
-        <TabPanels bg="#f9f5f5">
-          <TabPanel>
+        <TabPanels
+          overflowY="auto"
+          w="100%"
+          h="100%"
+        >
+          <TabPanel w="100%"
+            display="flex"
+          >
             <Landing />
           </TabPanel>
-          <TabPanel>
+          <TabPanel h="100%">
             <Clients />
           </TabPanel>
           <TabPanel>
@@ -82,11 +81,10 @@ const SideBar = () => {
           <TabPanel>
             <p>four!</p>
           </TabPanel>
-          {/*<ScaleFade initialScale={0.9} in=></ScaleFade>*/}
-          <Footer/>
+          <Footer />
         </TabPanels>
       </Tabs>
-    </Box>
+    </Box >
   );
 };
 export default SideBar;

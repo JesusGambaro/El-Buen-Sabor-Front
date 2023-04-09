@@ -27,7 +27,9 @@ import {
 } from "@chakra-ui/icons";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setAttempt } from "@redux/reducers/mainReducer";
+import { btnStyle } from "@utils/theme";
 const NavBar = () => {
   const {
     loginWithRedirect,
@@ -39,9 +41,18 @@ const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
+  const dispatch = useDispatch();
+  const handleIsAuth = () => {
+    if (isAuthenticated) {
+      onOpen();
+    } else {
+      dispatch(setAttempt(true));
+    }
+  };
 
   return (
-    <Box px={4} py={2} bg={useColorModeValue("white", "gray.800")}>
+    <Box px={4} py={2} bg={useColorModeValue("white", "gray.800")} w="100%"
+      pos='fixed' zIndex='100' h="5.5rem">
       <Flex alignItems="center">
         <Box
           color="black"
@@ -63,12 +74,12 @@ const NavBar = () => {
         <InputGroup size="md" w="50%" maxW="600px">
           <InputLeftElement
             pointerEvents="none"
-            children={<SearchIcon color="orange.500" />}
+            children={<SearchIcon color="orange" />}
           />
           <Input
             type="tel"
             placeholder="Buscar comida..."
-            focusBorderColor="orange.500"
+            focusBorderColor="orange.300"
           />
         </InputGroup>
         <Spacer />
@@ -85,7 +96,8 @@ const NavBar = () => {
            * * Login   
            */
         }
-        <Tag size="lg" colorScheme="orange" borderRadius="full" py={1}>
+        <Tag size="lg" colorScheme="orange" borderRadius="full" py={1}
+          bg='orange'>
           {
             isAuthenticated && (
               <Image
@@ -106,6 +118,7 @@ const NavBar = () => {
                 loginWithRedirect();
               }
             }}
+            color='white'
           >
 
             {isAuthenticated ? user.name
@@ -119,13 +132,25 @@ const NavBar = () => {
                 cursor="pointer"
                 as={Button}
                 rightIcon={<ChevronDownIcon />}
-                variant="link"
-                colorScheme="orange"
+                variant="unstyled"
+                bg='orange'
+                display='flex'
+                alignItems='center'
+                justifyContent='center'
                 transition='all 0.2s'
+                color='white'
+                colorScheme="orange"
+                _hover={{
+                  color: 'white',
+                  bg: 'orange',
+                }}
+                _expanded={{
+                  color: 'white',
+                  bg: 'orange',
+                }}
+                ml={1}
               />
-              <MenuList
-
-              >
+              <MenuList>
                 <MenuGroup title="Perfil">
                   <MenuItem>Mi cuenta</MenuItem>
                   <MenuItem>Pedidos </MenuItem>
@@ -141,11 +166,17 @@ const NavBar = () => {
             </Menu>
           )}
         </Tag>
-        <Button ref={btnRef} colorScheme="orange" variant="ghost"
-          onClick={onOpen}>
+        <Button ref={btnRef} variant="solid"
+          color='orange'
+          bg='white'
+          borderRadius='full'
+          _hover={{
+            bg: 'white',
+          }}
+          onClick={handleIsAuth}>
           <i className="fa-solid fa-cart-shopping"></i>
         </Button>
-        <Cart isOpen={isOpen} onClose={onClose} finalFocusRef={btnRef} />
+        {isAuthenticated && <Cart isOpen={isOpen} onClose={onClose} finalFocusRef={btnRef} />}
       </Flex>
     </Box>
   );
