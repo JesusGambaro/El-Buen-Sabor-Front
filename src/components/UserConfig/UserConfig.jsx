@@ -42,6 +42,7 @@ export const UserConfig = () => {
     },
   };
   const [isOpen, setisOpen] = useState(false);
+  const [mercadoPagoCards, setMercadoPagoCards] = useState([]);
 
   return (
     <Container maxW="container.xl" minH={"63vh"}>
@@ -83,8 +84,14 @@ export const UserConfig = () => {
 
           <Text mb="8px">Tarjetas</Text>
           <Flex flexDir="column" gap={".5rem"}>
-            <MercadoPagoCard cardType={"Mercado Pago"} cardNumber={1234} />
-            <MercadoPagoCard cardType={"Mercado Pago"} cardNumber={1234} />
+            {mercadoPagoCards.length > 0 && mercadoPagoCards.map((mercadoPagoCard) => {
+              return (
+                <MercadoPagoCard
+                  cardType={"Mercado Pago"}
+                  cardNumber={mercadoPagoCard.cardNumber}
+                />
+              );
+            })}
             <Button
               size="xl"
               w={"max-content"}
@@ -101,8 +108,11 @@ export const UserConfig = () => {
               () => {
                 setisOpen(false);
               },
-              () => {
-                setisOpen(false);
+              (data) => {
+                if (data.numeroTarjeta) {
+                  setMercadoPagoCards(...mercadoPagoCards, data);
+                  setisOpen(false);
+                }
               }
             )}
           </Flex>
@@ -116,7 +126,7 @@ const ModalAddCard = (_isOpen, onClose, onSave) => {
     background: "white",
     color: "orange",
     border: "1px solid white",
-    boxShadow: "5px 4px 6px rgba(0, 0, 0, 0.25);",
+    //boxShadow: "5px 4px 6px rgba(0, 0, 0, 0.25);",
     _hover: {
       boxShadow: "0rem 0rem 0rem .15rem white",
     },
@@ -124,6 +134,13 @@ const ModalAddCard = (_isOpen, onClose, onSave) => {
     _focus: {
       boxShadow: "none",
       border: "2px solid white",
+    },
+  };
+  const leftAddonStyle = {
+    background: "white",
+    color: "orange",
+    _hover: {
+      boxShadow: "0rem 0rem 0rem .15rem white",
     },
   };
   const labelStyle = {
@@ -141,11 +158,21 @@ const ModalAddCard = (_isOpen, onClose, onSave) => {
 
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+  const [newData, setNewData] = useState({
+    numeroTarjeta: 0,
+    fechaVencimiento: "",
+    codigoSeguridad: 0,
+  });
   return (
     <Modal
       isOpen={_isOpen}
       onClose={() => {
         onClose();
+        setNewData({
+          numeroTarjeta: 0,
+          fechaVencimiento: "",
+          codigoSeguridad: 0,
+        });
       }}
       size={"xl"}
     >
@@ -175,10 +202,14 @@ const ModalAddCard = (_isOpen, onClose, onSave) => {
               <FormLabel {...labelStyle}>Numero de tarjeta</FormLabel>
               <InputGroup>
                 <Flex justifyContent={"center"} w={"100%"}>
-                  <Input placeholder="" {...inputStyle} type={"number"} />
-                  <InputRightAddon
-                    pointerEvents="none"
-                    children={"hola"}
+                  <Input
+                    placeholder="**** **** ****"
+                    {...inputStyle}
+                    type={"text"}
+                    value={newData.numeroTarjeta ? newData.numeroTarjeta : ""}
+                    onChange={({ target }) => {
+                      setNewData({ ...newData, numeroTarjeta: target.value });
+                    }}
                   />
                 </Flex>
               </InputGroup>
@@ -187,7 +218,38 @@ const ModalAddCard = (_isOpen, onClose, onSave) => {
               <FormLabel {...labelStyle}>Fecha de vencimiento</FormLabel>
               <InputGroup>
                 <Flex justifyContent={"center"} w={"100%"}>
-                  <Input placeholder="" {...inputStyle} type={"date"} />
+                  <Input
+                    placeholder=""
+                    {...inputStyle}
+                    type={"date"}
+                    value={
+                      newData.fechaVencimiento ? newData.fechaVencimiento : ""
+                    }
+                    onChange={({ target }) => {
+                      setNewData({
+                        ...newData,
+                        fechaVencimiento: target.value,
+                      });
+                    }}
+                  />
+                </Flex>
+              </InputGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel {...labelStyle}>Codigo Seguridad</FormLabel>
+              <InputGroup>
+                <Flex justifyContent={"center"} w={"100%"}>
+                  <Input
+                    placeholder="***"
+                    {...inputStyle}
+                    type={"text"}
+                    value={
+                      newData.codigoSeguridad ? newData.codigoSeguridad : ""
+                    }
+                    onChange={({ target }) => {
+                      setNewData({ ...newData, codigoSeguridad: target.value });
+                    }}
+                  />
                 </Flex>
               </InputGroup>
             </FormControl>
@@ -203,7 +265,7 @@ const ModalAddCard = (_isOpen, onClose, onSave) => {
             color={"white"}
             mr={3}
             onClick={() => {
-              onSave();
+              onSave(newData);
             }}
           >
             Save

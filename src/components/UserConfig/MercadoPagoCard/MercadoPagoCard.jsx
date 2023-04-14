@@ -20,7 +20,7 @@ export const MercadoPagoCard = ({ cardType, cardNumber }) => {
           borderRadius={"20px"}
           textAlign={"center"}
         >
-          <Text>**** **** {cardNumber} </Text>
+          <Text>**** **** {cardNumber.toString().subtring(0,4)}</Text>
         </Box>
       </Flex>
     </Box>
