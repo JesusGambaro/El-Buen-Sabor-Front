@@ -28,7 +28,7 @@ import {
 import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
 import { btnStyle } from "@utils/theme";
-import { Product, CartProps } from "Types/types";
+import { Product, CartProps } from "types/types";
 
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
   const {

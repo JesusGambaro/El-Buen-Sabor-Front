@@ -62,6 +62,31 @@ type State = {
     landing: Landing;
 };
 
+type Supply = {
+    id_insumo: number;
+    nombre: string;
+    imagen: string;
+    descripcion: string;
+    stock_minimo: number;
+    stock_actual: number;
+    alta: boolean;
+    costo: number;
+    id_categoria: number;
+    id_unidad_medida: number;
+};
+
+type AdminState = {
+    products: Product[];
+    supplies: Supply[];
+    categories: Category[];
+    loading: boolean;
+    hasErrors: boolean;
+    product: Product | null;
+    productLoading: boolean;
+    productHasErrors: boolean;
+};
+
+
 type CreditCard = {
     cardNumber: number;
     cardName: string;
@@ -180,5 +205,7 @@ export type {
     Category,
     Landing,
     CreditCard,
+    Supply,
+    AdminState,
 };
 

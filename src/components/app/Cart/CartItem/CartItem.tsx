@@ -21,7 +21,7 @@ import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { removeFromCart, editCart } from "@redux/reducers/mainReducer";
-import { Product } from "Types/types";
+import { Product } from "types/types";
 
 const CartItem = ({ product, index }: { product: Product; index: number }) => {
   const [deleteItem, setDeleteItem] = useState<Product | null>(null);

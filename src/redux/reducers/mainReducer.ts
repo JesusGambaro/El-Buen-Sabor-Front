@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { API_URL } from '@utils/utils';
-import { Product } from 'Types/types';
+import { Product } from 'types/types';
 
 // Login and Register Reducer
 const authState = {

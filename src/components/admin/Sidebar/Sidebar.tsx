@@ -12,10 +12,12 @@ import {
   Button,
   Image,
   Tooltip,
+  Heading,
 } from "@chakra-ui/react";
 import SideIcon from "./SideIcon/SideIcon";
 import Users from "@admin/Users/Users";
 import NavBarAdmin from "@admin/NavBar/NavBar";
+import Stock from "../Stock/Stock";
 
 const SidebarAdmin = () => {
   let tabChangeTransition = "all 0.2s cubic-bezier(.08,.52,.52,1)";
@@ -30,8 +32,9 @@ const SidebarAdmin = () => {
 
   return (
     <Box w="100%" h="100%" pos="relative">
+      {/* <NavBarAdmin /> */}
       <Tabs
-        defaultIndex={0}
+        defaultIndex={1}
         orientation="vertical"
         w="100%"
         h="100%"
@@ -62,11 +65,13 @@ const SidebarAdmin = () => {
           </Flex>
         </TabList>
         <TabPanels overflowY="auto" w="100%" h="100%">
-        <NavBarAdmin/>
-          <TabPanel w="100%" display="flex">
-            Dashboard
+          <TabPanel mt="2rem">Dashboard</TabPanel>
+          <TabPanel>
+            <Heading>
+              Stock
+            </Heading>
+            <Stock />
           </TabPanel>
-          <TabPanel h="100%">Stock</TabPanel>
           <TabPanel h="100%">Pedidos</TabPanel>
           <TabPanel h="100%">
             <Users />
