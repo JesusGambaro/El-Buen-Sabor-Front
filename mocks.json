@@ -70,13 +70,13 @@
   "insumo": [
     {
       "id_insumo": 0,
-      "nombre": "",
+      "nombre": "Papas",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 175,
+      "stock_actual": 202,
       "alta": true,
-      "costo": 0,
+      "costo": 250,
       "id_categoria": 0,
       "id_unidad_medida": 0
     },
@@ -85,10 +85,10 @@
       "nombre": "Carne de vaca",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 205,
+      "stock_actual": 218,
       "alta": true,
-      "costo": 0,
+      "costo": 350,
       "id_categoria": 0,
       "id_unidad_medida": 0
     },
@@ -97,22 +97,22 @@
       "nombre": "Queso cheddar",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 42,
+      "stock_actual": 221,
       "alta": true,
-      "costo": 0,
+      "costo": 238,
       "id_categoria": 0,
-      "id_unidad_medida": 0
+      "id_unidad_medida": 1
     },
     {
       "id_insumo": 3,
       "nombre": "Lechuga",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 28,
+      "stock_actual": 89,
       "alta": true,
-      "costo": 0,
+      "costo": 467,
       "id_categoria": 1,
       "id_unidad_medida": 0
     },
@@ -121,10 +121,10 @@
       "nombre": "Tomate",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 46,
+      "stock_actual": 170,
       "alta": true,
-      "costo": 0,
+      "costo": 492,
       "id_categoria": 1,
       "id_unidad_medida": 0
     },
@@ -133,48 +133,48 @@
       "nombre": "Pollo",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 86,
+      "stock_actual": 224,
       "alta": true,
-      "costo": 0,
+      "costo": 390,
       "id_categoria": 0,
       "id_unidad_medida": 0
     },
     {
       "id_insumo": 6,
-      "nombre": "Pan de hamburguesa",
+      "nombre": "Pack hamburguesa x6",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 54,
+      "stock_actual": 221,
       "alta": true,
-      "costo": 0,
+      "costo": 355,
       "id_categoria": 0,
-      "id_unidad_medida": 0
+      "id_unidad_medida": 4
     },
     {
       "id_insumo": 7,
       "nombre": "Mayonesa",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 73,
+      "stock_actual": 238,
       "alta": true,
-      "costo": 0,
+      "costo": 225,
       "id_categoria": 2,
-      "id_unidad_medida": 0
+      "id_unidad_medida": 1
     },
     {
       "id_insumo": 8,
       "nombre": "Mostaza",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 0,
-      "stock_actual": 0,
+      "stock_minimo": 50,
+      "stock_actual": 200,
       "alta": true,
-      "costo": 0,
+      "costo": 400,
       "id_categoria": 2,
-      "id_unidad_medida": 0
+      "id_unidad_medida": 1
     }
   ],
   "categoria": [
@@ -231,7 +231,7 @@
     },
     {
       "id_unidad_medida": 1,
-      "valor": "gramos"
+      "valor": "g"
     },
     {
       "id_unidad_medida": 2,
@@ -240,6 +240,10 @@
     {
       "id_unidad_medida": 3,
       "valor": "mililitros"
+    },
+    {
+      "id_unidad_medida": 4,
+      "valor": "unidades"
     }
   ],
   "pedidos_productos": [
