@@ -45,9 +45,7 @@ const SideBar = () => {
             <SideIcon label="Carrito" />
             <SideIcon label="Configuración" />
           </Flex>
-          <Button bg="orange" color="white" w="100%" h="3rem" borderRadius="0">
-            <i className="fa-solid fa-right-from-bracket"></i>
-          </Button>
+          
         </TabList>
         <TabPanels overflowY="auto" w="100%" h="100%">
           <TabPanel w="100%" display="flex">

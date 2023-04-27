@@ -58,12 +58,32 @@ export const updateSupplyById = createAsyncThunk(
 export const getCategories = createAsyncThunk(
     'admin/getCategories',
     async () => {
-        const response = await axios.get(`${API_URL}/categories`);
+        const response = await axios.get(`${API_URL}/categorias`);
         console.log(response.data);
         return response.data;
     }
 );
-
+export const deleteCategoriaById = createAsyncThunk(
+    'admin/deleteCategoriaById',
+    async (id: number) => {
+        const { data } = await axios.delete(`${API_URL}/categorias/${id}`);
+        return data;
+    }
+);
+export const createCategoria = createAsyncThunk(
+    'admin/createCategoria',
+    async (categoria: any) => {
+        const { data } = await axios.post(`${API_URL}/categorias`, categoria);
+        return data;
+    }
+);
+export const updateCategoriaById = createAsyncThunk(
+    'admin/updateCategoriaById',
+    async (categoria: any) => {
+        const { data } = await axios.put(`${API_URL}/categorias/${categoria.id_insumo}`, categoria);
+        return data;
+    }
+);
 const adminSlice = createSlice({
     name: 'admin',
     initialState: adminState,

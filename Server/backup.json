@@ -177,39 +177,39 @@
       "id_unidad_medida": 1
     }
   ],
-  "categoria": [
+  "categorias": [
     {
-      "id_categoria": 0,
+      "id": 0,
       "alta": true,
       "nombre": "Hamburguesas",
       "categoria_padre": -1
     },
     {
-      "id_categoria": 1,
+      "id": 1,
       "alta": true,
       "nombre": "Ensaladas",
       "categoria_padre": -1
     },
     {
-      "id_categoria": 2,
+      "id": 2,
       "alta": true,
       "nombre": "Bebidas",
       "categoria_padre": -1
     },
     {
-      "id_categoria": 3,
+      "id": 3,
       "alta": true,
       "nombre": "Postres",
       "categoria_padre": -1
     },
     {
-      "id_categoria": 4,
+      "id": 4,
       "alta": true,
       "nombre": "Comida China",
       "categoria_padre": 0
     },
     {
-      "id_categoria": 5,
+      "id": 5,
       "alta": true,
       "nombre": "Comida Mexicana",
       "categoria_padre": 0
