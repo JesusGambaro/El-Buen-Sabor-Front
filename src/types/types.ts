@@ -13,9 +13,10 @@ type Product = {
 };
 
 type Category = {
-    id: number;
-    name: string;
-    img: string;
+    id?: number;
+    id_categoria: number;
+    nombre: string;
+    categoria_padre: number;
 };
 
 type CartItem = {

@@ -58,7 +58,8 @@ export const updateSupplyById = createAsyncThunk(
 export const getCategories = createAsyncThunk(
     'admin/getCategories',
     async () => {
-        const response = await axios.get(`${API_URL}/categorias`);
+        const response = await axios.get(`${API_URL}categorias`);
+
         console.log(response.data);
         return response.data;
     }
@@ -66,21 +67,21 @@ export const getCategories = createAsyncThunk(
 export const deleteCategoriaById = createAsyncThunk(
     'admin/deleteCategoriaById',
     async (id: number) => {
-        const { data } = await axios.delete(`${API_URL}/categorias/${id}`);
+        const { data } = await axios.delete(`${API_URL}categorias/${id}`);
         return data;
     }
 );
 export const createCategoria = createAsyncThunk(
     'admin/createCategoria',
     async (categoria: any) => {
-        const { data } = await axios.post(`${API_URL}/categorias`, categoria);
+        const { data } = await axios.post(`${API_URL}categorias`, categoria);
         return data;
     }
 );
 export const updateCategoriaById = createAsyncThunk(
     'admin/updateCategoriaById',
     async (categoria: any) => {
-        const { data } = await axios.put(`${API_URL}/categorias/${categoria.id_insumo}`, categoria);
+        const { data } = await axios.put(`${API_URL}categorias/${categoria.id_insumo}`, categoria);
         return data;
     }
 );
@@ -143,6 +144,73 @@ const adminSlice = createSlice({
             state.hasErrors = true;
         }
         );
+        builder.addCase(getCategories.pending, (state) => {
+            state.loading = true;
+        }
+        );
+        builder.addCase(getCategories.fulfilled, (state, action) => {
+            console.log(action.payload);
+            const categories = action.payload.map((category: any) => {
+                return { ...category, id_insumo: category.id }
+            })
+            state.categories = categories;
+            state.loading = false;
+            state.hasErrors = false;
+        }
+        );
+        builder.addCase(getCategories.rejected, (state) => {
+            state.loading = false;
+            state.hasErrors = true;
+        }
+        );
+        builder.addCase(createCategoria.pending, (state) => {
+            state.loading = true;
+        }
+        );
+        builder.addCase(createCategoria.fulfilled, (state, action) => {
+            const { arg: category } = action.meta;
+            state.categories = [...state.categories, category];
+            state.loading = false;
+            state.hasErrors = false;
+        }
+        );
+        builder.addCase(createCategoria.rejected, (state) => {
+            state.loading = false;
+            state.hasErrors = true;
+        }
+        );
+        builder.addCase(updateCategoriaById.pending, (state) => {
+            state.loading = true;
+        }
+        );
+        builder.addCase(updateCategoriaById.fulfilled, (state, action) => {
+            const { arg: category } = action.meta;
+            state.categories = state.products.map(c => c.id === category.id ? category : c);
+            state.loading = false;
+            state.hasErrors = false;
+        }
+        );
+        builder.addCase(updateCategoriaById.rejected, (state) => {
+            state.loading = false;
+            state.hasErrors = true;
+        }
+        );
+        builder.addCase(deleteCategoriaById.pending, (state) => {
+            state.loading = true;
+        }
+        );
+        builder.addCase(deleteCategoriaById.fulfilled, (state, action) => {
+            const { arg: id } = action.meta;
+            state.categories = state.categories.filter(category => category.id !== id);
+            state.loading = false;
+            state.hasErrors = false;
+        }
+        );
+        builder.addCase(deleteCategoriaById.rejected, (state) => {
+            state.loading = false;
+            state.hasErrors = true;
+        }
+        );
         builder.addCase(deleteSupplyById.pending, (state) => {
             state.loading = true;
         }
@@ -171,21 +239,6 @@ const adminSlice = createSlice({
             state.loading = false;
             state.hasErrors = true;
         });
-        builder.addCase(getCategories.pending, (state) => {
-            state.loading = true;
-        }
-        );
-        builder.addCase(getCategories.fulfilled, (state, action) => {
-            state.categories = action.payload;
-            state.loading = false;
-            state.hasErrors = false;
-        }
-        );
-        builder.addCase(getCategories.rejected, (state) => {
-            state.loading = false;
-            state.hasErrors = true;
-        }
-        );
     }
 });
 
