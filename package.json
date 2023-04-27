@@ -1,34 +1,39 @@
 {
-  "name": "elbuensabor",
+  "name": "el-buen-sabor-ts",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.0.1",
     "@chakra-ui/icons": "^2.0.17",
-    "@chakra-ui/react": "^2.5.2",
+    "@chakra-ui/react": "^2.5.5",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@reduxjs/toolkit": "^1.9.3",
     "axios": "^1.3.4",
     "colors": "^1.4.0",
-    "framer-motion": "^10.6.0",
+    "framer-motion": "^10.12.2",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-alice-carousel": "^2.7.1",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
+    "react-router-dom": "^6.10.0",
     "redux": "^4.2.1",
-    "sass": "^1.59.3"
+    "sass": "^1.59.3",
+    "sort-by": "^1.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react-swc": "^3.0.0",
+    "typescript": "^4.9.3",
     "vite": "^4.2.0"
   }
 }
