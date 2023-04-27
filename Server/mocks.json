@@ -87,10 +87,11 @@
       "descripcion": "",
       "stock_minimo": 205,
       "stock_actual": 218,
-      "alta": true,
+      "alta": false,
       "costo": 350,
       "id_categoria": 0,
-      "id_unidad_medida": 0
+      "id_unidad_medida": 0,
+      "id_insumo": 1
     },
     {
       "id": 2,
@@ -99,10 +100,11 @@
       "descripcion": "",
       "stock_minimo": 42,
       "stock_actual": 221,
-      "alta": true,
+      "alta": false,
       "costo": 238,
       "id_categoria": 0,
-      "id_unidad_medida": 1
+      "id_unidad_medida": 1,
+      "id_insumo": 2
     },
     {
       "id": 3,
@@ -138,7 +140,8 @@
       "alta": true,
       "costo": 390,
       "id_categoria": 0,
-      "id_unidad_medida": 0
+      "id_unidad_medida": 0,
+      "id_insumo": 5
     },
     {
       "id": 6,
@@ -169,12 +172,65 @@
       "nombre": "Mostaza",
       "imagen": "url",
       "descripcion": "",
-      "stock_minimo": 50,
+      "stock_minimo": "500",
       "stock_actual": 200,
       "alta": true,
       "costo": 400,
       "id_categoria": 2,
-      "id_unidad_medida": 1
+      "id_unidad_medida": 1,
+      "id_insumo": 8
+    },
+    {
+      "id": 9,
+      "nombre": "Carne de vaca",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 205,
+      "stock_actual": 218,
+      "alta": true,
+      "costo": 350,
+      "id_categoria": 0,
+      "id_unidad_medida": 0,
+      "id_insumo": 9
+    },
+    {
+      "id": 11,
+      "nombre": "Carne de vaca",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 205,
+      "stock_actual": 218,
+      "alta": true,
+      "costo": 350,
+      "id_categoria": 0,
+      "id_unidad_medida": 0,
+      "id_insumo": 11
+    },
+    {
+      "id": 575,
+      "nombre": "xd",
+      "imagen": "",
+      "descripcion": "",
+      "stock_minimo": 0,
+      "stock_actual": 0,
+      "alta": true,
+      "costo": 0,
+      "id_categoria": 0,
+      "id_unidad_medida": 0,
+      "id_insumo": 748
+    },
+    {
+      "id": 47,
+      "nombre": "xd",
+      "imagen": "",
+      "descripcion": "",
+      "stock_minimo": 0,
+      "stock_actual": 0,
+      "alta": true,
+      "costo": 0,
+      "id_categoria": 0,
+      "id_unidad_medida": 0,
+      "id_insumo": 176
     }
   ],
   "categoria": [

@@ -63,6 +63,7 @@ type State = {
 };
 
 type Supply = {
+    id?: number;
     id_insumo: number;
     nombre: string;
     imagen: string;
