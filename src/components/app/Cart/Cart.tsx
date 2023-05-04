@@ -1,6 +1,4 @@
-import { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getCartItems, clearCart, getTotal } from "@redux/reducers/mainReducer";
+import { useRef } from "react";
 import {
   Drawer,
   DrawerBody,
@@ -28,23 +26,19 @@ import {
 import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
 import { btnStyle } from "@utils/theme";
-import { Product, CartProps } from "types/types";
+import { CartProps, CartItem as CartType } from "Types/types";
+import { useCart, useEmptyCart } from "@hooks/useCart";
 
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
-  const {
-    loading,
-    cartProducts: cartItems,
-    total,
-  } = useSelector((state: any) => state.cart);
-  const dispatch = useDispatch();
+  const { data: cartItems, isLoading } = useCart() as {
+    data: CartType[];
+    isLoading: boolean;
+  };
 
-  useEffect(() => {
-    dispatch(getCartItems() as any);
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(getTotal());
-  }, [cartItems]);
+  const total = cartItems?.reduce(
+    (acc, cartItem) => acc + (cartItem.product.precio || 0) * cartItem.quantity,
+    0
+  );
 
   return (
     <Drawer
@@ -75,14 +69,14 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
             bg="white"
             pr={2}
           >
-            {loading ? (
+            {isLoading ? (
               <Loader />
             ) : cartItems.length > 0 ? (
               <>
-                {cartItems.map((product: Product, i: number) => (
+                {cartItems?.map((cartItem, i: number) => (
                   <CartItem
                     key={"cart-item-" + i}
-                    product={product}
+                    cartItem={cartItem}
                     index={i}
                   />
                 ))}
@@ -108,7 +102,7 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
           </Flex>
         </DrawerBody>
         <DrawerFooter>
-          {loading ? null : (
+          {isLoading ? null : (
             <Flex
               w="100%"
               h="7rem"
@@ -159,10 +153,10 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
 const EmptyCartBtn = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef() as React.MutableRefObject<HTMLButtonElement>;
-  const dispatch = useDispatch();
+  const { mutate: emptyCart } = useEmptyCart();
 
   const handleClearCart = () => {
-    dispatch(clearCart());
+    emptyCart();
     onClose();
   };
 

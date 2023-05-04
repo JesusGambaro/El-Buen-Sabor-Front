@@ -10,10 +10,9 @@ import {
 import Products from "./Products/Products";
 import Categories from "./Categories/Categories";
 import Ingredientes from "./Ingredientes/Ingredientes";
-import SideFilter from "../SideFilter/SideFilter";
+import SideFilter from "./SideFilter/SideFilter";
 
 const Stock = () => {
-    
   return (
     <Tabs
       isFitted
@@ -28,15 +27,14 @@ const Stock = () => {
         <Tab>Ingredientes</Tab>
       </TabList>
       <TabPanels>
-        <TabPanel>
+        <TabPanel display="flex" flexDirection="row">
+          <SideFilter />
           <Categories />
         </TabPanel>
-        <TabPanel>
-         {/*  <SideFilter /> */}
+        <TabPanel display="flex" flexDirection="row">
           <Products />
         </TabPanel>
         <TabPanel display="flex" flexDirection="row">
-        {/*   <SideFilter /> */}
           <Ingredientes />
         </TabPanel>
       </TabPanels>

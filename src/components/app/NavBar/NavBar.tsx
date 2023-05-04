@@ -24,23 +24,21 @@ import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
 import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setAttempt } from "@redux/reducers/mainReducer";
+import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
+  const navigate = useNavigate();
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
     useAuth0();
 
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef: any = React.useRef(null);
-  const dispatch = useDispatch();
 
   const handleIsAuth = () => {
     if (isAuthenticated) {
       onOpen();
     } else {
-      dispatch(setAttempt(true));
     }
   };
   const trimName = (name: string = ""): string => {
@@ -72,6 +70,7 @@ const NavBar = () => {
             src="https://res.cloudinary.com/dquqzevft/image/upload/v1680564907/Logo.png"
             alt="El Buen Sabor"
             ml={2}
+            onClick={() => navigate("/")}
           />
         </Box>
         <Spacer />

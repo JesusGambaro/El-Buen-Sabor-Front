@@ -11,7 +11,14 @@ import "./footer.scss";
 
 export const Footer = () => {
   return (
-    <Flex h="10rem" bgColor="orange" color="white" p={5} w="100%">
+    <Flex h="10rem" bgColor="orange" color="white" p={5} w="100%" 
+    zIndex={0}
+    position="fixed"
+    bottom="0"
+    width="calc(100vw - 8rem)"
+    left="8rem"
+    >
+
       {/*
           <Center h={"maxContainer"} w={"maxContainer"}>
             <Image

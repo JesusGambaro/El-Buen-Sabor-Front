@@ -8,21 +8,8 @@ import {
   Thead,
   Tbody,
   Td,
-  Tfoot,
   IconButton,
   Select,
-  Popover,
-  PopoverTrigger,
-  Button,
-  Portal,
-  PopoverContent,
-  PopoverArrow,
-  PopoverHeader,
-  PopoverCloseButton,
-  PopoverBody,
-  PopoverFooter,
-  ButtonGroup,
-  useDisclosure,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -41,29 +28,15 @@ import {
   FormControl,
   Flex,
   ModalFooter,
-  Box
+  Button,
+  FormLabelProps,
 } from "@chakra-ui/react";
-import {
-  deleteSupply,
-  deleteSupplyById,
-  getSupplies,
-  createSupply,
-  updateSupplyById
-} from "@redux/reducers/adminReducer";
-import { random } from "colors";
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Supply } from "types/types";
+import {  useRef, useState } from "react";
+import { Supply } from "Types/types";
+import { useDisclosure } from "@chakra-ui/react";
 
 const Ingredientes = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getSupplies() as any);
-  }, [dispatch]);
 
-  const { supplies }: { supplies: Supply[] } = useSelector(
-    (state: any) => state.admin
-  );
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const {
@@ -90,20 +63,17 @@ const Ingredientes = () => {
     id_unidad_medida: 0,
     id_insumo: -1,
   } as Supply);
-  const handleCreateNewItem = (supply: Supply) => {
-    console.log(supplies.length);
 
+  const [supplies, setSupplies] = useState<Supply[]>([] as Supply[]);
+  const handleCreateNewItem = (supply: Supply) => {
     if (isCreating) {
       let newSupply: Supply = supply;
       newSupply.id = Math.floor(Math.random() * (1000 - 0 + 1) + 0);
       newSupply.id_insumo = Math.floor(Math.random() * (1000 - 0 + 1) + 0);
-      dispatch(createSupply(newSupply) as any);
       console.log(newSupply);
     } else {
-      dispatch(updateSupplyById(supply) as any);
       console.log(supply);
     }
-    dispatch(getSupplies() as any);
   };
   return (
     <Container maxW="container.xl">
@@ -243,11 +213,9 @@ type PropsCreate = {
 
 const AlertDeleteItem = ({ supply, isOpen, onClose }: Props) => {
   const cancelRef = useRef(null);
-  const dispatch = useDispatch();
 
   const handleDelete = () => {
     console.log(supply);
-    dispatch(deleteSupplyById(supply.id_insumo) as any);
     onClose();
   };
 

@@ -18,6 +18,7 @@ import SideIcon from "./SideIcon/SideIcon";
 import Users from "@admin/Users/Users";
 import NavBarAdmin from "@admin/NavBar/NavBar";
 import Stock from "../Stock/Stock";
+import Dashboard from "@admin/Dashboard/Dashboard";
 
 const SidebarAdmin = () => {
   let tabChangeTransition = "all 0.2s cubic-bezier(.08,.52,.52,1)";
@@ -65,18 +66,24 @@ const SidebarAdmin = () => {
           </Flex>
         </TabList>
         <TabPanels overflowY="auto" w="100%" h="100%">
-          <TabPanel mt="2rem">Dashboard</TabPanel>
+          <TabPanel mt="2rem">
+            <Heading>Dashboard</Heading>
+            <Dashboard />
+          </TabPanel>
           <TabPanel>
-            <Heading>
-              Stock
-            </Heading>
+            <Heading>Stock</Heading>
             <Stock />
           </TabPanel>
-          <TabPanel h="100%">Pedidos</TabPanel>
           <TabPanel h="100%">
+            <Heading>Pedidos</Heading>
+          </TabPanel>
+          <TabPanel h="100%">
+            <Heading>Usuarios</Heading>
             <Users />
           </TabPanel>
-          <TabPanel h="100%">Configuración</TabPanel>
+          <TabPanel h="100%">
+            <Heading>Configuración</Heading>
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </Box>

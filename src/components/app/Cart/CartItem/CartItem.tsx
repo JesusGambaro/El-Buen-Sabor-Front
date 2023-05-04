@@ -1,4 +1,3 @@
-import React, { RefObject } from "react";
 import {
   ButtonGroup,
   Spacer,
@@ -18,43 +17,41 @@ import {
   Card,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { removeFromCart, editCart } from "@redux/reducers/mainReducer";
-import { Product } from "types/types";
+import { CartItem, Product } from "Types/types";
+import { useRemoveFromCart, useUpdateCart } from "@hooks/useCart";
 
-const CartItem = ({ product, index }: { product: Product; index: number }) => {
-  const [deleteItem, setDeleteItem] = useState<Product | null>(null);
+const CartItem = ({
+  cartItem,
+  index,
+}: {
+  cartItem: CartItem;
+  index: number;
+}) => {
+  const [deleteItem, setDeleteItem] = useState<CartItem | null>(null);
 
   const cancelRef = useRef() as any;
-  const dispatch = useDispatch();
   const { onOpen: onOpenDeleteItem } = useDisclosure();
-
+  const { mutate: removeFromCart } = useRemoveFromCart();
+  const { mutate: updateCart } = useUpdateCart();
+  const { product } = cartItem;
   const handleDeleteItem = () => {
     if (!deleteItem) return;
-    dispatch(removeFromCart(deleteItem.id));
+    removeFromCart(deleteItem);
     setDeleteItem(null);
   };
 
-  const handleOpenDeleteAlert = (
-    item: Product,
-    index: number,
-    isTheLast = false
-  ) => {
-    if (item.quantity > 1 && !isTheLast) {
-      dispatch(
-        editCart({ newItem: { ...item, quantity: item.quantity - 1 }, index })
-      );
+  const handleOpenDeleteAlert = (item: CartItem, isTheLast = false) => {
+    if (cartItem.quantity > 1 && !isTheLast) {
+      updateCart({ ...item, quantity: item.quantity - 1 });
       return;
     }
     setDeleteItem(item);
     onOpenDeleteItem();
   };
 
-  const handleAddItem = (item: Product, index: number) => {
-    dispatch(
-      editCart({ newItem: { ...item, quantity: item.quantity + 1 }, index })
-    );
+  const handleAddItem = (item: CartItem, index: number) => {
+    updateCart({ ...item, quantity: item.quantity + 1 });
   };
 
   const btnStyles = {
@@ -83,7 +80,7 @@ const CartItem = ({ product, index }: { product: Product; index: number }) => {
     >
       <Image
         boxSize="70px"
-        src={product.img}
+        src={product.imagen}
         alt="El Buen Sabor"
         borderRadius="md"
         objectFit="cover"
@@ -91,16 +88,16 @@ const CartItem = ({ product, index }: { product: Product; index: number }) => {
       />
       <Box ml={3}>
         <Text fontSize="sm" fontWeight="bold" mb={1} mr={2}>
-          {product.name}
+          {product.nombre}
         </Text>
         <Text fontSize="sm" fontWeight="bold">
-          ${Math.round(product.price * product.quantity)}
+          ${Math.round((product.precio || 0) * cartItem.quantity)}
         </Text>
         <Text fontSize="sm" fontWeight="bold">
           <Text as="span" color="orange.500">
             x
           </Text>
-          {product.quantity}
+          {cartItem.quantity}
         </Text>
       </Box>
       <Spacer />
@@ -109,7 +106,7 @@ const CartItem = ({ product, index }: { product: Product; index: number }) => {
         <Button
           {...btnStyles}
           onClick={() => {
-            handleOpenDeleteAlert(product, index);
+            handleOpenDeleteAlert(cartItem);
           }}
         >
           -
@@ -117,7 +114,7 @@ const CartItem = ({ product, index }: { product: Product; index: number }) => {
         <Button
           {...btnStyles}
           onClick={() => {
-            handleAddItem(product, index);
+            handleAddItem(cartItem, index);
           }}
         >
           +
@@ -135,7 +132,7 @@ const CartItem = ({ product, index }: { product: Product; index: number }) => {
               variant={deleteItem ? "solid" : "outline"}
               _hover={{ bg: "red.500", color: "white" }}
               onClick={() => {
-                handleOpenDeleteAlert(product, index, true);
+                handleOpenDeleteAlert(cartItem, true);
               }}
             >
               <DeleteIcon />
@@ -146,7 +143,8 @@ const CartItem = ({ product, index }: { product: Product; index: number }) => {
             <PopoverArrow />
             <PopoverCloseButton />
             <PopoverBody>
-              Esta seguro que desea eliminar {deleteItem?.name} del carrito?
+              Esta seguro que desea eliminar {deleteItem?.product?.nombre} del
+              carrito?
             </PopoverBody>
             <PopoverFooter display="flex" justifyContent="flex-end">
               <ButtonGroup size="sm">

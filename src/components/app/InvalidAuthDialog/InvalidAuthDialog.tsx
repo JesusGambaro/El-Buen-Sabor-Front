@@ -9,23 +9,16 @@ import {
   AlertDialogFooter,
   Button,
 } from "@chakra-ui/react";
-import { useSelector, useDispatch } from "react-redux";
-import { setAttempt } from "@redux/reducers/mainReducer";
 import { useAuth0 } from "@auth0/auth0-react";
-import { State } from "Types/types";
 
 const InvalidAuthDialog = () => {
-  const distpatch = useDispatch();
-  const { attempt } = useSelector((state: State) => state.auth);
   const { onOpen, onClose } = useDisclosure();
   const cancelRef = useRef() as any;
   const { loginWithRedirect } = useAuth0() as any;
-
   const handleOpen = () => {
     onOpen();
-    distpatch(setAttempt(false));
   };
-
+  const attempt = false;
   return (
     <AlertDialog
       isOpen={attempt}

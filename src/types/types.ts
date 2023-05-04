@@ -1,15 +1,18 @@
 import { ReactNode } from "react";
 
 type Product = {
-    id: number;
-    name: string;
-    price: number;
-    description: string;
-    category: string;
-    img: string;
-    quantity: number;
+    id?: number;
+    id_producto: number;
+    nombre: string;
+    imagen: string;
+    descripcion: string;
+    receta: string;
     discount: number;
+    tiempo_cocina: number;
+    alta: boolean;
+    id_categoria: number;
     rating: number;
+    precio?: number;
 };
 
 type Category = {
@@ -17,6 +20,8 @@ type Category = {
     id_categoria: number;
     nombre: string;
     categoria_padre: number;
+    img?: string;
+    alta: boolean;
 };
 
 type CartItem = {
@@ -24,10 +29,6 @@ type CartItem = {
     quantity: number;
 };
 
-type Cart = {
-    items: CartItem[];
-    checkout: boolean;
-};
 
 type Order = {
     id: number;
@@ -57,7 +58,6 @@ type Auth = {
 
 type State = {
     products: Product[];
-    cart: Cart;
     user: User;
     auth: Auth;
     landing: Landing;
@@ -159,7 +159,6 @@ type CartItemProps = {
 };
 
 type CartProps = {
-    cart?: Cart;
     isOpen: boolean;
     onClose: () => void;
     btnRef: any;
@@ -184,7 +183,6 @@ export type {
     ErrorBoundaryProps,
     Product,
     CartItem,
-    Cart,
     Order,
     User,
     State,

@@ -1,25 +1,16 @@
 {
-    "compilerOptions": {
-        "baseUrl": "./src",
-        "paths": {
-            "@components/*": [
-                "./components/*"
-            ],
-            "@admin/*": [
-                "./components/admin/*"
-            ],
-            "@app/*": [
-                "./components/app/*"
-            ],
-            "@utils/*": [
-                "./utils/*"
-            ],
-            "@hooks/*": [
-                "./hooks/*"
-            ],
-            "@redux/*": [
-                "./redux/*"
-            ],
-        }
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@components/*": ["./components/*"],
+      "@admin/*": ["./components/admin/*"],
+      "@app/*": ["./components/app/*"],
+      "@utils/*": ["./utils/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@redux/*": ["./redux/*"],
+      "@api/*": ["./api/*"],
+      "@store/*": ["./store/*"],
+      "@pages/*": ["./pages/*"]
     }
+  }
 }

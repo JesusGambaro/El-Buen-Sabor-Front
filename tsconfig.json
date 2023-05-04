@@ -7,6 +7,7 @@
       "DOM.Iterable",
       "ESNext"
     ],
+    "useUnknownInCatchVariables": true,
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": false,

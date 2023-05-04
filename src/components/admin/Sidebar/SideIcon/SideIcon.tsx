@@ -1,7 +1,13 @@
 import React from "react";
 import { Tab, Tooltip, Text } from "@chakra-ui/react";
 
-const SideIcon = ({ label, admin = false }) => {
+const SideIcon = ({
+  label,
+  admin = false,
+}: {
+  label: string;
+  admin?: boolean;
+}) => {
   const customIconsProps = {
     height: "3rem",
     width: "3rem",
@@ -20,7 +26,7 @@ const SideIcon = ({ label, admin = false }) => {
     //onClick: onToggle,
   };
 
-  const iconsPath = {
+  const iconsPath: { [key: string]: string } = {
     Home: "fa-solid fa-home",
     Catálogo: "fa-solid fa-utensils",
     Carrito: "fa-solid fa-cart-shopping",

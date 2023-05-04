@@ -1,24 +1,8 @@
 import React from "react";
-import { Tab, Tooltip } from "@chakra-ui/react";
+import { Button, ButtonProps, Tab, Tooltip } from "@chakra-ui/react";
+import { NavLink, NavLinkProps } from "react-router-dom";
 
 const SideIcon = ({ label }: { label: string }) => {
-  const customIconsProps = {
-    height: "3rem",
-    width: "3rem",
-    borderRadius: "50%",
-    fontSize: "1.2rem",
-    _selected: {
-      bg: "orange",
-      color: "white",
-    },
-    _hover: {
-      bg: "orange",
-      boxShadow: "0rem 0rem 0rem .2rem #ffb701",
-      color: "white",
-    },
-    //onClick: onToggle,
-  };
-
   const iconsPath: { [key: string]: string } = {
     Home: "fa-solid fa-home",
     Catálogo: "fa-solid fa-utensils",
@@ -34,9 +18,19 @@ const SideIcon = ({ label }: { label: string }) => {
       openDelay={500}
       closeDelay={500}
     >
-      <Tab {...customIconsProps}>
+      <NavLink
+        to={`/${label === "Home" ? "" : label.toLowerCase()}`}
+        className={({ isActive, isPending }) =>
+          isActive ? "active" : isPending ? "pending" : ""
+        }
+        style={{ textDecoration: "none", width: "3rem", height: "3rem" ,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+      >
         <i className={iconsPath[label]}></i>
-      </Tab>
+      </NavLink>
     </Tooltip>
   );
 };

@@ -9,32 +9,20 @@ import {
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import "./landing.scss";
-import { useEffect } from "react";
-import { getCategories, getLandingProducts } from "@redux/reducers/mainReducer";
-import { useDispatch, useSelector } from "react-redux";
 import Loader from "@app/Loader/Loader";
 import { LandingCard } from "./Cards/LandingProductCard";
 import { CategoryCard } from "./Cards/CategoryCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { State } from "Types/types";
+import { useProducts } from "@hooks/useProducts";
+import { useCategories } from "@hooks/useCategories";
 
 const Landing = () => {
-  const dispatch = useDispatch();
-  const {
-    loading,
-    landingProducts: products,
-    categories,
-  } = useSelector((state: State) => state.landing);
+  const { data: products, isLoading: isLoadingProds } = useProducts();
+  const { data: categories, isLoading } = useCategories();
 
-  useEffect(() => {
-    dispatch(getLandingProducts() as any);
-    dispatch(getCategories() as any);
-  }, []);
-
-  const items = categories.map((category) => (
+  const items = categories?.map((category) => (
     <CategoryCard key={category.id} category={category} />
-  ));
-
+  ));  
   const responsive = {
     0: { items: 1 },
     568: { items: 2 },
@@ -51,12 +39,13 @@ const Landing = () => {
   let carousel: any;
   return (
     <Container
-      maxW="container.xl"
-      minH="100vh"
+      maxW="container.2xl"
+      minH='100vh'
       display="flex"
       flexDirection="column"
-      justifyContent="center"
+      justifyContent="start"
       alignItems="center"
+      bg="#f9f6f6"
     >
       <Heading as="h1" size="xl" mb="2rem">
         El Buen Sabor
@@ -81,7 +70,7 @@ const Landing = () => {
             _hover={{ bg: "orange.400" }}
             onClick={handlePrevClick}
           />
-          {loading ? (
+          {isLoading ? (
             <Loader />
           ) : (
             <AliceCarousel
@@ -109,7 +98,7 @@ const Landing = () => {
           <Heading as="h2" size="lg">
             Productos destacados
           </Heading>
-          {loading ? (
+          {isLoadingProds ? (
             <Loader />
           ) : (
             <SimpleGrid
@@ -118,8 +107,11 @@ const Landing = () => {
               spacing={3}
               columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
             >
-              {products.map((product) => (
-                <LandingCard key={product.id} product={product} />
+              {products?.map((product) => (
+                <LandingCard
+                  key={"landing-card-" + product.id_producto}
+                  product={product}
+                />
               ))}
             </SimpleGrid>
           )}

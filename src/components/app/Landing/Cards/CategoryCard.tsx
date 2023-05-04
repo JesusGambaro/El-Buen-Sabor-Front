@@ -11,6 +11,8 @@ export const CategoryCard = ({ category }: { category: Category }) => {
       size="sm"
       my="1rem"
       boxShadow="md"
+      cursor="pointer"
+      userSelect={"none"}
     >
       <CardBody
         display="flex"
@@ -20,14 +22,15 @@ export const CategoryCard = ({ category }: { category: Category }) => {
       >
         <Image
           src={category.img}
-          alt={category.name}
+          alt={category.nombre}
           borderRadius="50%"
           boxSize="4rem"
           objectFit="cover"
           m="auto"
+          onDragStart={(e) => e.preventDefault()}
         />
         <Heading size="sm" mt="4">
-          {category.name}
+          {category.nombre}
         </Heading>
         <IconButton
           aria-label="Go to category"

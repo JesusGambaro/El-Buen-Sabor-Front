@@ -1,13 +1,8 @@
-import Home from "@app/Home/Home";
-import ErrorBoundary from "@app/ErrorBoundary/ErrorBoundary";
+import { RouterProvider } from "react-router-dom";
+import Router from "./routes/root";
+
 function App() {
-  return (
-    <ErrorBoundary>
-        <div className="App">
-          <Home />
-        </div>
-    </ErrorBoundary>
-  );
+  return <RouterProvider router={Router} />;
 }
 
 export default App;
