@@ -5,19 +5,24 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Badge,
   Box,
   Container,
+  Text,
 } from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
-import { useApiQuery } from "@hooks/useCart";
+import { useApiMutation, useApiQuery } from "@hooks/useCart";
 import { Category } from "Types/types";
-import React from "react";
 
 type Props = {};
+type NestedAccordionProps = {
+  categories: Category[];
+  isRecursive: boolean;
+};
 
 const SideFilter = (props: Props) => {
   const {
-    data: categories,
+    data: baseCategories,
     error,
     isLoading,
   } = useApiQuery("categories", getCategories) as {
@@ -25,56 +30,78 @@ const SideFilter = (props: Props) => {
     error: any;
     isLoading: boolean;
   };
+
   if (isLoading) return <Loader />;
+
+  const NestedAccordion = ({
+    categories,
+    isRecursive,
+  }: NestedAccordionProps) => {
+    return (
+      <Accordion allowMultiple>
+        {categories.map((category) => {
+          if (!isRecursive && category.categoria_padre !== -1) return null;
+          const subcategories = baseCategories.filter(
+            (subCategory) => subCategory.categoria_padre === category.id
+          );
+          const hasChildren = subcategories.length > 0;
+          return (
+            <AccordionItem key={category.id} border="none">
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                p={1}
+                width="100%"
+              >
+                <Text
+                  fontSize="md"
+                  fontWeight={hasChildren ? "bold" : "normal"}
+                  textDecorationColor="orange.500"
+                  _hover={{
+                    textDecoration: "underline",
+                    textDecorationColor: "orange.500",
+                    cursor: "pointer",
+                  }}
+                >
+                  {category.nombre}
+                </Text>
+                <AccordionButton
+                  onClick={(e) => {
+                    console.log("click");
+                  }}
+                  width="10%"
+                  justifyContent="center"
+                  visibility={hasChildren ? "visible" : "hidden"}
+                >
+                  <AccordionIcon />
+                </AccordionButton>
+              </Box>
+              {hasChildren && (
+                <AccordionPanel p={1} pr={0}>
+                  <NestedAccordion
+                    categories={subcategories}
+                    isRecursive={true}
+                  />
+                </AccordionPanel>
+              )}
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+    );
+  };
+
   return (
     <Container
       maxW="container.md"
-      bg="white"
       p={4}
       borderRadius="md"
-      boxShadow="md"
-      w="20%"
+      maxWidth={["100%", "100%", "100%", "100%", "20%"]}
     >
-      <NestedAccordion categories={categories} parent={-1} />
+      <NestedAccordion categories={baseCategories} isRecursive={false} />
     </Container>
   );
 };
 
-type NestedAccordionProps = {
-  categories: Category[];
-  parent: number;
-};
-
-const NestedAccordion = ({ categories, parent }: NestedAccordionProps) => {
-  console.log(categories);
-  const subcategories = categories.filter(
-    (category) => category.categoria_padre === parent
-  );
-  console.log("subcategories", subcategories);
-  if (subcategories.length === 0) return null;
-  return (
-    <Accordion allowMultiple>
-      {subcategories.map((category) => {
-        return (
-          <AccordionItem key={category.id} border="none">
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  {category.nombre}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              <NestedAccordion
-                categories={categories}
-                parent={category.id as number}
-              />
-            </AccordionPanel>
-          </AccordionItem>
-        );
-      })}
-    </Accordion>
-  );
-};
 export default SideFilter;

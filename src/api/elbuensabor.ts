@@ -1,12 +1,7 @@
 import { QueryFunctionContext } from "@tanstack/react-query";
 import api from "../libs/axios";
-import { useNavigate } from "react-router-dom";
 import { CartItem, Category, Product } from "Types/types";
 
-export const getCategories = async () => {
-    const { data: categories } = await api.get("categorias");
-    return categories;
-}
 
 export const getCategory = async ({ queryKey }: QueryFunctionContext) => {
     const [_, id] = queryKey;
@@ -88,7 +83,7 @@ export const updateCart = async ({ product, quantity }: CartItem) => {
         quantity: quantity,
         discount: product.discount,
     }
-    const { data } = await api.put(`getCartItems/${2}`, item2);
+    const { data } = await api.put(`getCartItems/${item2.id}`, item2);
     return data;
 }
 
@@ -116,4 +111,57 @@ export const updateCategory = async (category: Category) => {
 export const deleteCategory = async (id: number) => {
     const { data } = await api.delete(`categorias/${id}`);
     return data;
+}
+
+type FilterParams = {
+    query?: string;
+    id?: number;
+}
+
+export const getCategories = async (params?: QueryFunctionContext) => {
+    const [_, filter] = params?.queryKey as [string, FilterParams];
+
+    let query = '/';
+    if (filter) {
+        Object.keys(filter).forEach((key) => {
+            if (!filter[key as keyof FilterParams]) return;
+            const separator = query.indexOf("?") !== -1 ? "&" : "?";
+            query += `${separator}${key}=${filter[key as keyof FilterParams]}`;
+        });
+    }
+    const { data } = await api.get(`categorias${query}`);
+    return data;
+}
+
+
+type GenericFetch = {
+    url: string;
+    method: string;
+    data?: string;
+    headers?: any;
+}
+
+export const fetchBackend = async <T = any>(params: QueryFunctionContext): Promise<T> => {
+    console.log('params', params);
+    const [_, method, endpoint, data] = params.queryKey as [string, string, string, any | undefined];
+    const options = {
+        url: endpoint,
+        method,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+        },
+    } as GenericFetch;
+    if (data) {
+        options.data = JSON.stringify(data);
+    }
+    console.log('options', options);
+
+    return api(options).then((response) => {
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error(response.statusText);
+        }
+    });
 }

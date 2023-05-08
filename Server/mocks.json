@@ -190,7 +190,7 @@
       "nombre": "Pizzas",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075599/c-pizza_nglpg8.png",
       "alta": true,
-      "categoria_padre": 0
+      "categoria_padre": -1
     },
     {
       "id": 3,
@@ -247,6 +247,30 @@
       "id_categoria": -1,
       "img": "",
       "alta": false
+    },
+    {
+      "id": 11,
+      "nombre": "Mantequilla",
+      "categoria_padre": 6,
+      "id_categoria": -1,
+      "img": "",
+      "alta": true
+    },
+    {
+      "id": 12,
+      "nombre": "La Fría",
+      "categoria_padre": 11,
+      "id_categoria": -1,
+      "img": "",
+      "alta": true
+    },
+    {
+      "id": 13,
+      "nombre": "Ah sí?",
+      "categoria_padre": 12,
+      "id_categoria": -1,
+      "img": "",
+      "alta": true
     }
   ],
   "producto_insumo": [
@@ -403,13 +427,6 @@
   ],
   "getCartItems": [
     {
-      "id": 4,
-      "name": "Pancho Doble",
-      "price": 800,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/3a6f7af9-03ba-4b6a-ab5d-facf0c52f467.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
-      "quantity": 1
-    },
-    {
       "id": 1,
       "name": "Grand Tasty Turbo Bacon Doble",
       "price": 2760.99,
@@ -417,11 +434,18 @@
       "quantity": 1
     },
     {
+      "id": 3,
+      "name": "Pizza de Masa Madre napolitana con cherry",
+      "price": 2389.01,
+      "img": "https://images.deliveryhero.io/image/pedidosya/products/3e03b580-4d0f-49a6-87ac-18e6aaef0aca.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "quantity": 1
+    },
+    {
       "id": 2,
-      "name": "Grand Tasty Turbo Bacon Doble",
-      "price": 2760.99,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
-      "quantity": 2
+      "name": "McPollo",
+      "price": 1180.89,
+      "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_7aa88581-c715-49d7-95fa-9b1c89fce9d5.jpg?quality=90&width=1024&webp=1&dpi=1.5",
+      "quantity": 1
     }
   ],
   "getCategories": [

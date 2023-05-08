@@ -11,8 +11,9 @@ type QueryData<T> = {
 };
 
 
-export const useApiQuery = <T>(query: string, func: () => Promise<T>, enabled = true): QueryData<T> => {
-    const { data, error, isLoading, refetch } = useQuery<T>([query], func, {
+export const useApiQuery = <T>(query: string, func: () => Promise<T>, params?: any, enabled = true): QueryData<T> => {
+
+    const { data, error, isLoading, refetch } = useQuery<T>([query, params], func, {
         enabled
     });
     return { data: data as T, error, isLoading, refetch };

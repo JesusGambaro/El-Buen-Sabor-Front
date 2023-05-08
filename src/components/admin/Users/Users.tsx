@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 
 const Users = () => {
-    const users = [
+  const users = [
     {
       name: "Juan",
       lastname: "Perez",

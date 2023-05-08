@@ -22,7 +22,7 @@ const Stock = () => {
       size="lg"
     >
       <TabList mb="1em">
-        <Tab>Rubros</Tab>
+        <Tab>Categorías</Tab>
         <Tab>Productos</Tab>
         <Tab>Ingredientes</Tab>
       </TabList>

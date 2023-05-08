@@ -5,11 +5,10 @@ import {
   getCategories,
   updateCategory,
 } from "@api/elbuensabor";
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { DeleteIcon, EditIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   Container,
   TableContainer,
-  Table,
   Tr,
   Th,
   Thead,
@@ -17,8 +16,6 @@ import {
   Td,
   IconButton,
   Select,
-  Button,
-  useDisclosure,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -38,37 +35,38 @@ import {
   FormLabelProps,
   Modal,
   ModalFooter,
+  InputLeftElement,
 } from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
 import { useApiMutation, useApiQuery } from "@hooks/useCart";
-import { useEffect, useRef, useState } from "react";
+import useAdminStore from "@store/adminStore";
+import { useRef, useState } from "react";
 import { Category } from "Types/types";
-
+import { useDisclosure, usePagination } from "@mantine/hooks";
+import { Button, Pagination, Table } from "@mantine/core";
+import ModalForm from "./ModalCForm";
+import { Plus } from "tabler-icons-react";
+import { text } from "stream/consumers";
 type QueryProps = {
   data: Category[];
   error: any;
   isLoading: boolean;
 };
+
 const Categories = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
 
   const [deleteItem, setDeleteItem] = useState<Category>({} as Category);
   const [editItem, setEditItem] = useState<Category>({} as Category);
-  const {
-    isOpen: isOpenCreate,
-    onOpen: onOpenCreate,
-    onClose: onCloseCreate,
-  } = useDisclosure();
-  const {
-    isOpen: isCreating,
-    onOpen: onCreating,
-    onClose: onEditing,
-  } = useDisclosure();
+  const { filter, setFilter } = useAdminStore();
+  const [query, setQuery] = useState(filter.nombre_like || "");
+  console.log(filter);
+
   const {
     data: categories,
     error,
     isLoading,
-  } = useApiQuery("categories", getCategories) as QueryProps;
+  } = useApiQuery("categories", getCategories, filter) as QueryProps;
 
   const { mutate: create } = useApiMutation(
     "categories/create",
@@ -78,16 +76,27 @@ const Categories = () => {
   const { mutate: edit } = useApiMutation("categories/edit", updateCategory);
 
   if (isLoading) return <Loader />;
+  const rows = categories.map((category, i) => (
+    <tr key={"category" + i + category.id_categoria}>
+      <td>{category?.id}</td>
+      <td>{category?.nombre}</td>
+      <td>
+        {categories.find((c) => c.id === category.categoria_padre)?.nombre ||
+          "-"}
+      </td>
+      <td>
+        <IconButton
+          aria-label="Edit"
+          icon={<EditIcon />}
+          onClick={() => {
+            setEditItem(category);
+          }}
+          colorScheme="orange"
+        />
+      </td>
+    </tr>
+  ));
 
-  const handleCreateNewItem = (category: Category) => {
-    if (isCreating) {
-      category.id = categories.length + 1;
-      create(category);
-    } else {
-      edit(category);
-      console.log(category);
-    }
-  };
   return (
     <Container maxW="container.xl">
       <Flex
@@ -96,8 +105,11 @@ const Categories = () => {
         marginBottom="1rem"
       >
         <Button
-          colorScheme="orange"
+          leftIcon={<Plus />}
+          color="orange"
+          size="md"
           onClick={() => {
+            open();
             setEditItem({
               id: -1,
               nombre: "",
@@ -106,77 +118,59 @@ const Categories = () => {
               img: "",
               alta: false,
             });
-            onOpenCreate();
-            onCreating();
           }}
         >
-          {true ? "Crear Rubro" : "Editar Rubro"}
+          Crear Rubro
         </Button>
+        <InputGroup
+          size="md"
+          maxW="sm"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setFilter({ ...filter, nombre_like: query });
+            }
+          }}
+        >
+          <InputLeftElement
+            pointerEvents="none"
+            children={<SearchIcon color="orange" />}
+          />
+          <Input
+            type="tel"
+            placeholder="Buscar comida..."
+            focusBorderColor="orange.300"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
+          />
+        </InputGroup>
       </Flex>
-      <TableContainer overflowY="auto" maxHeight="calc(100vh - 15rem)">
-        <Table size="lg" variant="striped" colorScheme="orange">
-          <Thead>
-            <Tr>
-              <Th isNumeric>Id</Th>
-              <Th>Nombre</Th>
-              <Th isNumeric>Padre</Th>
-              <Th>Edit</Th>
-              <Th>Del</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {categories.map((category, i) => {
-              if (!category.alta) return null;
-              return (
-                <Tr key={"category" + i + category.id_categoria}>
-                  <Td isNumeric>{category.id}</Td>
-                  <Td>{category.nombre}</Td>
-                  <Td isNumeric>{category.categoria_padre}</Td>
-                  <Td>
-                    <IconButton
-                      aria-label="Edit"
-                      icon={<EditIcon />}
-                      onClick={() => {
-                        setEditItem(category);
-                        onOpenCreate();
-                        onEditing();
-                      }}
-                      colorScheme="orange"
-                    />
-                  </Td>
-                  <Td>
-                    <IconButton
-                      aria-label="Edit"
-                      icon={<DeleteIcon />}
-                      onClick={() => {
-                        setDeleteItem(category);
-                        onOpen();
-                      }}
-                      colorScheme="orange"
-                    />
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <AlertDeleteItem
-        isOpen={isOpen}
-        onClose={onClose}
-        category={deleteItem}
-      />
-      <ModalCreateModifyItem
-        isOpen={isOpenCreate}
-        onClose={onCloseCreate}
-        category={editItem}
-        isCreating={isCreating}
-        onSave={(category: Category) => {
-          handleCreateNewItem(category);
-        }}
-        onChangeValue={(value: any, key: string) => {
-          setEditItem((prevState) => ({ ...prevState, [key]: value }));
-        }}
+      <Table
+        verticalSpacing={"sm"}
+        striped
+        captionSide="bottom"
+        highlightOnHover
+        withBorder
+        withColumnBorders
+      >
+        <caption>
+          {/* <Pagination color="orange" {...pagination} total={10} /> */}
+        </caption>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Categoría padre</th>
+            <th>Editar</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+      <ModalForm
+        opened={opened}
+        close={close}
+        title={editItem.id === -1 ? "Crear Rubro" : "Editar Rubro"}
       />
     </Container>
   );
@@ -232,7 +226,7 @@ const AlertDeleteItem = ({ category, isOpen, onClose }: Props) => {
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={handleDelete} ml={3}>
+            <Button color="red" onClick={handleDelete} ml={3}>
               Delete
             </Button>
           </AlertDialogFooter>
@@ -401,10 +395,7 @@ const ModalCreateModifyItem = ({
 
         <ModalFooter>
           <Button
-            background={"#ffb701"}
-            _hover={{
-              background: "#e4a400",
-            }}
+            bg={"#ffb701"}
             color={"white"}
             mr={3}
             onClick={() => {

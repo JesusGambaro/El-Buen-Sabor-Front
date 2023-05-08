@@ -15,14 +15,17 @@ import { CategoryCard } from "./Cards/CategoryCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useProducts } from "@hooks/useProducts";
 import { useCategories } from "@hooks/useCategories";
+import { Product } from "Types/types";
 
 const Landing = () => {
-  const { data: products, isLoading: isLoadingProds } = useProducts();
+  const { data: products, isLoading: isLoadingProds } =
+    useProducts("GET/getLanding");
+
   const { data: categories, isLoading } = useCategories();
 
   const items = categories?.map((category) => (
     <CategoryCard key={category.id} category={category} />
-  ));  
+  ));
   const responsive = {
     0: { items: 1 },
     568: { items: 2 },
@@ -40,7 +43,7 @@ const Landing = () => {
   return (
     <Container
       maxW="container.2xl"
-      minH='100vh'
+      minH="100vh"
       display="flex"
       flexDirection="column"
       justifyContent="start"
@@ -107,12 +110,22 @@ const Landing = () => {
               spacing={3}
               columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
             >
-              {products?.map((product) => (
-                <LandingCard
-                  key={"landing-card-" + product.id_producto}
-                  product={product}
-                />
-              ))}
+              {products
+                ?.map((product: any) => {
+                  return {
+                    id_producto: product.id,
+                    nombre: product.name,
+                    imagen: product.img,
+                    precio: product.price,
+                    rating: product.rating,
+                  } as Product;
+                })
+                .map((product) => (
+                  <LandingCard
+                    key={"landing-card-" + product.id_producto}
+                    product={product}
+                  />
+                ))}
             </SimpleGrid>
           )}
         </Box>
