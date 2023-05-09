@@ -46,6 +46,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
       borderRadius="2rem"
       size="sm"
       mt="3rem"
+      maxH={"10rem"}
     >
       <CardBody
         mt={"2rem"}
