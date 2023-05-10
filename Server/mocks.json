@@ -393,100 +393,119 @@
   ],
   "getLanding": [
     {
-      "id": 1,
-      "name": "Grand Tastyyyyy Turbo Bacon Doble",
-      "price": 2760.99,
+      "id": 0,
+      "id_producto": 1,
+      "nombre": "Grand Tastyyyyy Turbo Bacon Doble",
+      "imagen": "https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
+      "descripcion": "",
+      "receta": "",
       "discount": 10,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 1,
       "rating": 2,
-      "id_categoria": 0
+      "precio": 2760.99
     },
     {
       "id": 2,
-      "name": "McPollo",
-      "price": 1180.89,
+      "id_producto": 2,
+      "nombre": "McPollo",
+      "imagen": "https://images.deliveryhero.io/image/pedidosya/products/54802_7aa88581-c715-49d7-95fa-9b1c89fce9d5.jpg?quality=90&width=1024&webp=1&dpi=1.5",
+      "descripcion": "",
+      "receta": "",
       "discount": 50,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_7aa88581-c715-49d7-95fa-9b1c89fce9d5.jpg?quality=90&width=1024&webp=1&dpi=1.5",
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 1,
       "rating": 4,
-      "id_categoria": 0
+      "precio": 1180.89
     },
     {
       "id": 3,
-      "name": "Pizza de Masa Madre napolitana con cherry",
-      "price": 2389.01,
+      "id_producto": 3,
+      "nombre": "Pizza de Masa Madre napolitana con cherry",
+      "imagen": "https://images.deliveryhero.io/image/pedidosya/products/3e03b580-4d0f-49a6-87ac-18e6aaef0aca.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "descripcion": "",
+      "receta": "",
       "discount": 0,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/3e03b580-4d0f-49a6-87ac-18e6aaef0aca.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 2,
       "rating": 5,
-      "id_categoria": 0
+      "precio": 2389.01
     },
     {
       "id": 4,
-      "name": "Pancho Doble",
-      "price": 800,
+      "id_producto": 4,
+      "nombre": "Pancho Doble",
+      "imagen": "https://images.deliveryhero.io/image/pedidosya/products/3a6f7af9-03ba-4b6a-ab5d-facf0c52f467.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "descripcion": "",
+      "receta": "",
       "discount": 5,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/3a6f7af9-03ba-4b6a-ab5d-facf0c52f467.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 5,
       "rating": 2.5,
-      "id_categoria": 0
-    },{
+      "precio": 800
+    },
+    {
       "id": 5,
-      "name": "Grand Tasty Turbo Bacon Doble",
-      "price": 2760.99,
+      "id_producto": 5,
+      "nombre": "Grand Tasty Turbo Bacon Doble",
+      "imagen": "https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
+      "descripcion": "",
+      "receta": "",
       "discount": 10,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 1,
       "rating": 2,
-      "id_categoria": 0
+      "precio": 2760.99
     },
     {
       "id": 6,
-      "name": "McPollo",
-      "price": 1180.89,
+      "id_producto": 6,
+      "nombre": "McPollo",
+      "imagen": "https://images.deliveryhero.io/image/pedidosya/products/54802_7aa88581-c715-49d7-95fa-9b1c89fce9d5.jpg?quality=90&width=1024&webp=1&dpi=1.5",
+      "descripcion": "",
+      "receta": "",
       "discount": 50,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_7aa88581-c715-49d7-95fa-9b1c89fce9d5.jpg?quality=90&width=1024&webp=1&dpi=1.5",
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 1,
       "rating": 4,
-      "id_categoria": 0
+      "precio": 1180.89
     },
     {
       "id": 7,
-      "name": "Pizza de Masa Madre napolitana con cherry",
-      "price": 2389.01,
+      "id_producto": 7,
+      "nombre": "Pizza de Masa Madre napolitana con cherry",
+      "imagen": "https://images.deliveryhero.io/image/pedidosya/products/3e03b580-4d0f-49a6-87ac-18e6aaef0aca.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "descripcion": "",
+      "receta": "",
       "discount": 0,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/3e03b580-4d0f-49a6-87ac-18e6aaef0aca.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 2,
       "rating": 5,
-      "id_categoria": 0
+      "precio": 2389.01
     },
     {
       "id": 8,
-      "name": "Pancho Doble",
-      "price": 800,
+      "id_producto": 8,
+      "nombre": "Pancho Doble",
+      "imagen": "https://images.deliveryhero.io/image/pedidosya/products/3a6f7af9-03ba-4b6a-ab5d-facf0c52f467.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "descripcion": "",
+      "receta": "",
       "discount": 5,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/3a6f7af9-03ba-4b6a-ab5d-facf0c52f467.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 5,
       "rating": 2.5,
-      "id_categoria": 0
+      "precio": 800
     }
   ],
-  "getCartItems": [
-    {
-      "id": 1,
-      "name": "Grand Tasty Turbo Bacon Doble",
-      "price": 2760.99,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
-      "quantity": 1
-    },
-    {
-      "id": 3,
-      "name": "Pizza de Masa Madre napolitana con cherry",
-      "price": 2389.01,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/3e03b580-4d0f-49a6-87ac-18e6aaef0aca.jpeg?quality=90&width=1280&webp=1&dpi=1.5",
-      "quantity": 1
-    },
-    {
-      "id": 2,
-      "name": "McPollo",
-      "price": 1180.89,
-      "img": "https://images.deliveryhero.io/image/pedidosya/products/54802_7aa88581-c715-49d7-95fa-9b1c89fce9d5.jpg?quality=90&width=1024&webp=1&dpi=1.5",
-      "quantity": 1
-    }
-  ],
+  "getCartItems": [],
   "getCategories": [
     {
       "id": 1,

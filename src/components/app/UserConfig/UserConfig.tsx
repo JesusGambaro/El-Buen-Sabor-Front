@@ -19,10 +19,12 @@ import {
   FormControl,
   FormLabel,
   FormLabelProps,
+  Stack,
 } from "@chakra-ui/react";
 import { MercadoPagoCard } from "./MercadoPagoCard/MercadoPagoCard";
 import { CreditCard } from "Types/types";
 export const UserConfig = () => {
+  
   const inputStyle = {
     border: "1px solid rgb(216, 216, 216)",
     _hover: {
@@ -40,56 +42,37 @@ export const UserConfig = () => {
   };
   const [isOpen, setisOpen] = useState<boolean>(false);
   const [mercadoPagoCards, setMercadoPagoCards] = useState<CreditCard[]>([]);
-
+  
   return (
-    <Container maxW="container.xl" minH={"63vh"}>
-      <Heading as="h1" size="md" mb="2rem">
-        Configuracion de usuario
+    <Container
+      maxW="container.2xl"
+      minH="100vh"
+      display="flex"
+      flexDirection="column"
+      justifyContent="start"
+      alignItems="center"
+      bg="#f9f6f6"
+    >
+      <Heading as="h1" size="xl" mb="2rem">
+        El Buen Sabor
       </Heading>
-      <Flex flexDir={"row"} h={"max-content"}>
-        <Flex flexDir="column" gap={"1rem"}>
-          <Checkbox colorScheme="orange" defaultChecked>
-            <Text fontWeight={"bold"}>Modo Oscuro</Text>
-          </Checkbox>
-          <Button size="xl" w={"max-content"} padding={"1rem"} {...buttonStyle}>
-            Cerar Sesion
-          </Button>
-          <Button
-            size="xl"
-            w={"max-content"}
-            padding={"1rem"}
-            {...buttonStyle}
-            onClick={() => {
-              setisOpen(true);
-            }}
-          >
-            Cambiar su contraseña
-          </Button>
-        </Flex>
-        <Spacer />
-        <Flex flexDir={"column"} gap={"1rem"}>
-          <InputGroup flexDir="column">
-            <Text mb="8px">Email:</Text>
-            <Input w={"xl"} focusBorderColor="#ffb701" {...inputStyle}></Input>
-          </InputGroup>
-          <Spacer />
-          <InputGroup flexDir="column">
-            <Text mb="8px">Email:</Text>
-            <Input w={"xl"} focusBorderColor="#ffb701" {...inputStyle}></Input>
-          </InputGroup>
-          <Spacer />
-
-          <Text mb="8px">Tarjetas</Text>
-          <Flex flexDir="column" gap={".5rem"}>
-            {mercadoPagoCards.length > 0 &&
-              mercadoPagoCards.map((mercadoPagoCard: CreditCard) => {
-                return (
-                  <MercadoPagoCard
-                    cardType={"Mercado Pago"}
-                    cardNumber={mercadoPagoCard.cardNumber}
-                  />
-                );
-              })}
+      <Stack spacing={3} w="100%">
+        <Heading as="h2" size="lg" mb="1rem">
+          Categorías
+        </Heading>
+        <Flex flexDir={"row"} w={"90%"} h={"max-content"}>
+          <Flex flexDir="column" gap={"1rem"}>
+            {/* <Checkbox colorScheme="orange" defaultChecked>
+              <Text fontWeight={"bold"}>Modo Oscuro</Text>
+            </Checkbox> */}
+            <Button
+              size="xl"
+              w={"max-content"}
+              padding={"1rem"}
+              {...buttonStyle}
+            >
+              Cerar Sesion
+            </Button>
             <Button
               size="xl"
               w={"max-content"}
@@ -99,21 +82,66 @@ export const UserConfig = () => {
                 setisOpen(true);
               }}
             >
-              Agregar tarjeta
+              Cambiar su contraseña
             </Button>
-            {ModalAddCard(
-              isOpen,
-              () => {
-                setisOpen(false);
-              },
-              (newCard: CreditCard) => {
-                setMercadoPagoCards([...mercadoPagoCards, newCard]);
-                setisOpen(false);
-              }
-            )}
+          </Flex>
+          <Spacer />
+          <Flex flexDir={"column"} gap={"1rem"}>
+            <InputGroup flexDir="column">
+              <Text mb="8px">Email:</Text>
+              <Input
+                w={"xl"}
+                focusBorderColor="#ffb701"
+                {...inputStyle}
+              ></Input>
+            </InputGroup>
+            <Spacer />
+            <InputGroup flexDir="column">
+              <Text mb="8px">Email:</Text>
+              <Input
+                w={"xl"}
+                focusBorderColor="#ffb701"
+                {...inputStyle}
+              ></Input>
+            </InputGroup>
+            <Spacer />
+
+            <Text mb="8px">Tarjetas</Text>
+            <Flex flexDir="column" gap={".5rem"}>
+              {mercadoPagoCards.length > 0 &&
+                mercadoPagoCards.map((mercadoPagoCard: CreditCard) => {
+                  return (
+                    <MercadoPagoCard
+                      cardType={"Mercado Pago"}
+                      cardNumber={mercadoPagoCard.cardNumber}
+                    />
+                  );
+                })}
+              <Button
+                size="xl"
+                w={"max-content"}
+                padding={"1rem"}
+                {...buttonStyle}
+                onClick={() => {
+                  setisOpen(true);
+                }}
+              >
+                Agregar tarjeta
+              </Button>
+              {ModalAddCard(
+                isOpen,
+                () => {
+                  setisOpen(false);
+                },
+                (newCard: CreditCard) => {
+                  setMercadoPagoCards([...mercadoPagoCards, newCard]);
+                  setisOpen(false);
+                }
+              )}
+            </Flex>
           </Flex>
         </Flex>
-      </Flex>
+      </Stack>
     </Container>
   );
 };

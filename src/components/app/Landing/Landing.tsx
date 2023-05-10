@@ -16,9 +16,26 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useProducts } from "@hooks/useProducts";
 import { useCategories } from "@hooks/useCategories";
 import { Product } from "Types/types";
+import { useApiQuery } from "@hooks/useCart";
+import { getLandingFiltered } from "@api/elbuensabor";
+import useCatalogueStore from "@store/catalogueStore";
 
 const Landing = () => {
-  const { data: products, isLoading: isLoadingProds } = useProducts();
+  const { filter, setFilter } = useCatalogueStore();
+  type QueryProps = {
+    data: Product[];
+    error: any;
+    isLoading: boolean;
+  };
+  const {
+    data: products,
+    isLoading: isLoadingProds,
+    error,
+  } = useApiQuery(
+    "getLandingFiltered",
+    getLandingFiltered,
+    filter
+  ) as QueryProps;
 
   const { data: categories, isLoading } = useCategories();
 

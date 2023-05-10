@@ -31,6 +31,6 @@ const useCatalogueStore = create<CatalogueStore>((set, get) => ({
     )
 }))
 
-mountStoreDevtool('Store', useCatalogueStore);
+mountStoreDevtool('Catalogue', useCatalogueStore);
 
 export default useCatalogueStore;

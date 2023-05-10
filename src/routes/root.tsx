@@ -6,6 +6,7 @@ import HomePage from "@pages/HomePage";
 import ProductDetailPage from "@pages/ProductDetailPage";
 import { createBrowserRouter } from "react-router-dom";
 import Catalogue from "@components/app/Catalogue/Catalogue";
+import { UserConfig } from "@components/app/UserConfig/UserConfig";
 const BrowserRouter = createBrowserRouter([
   {
     path: "/",
@@ -28,7 +29,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/configuración",
-        element: <ProductDetailPage />,
+        element: <UserConfig />,
         errorElement: <ErrorPage />,
       },
       {

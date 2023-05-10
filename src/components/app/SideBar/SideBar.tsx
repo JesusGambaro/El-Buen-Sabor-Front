@@ -1,8 +1,10 @@
 import "./sidebar.scss";
 import { Box, Flex } from "@chakra-ui/react";
 import SideIcon from "./SideIcon/SideIcon";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const SideBar = () => {
+  const { isAuthenticated } = useAuth0();
   return (
     <Box
       h="calc(100vh - 5.5rem)"
@@ -25,8 +27,12 @@ const SideBar = () => {
       >
         <SideIcon label="Home" />
         <SideIcon label="Catálogo" />
-        <SideIcon label="Carrito" />
-        <SideIcon label="Configuración" />
+        {isAuthenticated && (
+          <>
+            <SideIcon label="Carrito" />
+            <SideIcon label="Configuración" />
+          </>
+        )}
       </Flex>
     </Box>
   );

@@ -7,9 +7,7 @@ import {
   IconButton,
   Flex,
 } from "@chakra-ui/react";
-import {
-  getLandingFiltered
-} from "@api/elbuensabor";
+import { getLandingFiltered, getCategories } from "@api/elbuensabor";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import "./catalogue.scss";
@@ -20,27 +18,19 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useProducts } from "@hooks/useProducts";
 import { useCategories } from "@hooks/useCategories";
 import CatalogueLeftFilters from "./CatalogueLeftFilters";
-import { Product } from "Types/types";
+import { Product, Category } from "Types/types";
 import useCatalogueStore from "@store/catalogueStore";
 import { useState } from "react";
 import { useApiMutation, useApiQuery } from "@hooks/useCart";
+import CatalogueProductsContainer from "./CatalogueProductsContainer";
 const Catalogue = () => {
   const { data: categories } = useCategories();
   const { filter, setFilter } = useCatalogueStore();
-  const [query, setQuery] = useState(filter);
-  type QueryProps = {
-    data: Product[];
-    error: any;
-    isLoading: boolean;
+  
+  let handleSetFilter = (_id_categoria?: number,_nombre_like?:string) => {
+    setFilter({...filter, id_categoria: _id_categoria,nombre_like:_nombre_like})
   };
-  const {
-    data: products,
-    error,
-    isLoading, 
-  } = useApiQuery("getLandingFiltered", getLandingFiltered, filter) as QueryProps;
-  let setIdCategoria = (_id_categoria: number) => {
-    setQuery({ ...query, id_categoria: _id_categoria });
-  };
+
   return (
     <Container
       maxW="container.2xl"
@@ -60,21 +50,12 @@ const Catalogue = () => {
         </Heading>
 
         <Box>
-          {isLoading ? (
-            <Loader />
-          ) : (
-            <Flex gap={"0rem 2rem"} justifyContent={"flex-start"}>
-              <CatalogueLeftFilters setIdCategoria={setIdCategoria} />
-              <Flex flexGrow={1} gap={"2rem"} flexWrap={"wrap"}>
-                {products?.map((product: Product) => (
-                  <LandingCard
-                    key={"landing-card-" + product.id_producto}
-                    product={product}
-                  />
-                ))}
-              </Flex>
-            </Flex>
-          )}
+          <Flex gap={"0rem 2rem"} justifyContent={"flex-start"}>
+            <CatalogueLeftFilters currentIdCategoria={filter.id_categoria} handleSetFilter={handleSetFilter} />
+            <CatalogueProductsContainer
+              filter={filter}
+            ></CatalogueProductsContainer>
+          </Flex>
         </Box>
       </Stack>
     </Container>
