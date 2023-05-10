@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { Auth0Provider } from "@auth0/auth0-react";
-import theme from "./utils/theme";
+import theme, { mantineTheme } from "./utils/theme";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
 import App from "./App";
@@ -17,7 +17,7 @@ const aut0Config = {
 };
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider withGlobalStyles withNormalizeCSS theme={mantineTheme}>
       <ChakraProvider>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <Auth0Provider

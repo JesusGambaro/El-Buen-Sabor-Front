@@ -1,40 +1,29 @@
 import React from "react";
-import { useDisclosure } from "@mantine/hooks";
-import { useForm, yupResolver } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import {
-  NumberInput,
   TextInput,
   Button,
   Modal,
-  Box,
-  PasswordInput,
-  SelectChevronIcon,
   Select,
-  ScrollArea,
   SegmentedControl,
 } from "@mantine/core";
 import { useApiMutation, useApiQuery } from "@hooks/useCart";
-import { getCategories } from "@api/elbuensabor";
 import { Category } from "Types/types";
-import { createCategory } from "../../../../api/elbuensabor";
 
 type Props = {
   opened: boolean;
   close: () => void;
   title: string;
-  centered?: boolean;
 };
 
 const ModalCForm = (props: Props) => {
-  const { opened, close, title, centered } = props;
-  const { data: categories, isLoading } = useApiQuery(
-    "categories",
-    getCategories
-  );
-  const { mutate: createNew } = useApiMutation(
-    "categories/create",
-    createCategory
-  );
+  const { opened, close, title } = props;
+  const { data: categories, isLoading } = useApiQuery("GET/categorias") as {
+    data: Category[];
+    error: any;
+    isLoading: boolean;
+  };
+  const { mutate: createCategory } = useApiMutation("POST/categorias");
   const form = useForm({
     initialValues: {
       nombre: "",
@@ -64,7 +53,8 @@ const ModalCForm = (props: Props) => {
     >
       <form
         onSubmit={form.onSubmit((values) => {
-          console.log(values);
+          createCategory(values as any);
+          handleClose();
         })}
       >
         <TextInput
@@ -72,6 +62,7 @@ const ModalCForm = (props: Props) => {
           placeholder="Nombre"
           {...form.getInputProps("nombre")}
           required
+          data-autofocus
         />
         <Select
           label="Categoría"
@@ -81,7 +72,7 @@ const ModalCForm = (props: Props) => {
           maxDropdownHeight={100}
           dropdownPosition="bottom"
           data={categories?.map((category: Category) => ({
-            value: category.id,
+            value: "" + category.id,
             label: category.nombre,
           }))}
           {...form.getInputProps("categoria_padre")}
@@ -113,7 +104,7 @@ const ModalCForm = (props: Props) => {
           {...form.getInputProps("alta")}
           color={form.values.alta === "No disponible" ? "red" : "lime"}
         />
-        <Button type="submit" mt="md" color="orange">
+        <Button type="submit" mt="md" color="orange" w="100%">
           Guardar
         </Button>
       </form>

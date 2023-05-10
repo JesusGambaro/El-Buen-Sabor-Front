@@ -1,28 +1,19 @@
-import { Container, Spinner, Text } from "@chakra-ui/react";
-
+import { Container, Flex, Loader as Spinner, Text } from "@mantine/core";
 const Loader = () => {
   return (
-    <Container
-      maxW="container.2xl"
-      p="2rem"
+    <Flex
+      align="center"
+      justify="center"
+      direction="column"
+      mih="50vh"
       h="100%"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      flexDirection="column"
-      gridGap="1rem"
+      w="100%"
     >
-      <Spinner
-        thickness=".3rem"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="orange"
-        size="xl"
-      />
-      <Text fontSize="md" color="orange">
+      <Spinner color="orange" variant="bars" size="lg" />
+      <Text size="xs" align="center">
         Cargando...
       </Text>
-    </Container>
+    </Flex>
   );
 };
 export default Loader;

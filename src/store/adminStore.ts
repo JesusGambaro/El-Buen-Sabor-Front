@@ -15,6 +15,7 @@ type AdminStore = {
 const initialState = {
     filter: {
         nombre_like: '',
+        id: undefined
     }
 }
 

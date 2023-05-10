@@ -5,31 +5,28 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Badge,
   Box,
   Container,
   Text,
 } from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
-import { useApiMutation, useApiQuery } from "@hooks/useCart";
+import { useApiQuery } from "@hooks/useCart";
+import useAdminStore from "@store/adminStore";
 import { Category } from "Types/types";
 
-type Props = {};
 type NestedAccordionProps = {
   categories: Category[];
   isRecursive: boolean;
 };
 
-const SideFilter = (props: Props) => {
-  const {
-    data: baseCategories,
-    error,
-    isLoading,
-  } = useApiQuery("categories", getCategories) as {
+const SideFilter = () => {
+  const { data: baseCategories, isLoading } = useApiQuery("GET/categorias") as {
     data: Category[];
     error: any;
     isLoading: boolean;
   };
+
+  const { filter, setFilter } = useAdminStore();
 
   if (isLoading) return <Loader />;
 
@@ -53,15 +50,13 @@ const SideFilter = (props: Props) => {
                 justifyContent="space-between"
                 p={1}
                 width="100%"
+                bg={filter.id === category.id ? "orange.200" : "white"}
               >
                 <Text
                   fontSize="md"
                   fontWeight={hasChildren ? "bold" : "normal"}
-                  textDecorationColor="orange.500"
-                  _hover={{
-                    textDecoration: "underline",
-                    textDecorationColor: "orange.500",
-                    cursor: "pointer",
+                  onClick={() => {
+                    setFilter({ ...filter, id: category.id });
                   }}
                 >
                   {category.nombre}

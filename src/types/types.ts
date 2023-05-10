@@ -21,7 +21,7 @@ type Category = {
     nombre: string;
     categoria_padre: number;
     img?: string;
-    alta: boolean;
+    alta: string;
 };
 
 type CartItem = {

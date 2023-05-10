@@ -1,4 +1,4 @@
-import { addToCart, emptyCart, getCart, removeFromCart, updateCart } from "@api/elbuensabor";
+import { addToCart, emptyCart, fetchBackend, getCart, removeFromCart, updateCart } from "@api/elbuensabor";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CartItem } from "Types/types";
 import { queryClient } from "../queryClient";
@@ -10,18 +10,19 @@ type QueryData<T> = {
     refetch: () => void;
 };
 
+export const useApiQuery = <T>(query: string, params?: any, enabled = true): QueryData<T> => {
 
-export const useApiQuery = <T>(query: string, func: () => Promise<T>, params?: any, enabled = true): QueryData<T> => {
-
-    const { data, error, isLoading, refetch } = useQuery<T>([query, params], func, {
+    const { data, error, isLoading, refetch } = useQuery<T>([query, params], fetchBackend, {
         enabled
     });
     return { data: data as T, error, isLoading, refetch };
 };
 
-export const useApiMutation = <T>(query: string, func: (data: T) => Promise<T>) => {
+export const useApiMutation = <T>(query: string) => {
     const parentQuery = query.includes('/') && query.split('/')[0];
-    return useMutation(func, {
+    // add the query to the params
+    return useMutation(
+        ((params: any) => fetchBackend({ query, params } as any)), {
         onMutate: async (data) => {
             await queryClient.cancelQueries([query]);
             const previousValue = queryClient.getQueryData([query]);

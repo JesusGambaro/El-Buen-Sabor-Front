@@ -1,6 +1,7 @@
-import { QueryFunctionContext } from "@tanstack/react-query";
+import { MutationFunction, QueryFunctionContext } from "@tanstack/react-query";
 import api from "../libs/axios";
 import { CartItem, Category, Product } from "Types/types";
+import { prepareFetch } from "@utils/utils";
 
 
 export const getCategory = async ({ queryKey }: QueryFunctionContext) => {
@@ -141,24 +142,44 @@ type GenericFetch = {
     headers?: any;
 }
 
-export const fetchBackend = async <T = any>(params: QueryFunctionContext): Promise<T> => {
-    console.log('params', params);
-    const [_, method, endpoint, data] = params.queryKey as [string, string, string, any | undefined];
+// recive data from a useQuery or useMutation and fetch the backend with it 
+
+export const fetchBackend = async (params: QueryFunctionContext | MutationFunction<any, any>) => {
     const options = {
-        url: endpoint,
-        method,
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
         },
     } as GenericFetch;
-    if (data) {
-        options.data = JSON.stringify(data);
+
+    console.log('params', params);
+
+    if (params && "queryKey" in params) {
+        const [query, data,] = params.queryKey as [string, any | undefined];
+        const { url, method } = prepareFetch(query, data);
+
+        if (data) {
+            options.data = JSON.stringify(data);
+        }
+
+        options.url = url;
+        options.method = method;
+    } else {
+        if (params && "params" in params) {
+            const { query, params: data } = params as any;
+            console.log('data', data);
+
+            const { url, method } = prepareFetch(query, data);
+            options.url = url;
+            options.method = method;
+            if (Object.keys(data).length > 1)
+                options.data = JSON.stringify(data);
+        }
     }
-    console.log('options', options);
 
     return api(options).then((response) => {
-        if (response.status === 200) {
+
+        if ([200, 201, 204].includes(response.status)) {
             return response.data;
         } else {
             throw new Error(response.statusText);
