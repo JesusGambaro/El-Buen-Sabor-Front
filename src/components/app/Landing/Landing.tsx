@@ -18,8 +18,7 @@ import { useCategories } from "@hooks/useCategories";
 import { Product } from "Types/types";
 
 const Landing = () => {
-  const { data: products, isLoading: isLoadingProds } =
-    useProducts("GET/getLanding");
+  const { data: products, isLoading: isLoadingProds } = useProducts();
 
   const { data: categories, isLoading } = useCategories();
 
@@ -111,12 +110,14 @@ const Landing = () => {
               columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
             >
               {products
-                ?.map((product: any) => {
+                  ?.map((product: any) => {
+                  console.log(product);
+                  
                   return {
-                    id_producto: product.id,
-                    nombre: product.name,
-                    imagen: product.img,
-                    precio: product.price,
+                    id_producto: product.id_producto,
+                    nombre: product.nombre,
+                    imagen: product.imagen,
+                    precio: product.precio,
                     rating: product.rating,
                   } as Product;
                 })

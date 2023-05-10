@@ -5,7 +5,7 @@ import { ErrorPage } from "@pages/ErrorPage";
 import HomePage from "@pages/HomePage";
 import ProductDetailPage from "@pages/ProductDetailPage";
 import { createBrowserRouter } from "react-router-dom";
-
+import Catalogue from "@components/app/Catalogue/Catalogue";
 const BrowserRouter = createBrowserRouter([
   {
     path: "/",
@@ -23,7 +23,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/catálogo",
-        element: <ProductDetailPage />,
+        element: <Catalogue />,
         errorElement: <ErrorPage />,
       },
       {

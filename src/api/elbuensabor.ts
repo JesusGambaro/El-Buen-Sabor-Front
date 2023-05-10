@@ -10,6 +10,26 @@ export const getCategory = async ({ queryKey }: QueryFunctionContext) => {
     return category;
 }
 
+type LandingFilter = {
+    query?: string;
+    id?: number;
+}
+export const getLandingFiltered = async (params?: QueryFunctionContext) => {
+    const [_, filter] = params?.queryKey as [string, LandingFilter];
+
+    let query = '/';
+    if (filter) {
+        Object.keys(filter).forEach((key) => {
+            if (!filter[key as keyof FilterParams]) return;
+            const separator = query.indexOf("?") !== -1 ? "&" : "?";
+            query += `${separator}${key}=${filter[key as keyof FilterParams]}`;
+        });
+    }
+    console.log("landingQuery: "+query);
+    
+    const { data } = await api.get(`categorias${query}`);
+    return data;
+}
 export const getLanding = async () => {
     let { data: landing } = await api.get("getLanding");
     landing = landing.map((product: any) => {
@@ -130,6 +150,8 @@ export const getCategories = async (params?: QueryFunctionContext) => {
             query += `${separator}${key}=${filter[key as keyof FilterParams]}`;
         });
     }
+    console.log(query);
+    
     const { data } = await api.get(`categorias${query}`);
     return data;
 }
