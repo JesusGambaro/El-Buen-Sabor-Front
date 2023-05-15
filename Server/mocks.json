@@ -183,68 +183,77 @@
       "nombre": "Burgers",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075600/c-hamburger_n6j3kd.png",
       "alta": true,
-      "categoria_padre": -1
+      "categoria_padre": -1,
+      "id_categoria": 1
     },
     {
       "id": 2,
       "nombre": "Pizzas",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075599/c-pizza_nglpg8.png",
       "alta": true,
-      "categoria_padre": -1
-    },
+      "categoria_padre": -1,
+      "id_categoria": 2    },
     {
       "id": 3,
       "nombre": "Sandwiches",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075600/c-sandwich_v4xdj0.png",
       "alta": true,
-      "categoria_padre": 7
+      "categoria_padre": 7,
+      "id_categoria": 3
     },
     {
       "id": 4,
       "nombre": "Bebidas",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075600/c-cola_asabed.png",
       "alta": true,
-      "categoria_padre": -1
+      "categoria_padre": -1,
+      "id_categoria": 4
     },
     {
       "id": 5,
       "nombre": "Panchazo",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075600/c-hot-dog_pcpu84.png",
       "alta": false,
-      "categoria_padre": 3
+      "categoria_padre": 3,
+      "id_categoria": 5
     },
     {
       "id": 6,
       "nombre": "Para llevar",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075599/c-take-away_wkz6jz.png",
       "alta": true,
-      "categoria_padre": 1
+      "categoria_padre": 1,
+      "id_categoria": 6
     },
     {
       "id": 7,
       "nombre": "Acompañamientos",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075599/c-french-fries_ozqyoe.png",
       "alta": true,
-      "categoria_padre": -1
+      "categoria_padre": -1,
+      "id_categoria": 7
     },
     {
       "id": 8,
       "nombre": "Lácteos",
       "img": "https://res.cloudinary.com/dquqzevft/image/upload/v1681075600/c-hamburger_n6j3kd.png",
       "alta": true,
-      "categoria_padre": 2
+      "categoria_padre": 2,
+      "id_categoria": 8
     },
     {
       "id": 9,
       "nombre": "Sushi",
       "alta": true,
-      "categoria_padre": 2
+      "categoria_padre": 2,
+      "id_categoria": 9,
+      "img": ""
     },
     {
       "id": 10,
       "nombre": "Aderezo",
       "categoria_padre": -1,
-      "id_categoria": -1,
+      "id_categoria": 10,
       "img": "",
       "alta": false
     },
@@ -252,7 +261,7 @@
       "id": 11,
       "nombre": "Mantequilla",
       "categoria_padre": 6,
-      "id_categoria": -1,
+      "id_categoria": 11,
       "img": "",
       "alta": true
     },
@@ -260,7 +269,7 @@
       "id": 12,
       "nombre": "La Fría",
       "categoria_padre": 11,
-      "id_categoria": -1,
+      "id_categoria": 12,
       "img": "",
       "alta": true
     },
@@ -268,7 +277,7 @@
       "id": 13,
       "nombre": "Ah sí?",
       "categoria_padre": 12,
-      "id_categoria": -1,
+      "id_categoria": 13,
       "img": "",
       "alta": true
     }
@@ -393,7 +402,7 @@
   ],
   "getLanding": [
     {
-      "id": 0,
+      "id": 1,
       "id_producto": 1,
       "nombre": "Grand Tastyyyyy Turbo Bacon Doble",
       "imagen": "https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",

@@ -12,8 +12,8 @@ type GenericFetch = {
 }
 
 export const prepareFetch = (query: string, params: any): GenericFetch => {
-    const method = query.split('/')[0] as keyof typeof METHODS;
-    const url = query.split('/')[1];
+    const method = query.split('|')[0] as keyof typeof METHODS;
+    const url = query.split('|')[1];
 
 
 

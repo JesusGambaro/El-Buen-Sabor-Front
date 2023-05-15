@@ -5,10 +5,10 @@ import { LandingCard } from "../Landing/Cards/LandingProductCard";
 import { useApiQuery } from "@hooks/useCart";
 import { getLandingFiltered } from "@api/elbuensabor";
 import Loader from "../Loader/Loader";
-type Props = {
-  filter: any;
-};
-const CatalogueProductsContainer = (props: Props) => {
+import useCatalogueStore from "@store/catalogueStore";
+
+const CatalogueProductsContainer = () => {
+  const { filter, setFilter } = useCatalogueStore();
   type QueryProps = {
     data: Product[];
     error: any;
@@ -18,13 +18,8 @@ const CatalogueProductsContainer = (props: Props) => {
     data: products,
     error,
     isLoading,
-  } = useApiQuery(
-    "getLandingFiltered",
-    getLandingFiltered,
-    props.filter
-  ) as QueryProps;
-  console.log(products);
-
+  } = useApiQuery("GET|getLanding", filter) as QueryProps;
+ 
   return isLoading ? (
     <Loader />
   ) : (

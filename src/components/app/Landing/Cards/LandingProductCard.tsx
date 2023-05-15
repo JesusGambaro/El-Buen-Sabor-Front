@@ -14,11 +14,12 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Product } from "Types/types";
 import { Link } from "react-router-dom";
 import { useAddToCart } from "@hooks/useCart";
+import useCatalogueStore from "@store/catalogueStore";
 
 export const LandingCard = ({ product }: { product: Product }) => {
   const toast = useToast();
   const { isAuthenticated } = useAuth0();
-
+  const { filter, setFilter } = useCatalogueStore();
   const addToCartHandler = () => {
     if (!isAuthenticated) {
       return;
@@ -57,6 +58,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
         <Link
           to={`/product/${product.id_producto}`}
           style={{ textDecoration: "none" }}
+          
         >
           <Image
             src={product.imagen}

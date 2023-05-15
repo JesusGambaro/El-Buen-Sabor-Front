@@ -27,8 +27,12 @@ const Catalogue = () => {
   const { data: categories } = useCategories();
   const { filter, setFilter } = useCatalogueStore();
   
-  let handleSetFilter = (_id_categoria?: number,_nombre_like?:string) => {
-    setFilter({...filter, id_categoria: _id_categoria,nombre_like:_nombre_like})
+  let handleSetFilter = (_id_categoria?: number, _nombre_like?: string) => {
+    setFilter({
+      ...filter,
+      id_categoria: _id_categoria,
+      nombre_like: _nombre_like,
+    });
   };
 
   return (
@@ -51,10 +55,11 @@ const Catalogue = () => {
 
         <Box>
           <Flex gap={"0rem 2rem"} justifyContent={"flex-start"}>
-            <CatalogueLeftFilters currentIdCategoria={filter.id_categoria} handleSetFilter={handleSetFilter} />
-            <CatalogueProductsContainer
-              filter={filter}
-            ></CatalogueProductsContainer>
+            <CatalogueLeftFilters
+              currentIdCategoria={filter.id_categoria}
+              handleSetFilter={handleSetFilter}
+            />
+            <CatalogueProductsContainer></CatalogueProductsContainer>
           </Flex>
         </Box>
       </Stack>

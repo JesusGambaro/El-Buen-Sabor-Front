@@ -12,12 +12,13 @@ import {
   Flex,
   Button,
 } from "@chakra-ui/react";
+import { RangeSlider, Title } from "@mantine/core";
 import Loader from "@components/app/Loader/Loader";
 import { useApiMutation, useApiQuery } from "@hooks/useCart";
 import useAdminStore from "@store/adminStore";
 import useCatalogueStore from "@store/catalogueStore";
 import { Category } from "Types/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
@@ -39,24 +40,27 @@ const CatalogueLeftFilters = (props: Props) => {
     data: baseCategories,
     error,
     isLoading,
-  } = useApiQuery("categories", getCategories, filter) as QueryProps;
-  const [currentCategoriaName, setCurrentCategoriaName] = useState(
-    {} as string
-  );
+  } = useApiQuery("GET|categorias", filter) as QueryProps;
+  const [currentCategoriaName, setCurrentCategoriaName] = useState("");
+
   const NestedAccordion = ({
     categories,
     isRecursive,
   }: NestedAccordionProps) => {
     return (
-      <Accordion allowMultiple>
+      <Accordion marginTop="1rem" allowMultiple>
         {categories?.map((category) => {
           if (!isRecursive && category.categoria_padre !== -1) return null;
           const subcategories = baseCategories.filter(
-            (subCategory) => subCategory.categoria_padre === category.id
+            (subCategory) =>
+              subCategory.categoria_padre === category.id_categoria
           );
           const hasChildren = subcategories.length > 0;
           return (
-            <AccordionItem key={category.id} border="none">
+            <AccordionItem
+              key={category.id_categoria + Math.random() * 100}
+              border="none"
+            >
               <Box
                 display="flex"
                 alignItems="center"
@@ -79,16 +83,13 @@ const CatalogueLeftFilters = (props: Props) => {
                     cursor: "pointer",
                   }}
                   onClick={() => {
-                    props.handleSetFilter(category.id);
+                    props.handleSetFilter(category.id_categoria);
                     setCurrentCategoriaName(category.nombre);
                   }}
                 >
                   {category.nombre}
                 </Text>
                 <AccordionButton
-                  onClick={(e) => {
-                    console.log("click");
-                  }}
                   width="10%"
                   justifyContent="center"
                   visibility={hasChildren ? "visible" : "hidden"}
@@ -110,7 +111,6 @@ const CatalogueLeftFilters = (props: Props) => {
       </Accordion>
     );
   };
-
   return (
     <Container margin={0} borderRadius="md" minW={"15rem"} maxWidth={"20rem"}>
       <Flex marginBottom={"1rem"}>
@@ -128,14 +128,17 @@ const CatalogueLeftFilters = (props: Props) => {
               alignItems={"center"}
               gap={"1rem"}
             >
-              {currentCategoriaName}
+              {
+                baseCategories.find((c) => {
+                  return c.id_categoria == props.currentIdCategoria;
+                })?.nombre
+              }
               <Button
                 w={"1rem"}
                 borderRadius={"50%"}
                 colorScheme="orange"
                 onClick={() => {
                   props.handleSetFilter(undefined);
-                  setCurrentCategoriaName("");
                 }}
               >
                 X
@@ -144,6 +147,21 @@ const CatalogueLeftFilters = (props: Props) => {
           </Box>
         )}
       </Flex>
+      <Title order={3}>Filtro por precio min-max</Title>
+      <br></br>
+      <RangeSlider
+        color="orange"
+        size="lg"
+        min={0}
+        max={10000}
+        defaultValue={[0, 10000]}
+        label={(value: number) => {
+          return `$${value}`;
+        }}
+        onChange={(e: any) => {
+          console.log(e[0], e[1]);
+        }}
+      />
       <NestedAccordion categories={baseCategories} isRecursive={false} />
     </Container>
   );

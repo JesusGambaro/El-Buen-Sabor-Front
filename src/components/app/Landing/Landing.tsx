@@ -21,7 +21,6 @@ import { getLandingFiltered } from "@api/elbuensabor";
 import useCatalogueStore from "@store/catalogueStore";
 
 const Landing = () => {
-  const { filter, setFilter } = useCatalogueStore();
   type QueryProps = {
     data: Product[];
     error: any;
@@ -29,14 +28,10 @@ const Landing = () => {
   };
   const {
     data: products,
-    isLoading: isLoadingProds,
     error,
-  } = useApiQuery(
-    "getLandingFiltered",
-    getLandingFiltered,
-    filter
-  ) as QueryProps;
-
+    isLoading: isLoadingProds
+  } = useApiQuery("GET|getLanding") as QueryProps;
+  //q pelotu
   const { data: categories, isLoading } = useCategories();
 
   const items = categories?.map((category) => (
@@ -127,9 +122,9 @@ const Landing = () => {
               columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
             >
               {products
-                  ?.map((product: any) => {
+                ?.map((product: any) => {
                   console.log(product);
-                  
+
                   return {
                     id_producto: product.id_producto,
                     nombre: product.nombre,
