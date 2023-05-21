@@ -2,6 +2,7 @@ import { MutationFunction, QueryFunctionContext } from "@tanstack/react-query";
 import api from "../libs/axios";
 import { CartItem, Category, Product } from "Types/types";
 import { prepareFetch } from "@utils/utils";
+import useAdminStore from "@store/adminStore";
 
 
 export const getCategory = async ({ queryKey }: QueryFunctionContext) => {
@@ -25,8 +26,8 @@ export const getLandingFiltered = async (params?: QueryFunctionContext) => {
             query += `${separator}${key}=${filter[key as keyof FilterParams]}`;
         });
     }
-    console.log("landingQuery: "+query);
-    
+    console.log("landingQuery: " + query);
+
     const { data } = await api.get(`categorias${query}`);
     return data;
 }
@@ -151,7 +152,7 @@ export const getCategories = async (params?: QueryFunctionContext) => {
         });
     }
     console.log(query);
-    
+
     const { data } = await api.get(`categorias${query}`);
     return data;
 }
@@ -174,8 +175,6 @@ export const fetchBackend = async (params: QueryFunctionContext | MutationFuncti
         },
     } as GenericFetch;
 
-    console.log('params', params);
-
     if (params && "queryKey" in params) {
         const [query, data,] = params.queryKey as [string, any | undefined];
         const { url, method } = prepareFetch(query, data);
@@ -186,23 +185,33 @@ export const fetchBackend = async (params: QueryFunctionContext | MutationFuncti
 
         options.url = url;
         options.method = method;
-    } else {
-        if (params && "params" in params) {
-            const { query, params: data } = params as any;
-            console.log('data', data);
+    } else if (params && "params" in params) {
+        let { query, params: data } = params as any;
+        console.log('data', data);
 
-            const { url, method } = prepareFetch(query, data);
-            options.url = url;
-            options.method = method;
-            if (Object.keys(data).length > 1)
-                options.data = JSON.stringify(data);
+        const { url, method } = prepareFetch(query, data);
+        options.url = url;
+        options.method = method;
+
+        if (Object.keys(data).length > 1) {
+            if ("categoriaPadre" in data && method === "PUT") {
+                data.categoriaPadre = {
+                    id: Number(data.categoriaPadre),
+                }
+            }
+            options.data = JSON.stringify(data);
         }
     }
+
+    //console.log('options', options);
+    console.log('options', options, 'params', params);
+    const { setTotalPages } = useAdminStore.getState();
 
     return api(options).then((response) => {
 
         if ([200, 201, 204].includes(response.status)) {
-            return response.data;
+            setTotalPages(response.data.totalPages, `${options.url.split('/')[0]}Filter`);
+            return response.data.content;
         } else {
             throw new Error(response.statusText);
         }

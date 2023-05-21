@@ -1,65 +1,30 @@
-import React from "react";
-import { Tab, Tooltip, Text } from "@chakra-ui/react";
+import { Flex, Group, SimpleGrid, Text, Tooltip } from "@mantine/core";
+import { NavLink } from "react-router-dom";
+import { Path } from "@utils/constants";
+import "../sidebar.scss";
 
-const SideIcon = ({
-  label,
-  admin = false,
-}: {
-  label: string;
-  admin?: boolean;
-}) => {
-  const customIconsProps = {
-    height: "3rem",
-    width: "3rem",
-    borderRadius: admin ? "10" : "50%",
-    fontSize: "1.2rem",
-    _selected: {
-      bg: "orange",
-      color: "white",
-    },
-    _hover: {
-      bg: admin ? "white" : "orange",
-      boxShadow: admin ? "" : "0rem 0rem 0rem .2rem #ffb701",
-      color: admin ? "black" : "white",
-      transition: "all 0.2s cubic-bezier(.08,.52,.52,1)",
-    },
-    //onClick: onToggle,
-  };
-
-  const iconsPath: { [key: string]: string } = {
-    Home: "fa-solid fa-home",
-    Catálogo: "fa-solid fa-utensils",
-    Carrito: "fa-solid fa-cart-shopping",
-    Configuración: "fa-solid fa-gear",
-    Usuarios: "fa-solid fa-users",
-    Dashboard: "fa-solid fa-chart-bar",
-    Pedidos: "fa-solid fa-shopping-bag",
-    Stock: "fa-solid fa-box",
-  };
-
+const SideIcon = ({ route }: { route: Path }) => {
   return (
-    <Tooltip
-      label={label}
-      placement="right"
-      hasArrow
-      openDelay={500}
-      closeDelay={500}
-      hidden={admin}
-    >
-      <Tab
-        {...customIconsProps}
-        display="flex"
-        justifyContent={admin ? "flex-start" : "center"}
-        w="100%"
+    <Flex align="center" justify="start" w="80%" gap={6}>
+      <NavLink
+        to={route?.route || ""}
+        className={({ isActive, isPending }) =>
+          isActive ? "active" : isPending ? "pending" : ""
+        }
+        style={{
+          textDecoration: "none",
+          padding: "1rem",
+          width: "100%",
+          color: "white",
+          borderRadius: "0.5rem",
+        }}
       >
-        <i className={iconsPath[label]}></i>
-        {admin && (
-          <Text fontSize="md" fontWeight="bold" ml="1rem">
-            {label}
-          </Text>
-        )}
-      </Tab>
-    </Tooltip>
+        <span className="icon">
+          <i className={route?.icon}></i>
+          <Text color="white">{route.name}</Text>
+        </span>
+      </NavLink>
+    </Flex>
   );
 };
 export default SideIcon;

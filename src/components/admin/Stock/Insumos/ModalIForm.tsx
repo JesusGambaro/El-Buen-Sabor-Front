@@ -8,18 +8,18 @@ import {
   SegmentedControl,
 } from "@mantine/core";
 import { useApiMutation, useApiQuery } from "@hooks/useCart";
-import { Category } from "Types/types";
+import { Category, Supply } from "Types/types";
 import { ESTADO } from "@utils/constants";
 
 type Props = {
   opened: boolean;
   close: () => void;
   title: string;
-  item: Category;
-  setItem?: (item: Category) => void;
+  item: Supply;
+  setItem?: (item: Supply) => void;
 };
 
-const ModalCForm = (props: Props) => {
+const ModalIForm = (props: Props) => {
   const { opened, close, title, item, setItem } = props;
 
   const { data: categories, isLoading } = useApiQuery("GET|categoria/all") as {
@@ -27,18 +27,32 @@ const ModalCForm = (props: Props) => {
     error: any;
     isLoading: boolean;
   };
-  const { mutate: createCategory } = useApiMutation("POST|categoria");
-  const { mutate: editCategory } = useApiMutation("PUT|categoria");
+  const { mutate: createSupply } = useApiMutation("POST|insumo");
+  const { mutate: editSupply } = useApiMutation("PUT|insumo");
 
   const form = useForm({
     initialValues: {
       nombre: "",
-      categoriaPadre: "",
+      imagen: "",
+      stockMinimo: 0,
+      stockActual: 0,
+      costo: 0,
       estado: "DISPONIBLE",
     },
     validate: {
       nombre: (value) =>
         value.length < 3 ? "El nombre debe tener al menos 3 caracteres" : null,
+      imagen: (value) =>
+        value.includes("http") && value.includes(".")
+          ? null
+          : "Ingrese una url válida",
+      stockMinimo: (value) =>
+        value < 0 ? "El stock mínimo debe ser mayor a 0" : null,
+      stockActual: (value, values) =>
+        value < 0 || value < values.stockMinimo
+          ? "Ingrese un valor válido"
+          : null,
+      costo: (value) => (value < 0 ? "El costo debe ser mayor a 0" : null),
     },
   });
 
@@ -47,15 +61,21 @@ const ModalCForm = (props: Props) => {
     setItem?.({
       id: -1,
       nombre: "",
-      categoriaPadre: -1,
       estado: ESTADO.DISPONIBLE,
-    } as Category);
+      costo: 0,
+      imagen: "",
+      stockActual: 0,
+      stockMinimo: 0,
+    } as Supply);
     close();
   };
   useEffect(() => {
     form.setValues({
       nombre: item?.nombre,
-      categoriaPadre: "" + item?.categoriaPadre,
+      imagen: item?.imagen,
+      stockMinimo: item?.stockMinimo,
+      stockActual: item?.stockActual,
+      costo: item?.costo,
       estado: item?.estado,
     });
   }, [item]);
@@ -72,9 +92,9 @@ const ModalCForm = (props: Props) => {
       <form
         onSubmit={form.onSubmit((values) => {
           if (item.id > 0) {
-            editCategory({ ...values, id: item.id });
+            editSupply({ ...values, id: item.id });
           } else {
-            createCategory(values);
+            createSupply(values);
           }
           handleClose();
         })}
@@ -86,21 +106,45 @@ const ModalCForm = (props: Props) => {
           required
           data-autofocus
         />
-        <Select
+        <TextInput
+          label="Imagen"
+          placeholder="Imagen"
+          {...form.getInputProps("imagen")}
+          required
+        />
+        <TextInput
+          label="Stock mínimo"
+          placeholder="Stock mínimo"
+          {...form.getInputProps("stockMinimo")}
+          required
+          type="number"
+        />
+        <TextInput
+          label="Stock actual"
+          placeholder="Stock actual"
+          {...form.getInputProps("stockActual")}
+          required
+          type="number"
+        />
+        <TextInput
+          label="Costo"
+          placeholder="Costo"
+          {...form.getInputProps("costo")}
+          required
+          type="number"
+        />
+
+        {/* <Select
           label="Categoría"
           placeholder="Seleccione una categoría"
           searchable
           clearable
           maxDropdownHeight={100}
           dropdownPosition="bottom"
-          data={
-            categories
-              ? categories?.map((category: Category) => ({
-                  value: "" + category.id,
-                  label: category.nombre,
-                }))
-              : []
-          }
+          data={categories?.map((category: Category) => ({
+            value: "" + category.id,
+            label: category.nombre,
+          }))}
           {...form.getInputProps("categoriaPadre")}
           styles={(theme) => ({
             item: {
@@ -119,7 +163,7 @@ const ModalCForm = (props: Props) => {
               },
             },
           })}
-        />
+        /> */}
         <SegmentedControl
           w="100%"
           mt="md"
@@ -138,4 +182,4 @@ const ModalCForm = (props: Props) => {
   );
 };
 
-export default ModalCForm;
+export default ModalIForm;

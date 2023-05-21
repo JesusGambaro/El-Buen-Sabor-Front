@@ -1,16 +1,16 @@
 const mainColor: string = "#dd6b20";
 //const API_URL = 'https://apimocha.com/elbuensabor/';
 const API_URL: string = 'http://localhost:3000/api/v1/';
-const API_SPRING: string = 'http://localhost:9000/api/v1/clients';
+const API_SPRING: string = 'http://localhost:9000/v1/api/';
 
 import axios from "axios";
 
 const elbuensabor = axios.create({
-    baseURL: API_URL,
-    withCredentials: true
+    baseURL: API_SPRING
+    //,withCredentials: true
 })
 
-elbuensabor.interceptors.response.use(
+/* elbuensabor.interceptors.response.use(
     (config) => {
         config.headers = {
             ...config.headers,
@@ -22,6 +22,6 @@ elbuensabor.interceptors.response.use(
         return config;
     }
 );
-
+ */
 export { mainColor, API_URL, API_SPRING }
 export default elbuensabor;

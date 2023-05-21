@@ -1,27 +1,23 @@
 import { ReactNode } from "react";
 
 type Product = {
-    id?: number;
-    id_producto: number;
     nombre: string;
-    imagen: string;
+    imgURL?: string;
     descripcion: string;
+    tiempoCocina: number;
     receta: string;
-    discount: number;
-    tiempo_cocina: number;
-    alta: boolean;
-    id_categoria: number;
-    rating: number;
-    precio?: number;
+    estado: string;
+    productoCategoria: Category;
+    insumoSet: number[];
+    id: number;
 };
 
 type Category = {
-    id?: number;
-    id_categoria: number;
+    id: number;
     nombre: string;
-    categoria_padre: number;
+    categoriaPadre?: number;
     img?: string;
-    alta: string;
+    estado: string;
 };
 
 type CartItem = {
@@ -64,17 +60,13 @@ type State = {
 };
 
 type Supply = {
-    id?: number;
-    id_insumo: number;
+    id: number;
     nombre: string;
     imagen: string;
-    descripcion: string;
-    stock_minimo: number;
-    stock_actual: number;
-    alta: boolean;
+    stockMinimo: number;
+    stockActual: number;
+    estado: string;
     costo: number;
-    id_categoria: number;
-    id_unidad_medida: number;
 };
 
 type AdminState = {

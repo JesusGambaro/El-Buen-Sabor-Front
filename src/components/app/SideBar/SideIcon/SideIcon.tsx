@@ -23,11 +23,14 @@ const SideIcon = ({ label }: { label: string }) => {
         className={({ isActive, isPending }) =>
           isActive ? "active" : isPending ? "pending" : ""
         }
-        style={{ textDecoration: "none", width: "3rem", height: "3rem" ,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+        style={{
+          textDecoration: "none",
+          width: "3rem",
+          height: "3rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
         <i className={iconsPath[label]}></i>
       </NavLink>

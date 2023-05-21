@@ -15,10 +15,8 @@ export const prepareFetch = (query: string, params: any): GenericFetch => {
     const method = query.split('|')[0] as keyof typeof METHODS;
     const url = query.split('|')[1];
 
-
-
     if (METHODS[method] === METHODS.GET) {
-        let filter = '/';
+        let filter = '';
         if (params) {
             Object.keys(params).forEach((key) => {
                 if (!params[key as keyof typeof params]) return;

@@ -2,7 +2,7 @@ import Loader from "@components/app/Loader/Loader";
 import { useApiQuery } from "@hooks/useCart";
 import useAdminStore from "@store/adminStore";
 import { useState } from "react";
-import { Category } from "Types/types";
+import { Product } from "Types/types";
 import { useDisclosure, usePagination } from "@mantine/hooks";
 import {
   Badge,
@@ -13,54 +13,64 @@ import {
   Container,
   Flex,
   Input,
+  Image,
 } from "@mantine/core";
-import ModalForm from "./ModalCForm";
+import ModalPForm from "./ModalPForm";
 import { Edit, Plus, ListSearch } from "tabler-icons-react";
 
 type QueryProps = {
-  data: Category[];
+  data: Product[];
   error: any;
   isLoading: boolean;
 };
 
-const Categories = () => {
+const Productos = () => {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const [editItem, setEditItem] = useState<Category>({
+  const [editItem, setEditItem] = useState<Product>({
     id: -1,
     nombre: "",
-    categoriaPadre: -1,
+    descripcion: "",
     estado: "DISPONIBLE",
-  } as Category);
-  const { categoriaFilter, setFilter, setPage } = useAdminStore();
-  const [query, setQuery] = useState(categoriaFilter.nombre || "");
+    receta: "",
+    productoCategoria: {
+      id: -1,
+      nombre: "",
+    },
+    tiempoCocina: 0,
+    insumoSet: [] as number[],
+  } as Product);
+  const { productoFilter, setFilter, setPage } = useAdminStore();
+  ///const [query, setQuery] = useState(filter.nombre || "");
   const {
-    data: categories,
+    data: products,
     error,
     isLoading,
-  } = useApiQuery("GET|categoria/filter", categoriaFilter) as QueryProps;
+  } = useApiQuery("GET|producto", productoFilter) as QueryProps;
 
   if (isLoading) return <Loader />;
 
-  const rows = categories ? (
-    categories.map((category, i) => (
-      <tr key={"category" + i + category.id}>
-        <td>{category?.id}</td>
-        <td>{category?.nombre}</td>
+  const rows = products ? (
+    products.map((product, i) => (
+      <tr key={"product" + i + product.id}>
+        <td>{product?.id}</td>
+        <td>{product?.nombre}</td>
         <td>
-          {categories.find((c) => c.id === category.categoriaPadre)?.nombre ||
-            "-"}
+          <Image src={product?.imgURL} width={50} height={50} />
         </td>
+        <td>{product?.tiempoCocina}</td>
+        <td>{product?.descripcion}</td>
+        <td>${product?.productoCategoria.nombre}</td>
         <td>
-          <Badge color={category.estado === "DISPONIBLE" ? "lime" : "red"}>
-            {category?.estado}
+          <Badge color={product.estado === "DISPONIBLE" ? "lime" : "red"}>
+            {product?.estado}
           </Badge>
         </td>
         <td>
           <ActionIcon
             aria-label="Edit"
             onClick={() => {
-              setEditItem(category);
+              setEditItem(product);
               open();
             }}
           >
@@ -72,7 +82,7 @@ const Categories = () => {
   ) : (
     <tr>
       <td colSpan={10} style={{ textAlign: "center" }}>
-        No hay categorías
+        No hay productos
       </td>
     </tr>
   );
@@ -87,26 +97,23 @@ const Categories = () => {
             open();
           }}
         >
-          Crear categoría
+          Crear producto
         </Button>
         <Input.Wrapper
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              setFilter(
-                { ...categoriaFilter, nombre: query },
-                "categoriaFilter"
-              );
+              //    setFilter({ ...filter, nombre: query });
             }
           }}
         >
           <Input
             size="md"
             type="tel"
-            placeholder="Buscar categoría..."
+            placeholder="Buscar producto..."
             icon={<ListSearch />}
-            value={query}
+            // value={query}
             onChange={(e) => {
-              setQuery(e.target.value);
+              // setQuery(e.target.value);
             }}
             styles={(theme) => ({
               input: {
@@ -132,26 +139,29 @@ const Categories = () => {
         <caption>
           <Pagination
             color="orange"
-            total={categoriaFilter.totalPages}
-            onChange={(value) => setPage(value - 1, "categoriaFilter")}
-            value={categoriaFilter.page + 1 || 1}
+            total={productoFilter.totalPages}
+            onChange={(value) => setPage(value - 1, "insumoFilter")}
+            value={productoFilter.page + 1 || 1}
           />
         </caption>
         <thead>
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Categoría padre</th>
+            <th>Imagen</th>
+            <th>Tiempo de cocina</th>
+            <th>Descripción</th>
+            <th>Categoria</th>
             <th>Disponibilidad</th>
             <th>Editar</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>
       </Table>
-      <ModalForm
+      <ModalPForm
         opened={opened}
         close={close}
-        title={editItem.id >= 0 ? "Editar categoría" : "Crear categoría"}
+        title={`${editItem.id === -1 ? "Crear" : "Editar"} producto`}
         item={editItem}
         setItem={setEditItem}
       />
@@ -159,4 +169,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default Productos;

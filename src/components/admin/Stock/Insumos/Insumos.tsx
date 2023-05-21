@@ -2,7 +2,7 @@ import Loader from "@components/app/Loader/Loader";
 import { useApiQuery } from "@hooks/useCart";
 import useAdminStore from "@store/adminStore";
 import { useState } from "react";
-import { Category } from "Types/types";
+import { Supply } from "Types/types";
 import { useDisclosure, usePagination } from "@mantine/hooks";
 import {
   Badge,
@@ -13,54 +13,60 @@ import {
   Container,
   Flex,
   Input,
+  Image,
 } from "@mantine/core";
-import ModalForm from "./ModalCForm";
+import ModalForm from "./ModalIForm";
 import { Edit, Plus, ListSearch } from "tabler-icons-react";
 
 type QueryProps = {
-  data: Category[];
+  data: Supply[];
   error: any;
   isLoading: boolean;
 };
 
-const Categories = () => {
+const Insumos = () => {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const [editItem, setEditItem] = useState<Category>({
+  const [editItem, setEditItem] = useState<Supply>({
     id: -1,
     nombre: "",
-    categoriaPadre: -1,
     estado: "DISPONIBLE",
-  } as Category);
-  const { categoriaFilter, setFilter, setPage } = useAdminStore();
-  const [query, setQuery] = useState(categoriaFilter.nombre || "");
+    costo: 0,
+    imagen: "",
+    stockActual: 0,
+    stockMinimo: 0,
+  } as Supply);
+  const { insumoFilter, setFilter, setPage } = useAdminStore();
+  ///const [query, setQuery] = useState(filter.nombre || "");
   const {
-    data: categories,
+    data: supplies,
     error,
     isLoading,
-  } = useApiQuery("GET|categoria/filter", categoriaFilter) as QueryProps;
+  } = useApiQuery("GET|insumo", insumoFilter) as QueryProps;
 
   if (isLoading) return <Loader />;
 
-  const rows = categories ? (
-    categories.map((category, i) => (
-      <tr key={"category" + i + category.id}>
-        <td>{category?.id}</td>
-        <td>{category?.nombre}</td>
+  const rows = supplies ? (
+    supplies.map((supply, i) => (
+      <tr key={"supply" + i + supply.id}>
+        <td>{supply?.id}</td>
+        <td>{supply?.nombre}</td>
         <td>
-          {categories.find((c) => c.id === category.categoriaPadre)?.nombre ||
-            "-"}
+          <Image src={supply?.imagen} width={50} height={50} />
         </td>
+        <td>{supply?.stockMinimo}</td>
+        <td>{supply?.stockActual}</td>
+        <td>${supply?.costo}</td>
         <td>
-          <Badge color={category.estado === "DISPONIBLE" ? "lime" : "red"}>
-            {category?.estado}
+          <Badge color={supply.estado === "DISPONIBLE" ? "lime" : "red"}>
+            {supply?.estado}
           </Badge>
         </td>
         <td>
           <ActionIcon
             aria-label="Edit"
             onClick={() => {
-              setEditItem(category);
+              setEditItem(supply);
               open();
             }}
           >
@@ -72,7 +78,7 @@ const Categories = () => {
   ) : (
     <tr>
       <td colSpan={10} style={{ textAlign: "center" }}>
-        No hay categorías
+        No hay insumos
       </td>
     </tr>
   );
@@ -87,26 +93,23 @@ const Categories = () => {
             open();
           }}
         >
-          Crear categoría
+          Crear insumo
         </Button>
         <Input.Wrapper
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              setFilter(
-                { ...categoriaFilter, nombre: query },
-                "categoriaFilter"
-              );
+              //    setFilter({ ...filter, nombre: query });
             }
           }}
         >
           <Input
             size="md"
             type="tel"
-            placeholder="Buscar categoría..."
+            placeholder="Buscar insumo..."
             icon={<ListSearch />}
-            value={query}
+            // value={query}
             onChange={(e) => {
-              setQuery(e.target.value);
+              // setQuery(e.target.value);
             }}
             styles={(theme) => ({
               input: {
@@ -132,16 +135,19 @@ const Categories = () => {
         <caption>
           <Pagination
             color="orange"
-            total={categoriaFilter.totalPages}
-            onChange={(value) => setPage(value - 1, "categoriaFilter")}
-            value={categoriaFilter.page + 1 || 1}
+            total={insumoFilter.totalPages}
+            onChange={(value) => setPage(value - 1, "insumoFilter")}
+            value={insumoFilter.page + 1 || 1}
           />
         </caption>
         <thead>
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Categoría padre</th>
+            <th>Imagen</th>
+            <th>Stock mínimo</th>
+            <th>Stock actual</th>
+            <th>Costo</th>
             <th>Disponibilidad</th>
             <th>Editar</th>
           </tr>
@@ -151,7 +157,7 @@ const Categories = () => {
       <ModalForm
         opened={opened}
         close={close}
-        title={editItem.id >= 0 ? "Editar categoría" : "Crear categoría"}
+        title={`${editItem.id === -1 ? "Crear" : "Editar"} insumo`}
         item={editItem}
         setItem={setEditItem}
       />
@@ -159,4 +165,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default Insumos;

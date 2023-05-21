@@ -1,32 +1,71 @@
 import { create } from 'zustand'
 import { mountStoreDevtool } from 'simple-zustand-devtools'
 
-type FilterCategoryy = {
-    nombre_like?: string;
+type BaseFilter = {
+    nombre?: string;
     id?: number;
+    page: number;
+    totalPages: number;
 }
 
 type AdminStore = {
-    filter: FilterCategoryy;
-    setFilter: (filter: FilterCategoryy) => void;
+    categoriaFilter: BaseFilter;
+    insumoFilter: BaseFilter;
+    productoFilter: BaseFilter;
+    setFilter: (filter: BaseFilter, name: string) => void;
+    setPage: (page: number, name: string) => void;
+    setTotalPages: (totalPages: number, name: string) => void;
 }
 
 
 const initialState = {
-    filter: {
-        nombre_like: '',
-        id: undefined
+    categoriaFilter: {
+        nombre: '',
+        id: undefined,
+        page: 0,
+        totalPages: 0
+    },
+    insumoFilter: {
+        nombre: '',
+        category_id: undefined,
+        page: 0,
+        totalPages: 0
+    },
+    productoFilter: {
+        nombre: '',
+        category_id: undefined,
+        supply_id: undefined,
+        page: 0,
+        totalPages: 0
     }
 }
 
 const useAdminStore = create<AdminStore>((set, get) => ({
     ...initialState,
-    setFilter: (filter: FilterCategoryy) => set(
+    setFilter: (filter: BaseFilter, name: string) => set(
         (state) => ({
             ...state,
-            filter: {
-                ...state.filter,
+            [name]: {
+                ...state[name as keyof AdminStore],
                 ...filter
+            }
+        })
+    ),
+    setPage: (page: number, name: string) => set(
+        (state) => ({
+            ...state,
+            [name]: {
+                ...state[name as keyof AdminStore],
+                page
+            }
+        })
+    ),
+    setTotalPages: (totalPages: number, name) => set(
+        (state) => ({
+            ...state,
+            [name]: {
+                ...state[name as keyof AdminStore],
+                totalPages
             }
         })
     )

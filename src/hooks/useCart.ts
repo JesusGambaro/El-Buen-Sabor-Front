@@ -13,14 +13,15 @@ type QueryData<T> = {
 export const useApiQuery = <T>(query: string, params?: any, enabled = true): QueryData<T> => {
 
     const { data, error, isLoading, refetch } = useQuery<T>([query, params], fetchBackend, {
-        enabled
+        enabled,
+        retry: false,
     });
     return { data: data as T, error, isLoading, refetch };
 };
 
 export const useApiMutation = <T>(query: string) => {
-    const parentQuery = query.includes('/') && query.split('/')[0];
-    // add the query to the params
+    const parentQuery = `GET|${query.split('|')[1]}/`;
+
     return useMutation(
         ((params: any) => fetchBackend({ query, params } as any)), {
         onMutate: async (data) => {
@@ -33,11 +34,13 @@ export const useApiMutation = <T>(query: string) => {
             queryClient.setQueryData([query], context?.previousValue);
             console.log('onError');
         },
-        onSettled: () => {
-            queryClient.invalidateQueries([query]);
-            if (parentQuery) {
-                queryClient.invalidateQueries([parentQuery]);
-            }
+        onSuccess: () => {
+            const similarQueries = queryClient.getQueryCache().findAll();
+            similarQueries.forEach((query: any) => {
+                if (query.queryKey[0].includes(parentQuery)) {
+                    queryClient.invalidateQueries(query.queryKey);
+                }
+            });
         }
     });
 };

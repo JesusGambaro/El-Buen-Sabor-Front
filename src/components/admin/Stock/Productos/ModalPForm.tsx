@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "@mantine/form";
 import {
   TextInput,
@@ -8,18 +8,18 @@ import {
   SegmentedControl,
 } from "@mantine/core";
 import { useApiMutation, useApiQuery } from "@hooks/useCart";
-import { Category } from "Types/types";
+import { Product, Category } from "Types/types";
 import { ESTADO } from "@utils/constants";
 
 type Props = {
   opened: boolean;
   close: () => void;
   title: string;
-  item: Category;
-  setItem?: (item: Category) => void;
+  item: Product;
+  setItem?: (item: Product) => void;
 };
 
-const ModalCForm = (props: Props) => {
+const ModalPForm = (props: Props) => {
   const { opened, close, title, item, setItem } = props;
 
   const { data: categories, isLoading } = useApiQuery("GET|categoria/all") as {
@@ -49,7 +49,7 @@ const ModalCForm = (props: Props) => {
       nombre: "",
       categoriaPadre: -1,
       estado: ESTADO.DISPONIBLE,
-    } as Category);
+    } as Product);
     close();
   };
   useEffect(() => {
@@ -93,14 +93,10 @@ const ModalCForm = (props: Props) => {
           clearable
           maxDropdownHeight={100}
           dropdownPosition="bottom"
-          data={
-            categories
-              ? categories?.map((category: Category) => ({
-                  value: "" + category.id,
-                  label: category.nombre,
-                }))
-              : []
-          }
+          data={categories?.map((category: Category) => ({
+            value: "" + category.id,
+            label: category.nombre,
+          }))}
           {...form.getInputProps("categoriaPadre")}
           styles={(theme) => ({
             item: {
@@ -138,4 +134,4 @@ const ModalCForm = (props: Props) => {
   );
 };
 
-export default ModalCForm;
+export default ModalPForm;
