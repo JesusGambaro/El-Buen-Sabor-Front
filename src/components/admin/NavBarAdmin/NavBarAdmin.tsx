@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./navbaradmin.scss";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
@@ -18,9 +18,34 @@ import {
 import { useLocation } from "react-router-dom";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { adminPaths } from "@utils/constants";
+import { CopyButton, ActionIcon, Tooltip } from "@mantine/core";
+import { IconCopy, IconCheck } from "@tabler/icons-react";
+
 const NavBarAdmin = () => {
-  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
-    useAuth0();
+  const {
+    loginWithRedirect,
+    logout,
+    user,
+    isAuthenticated,
+    isLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
+  const [jwt, setJwt] = useState<string>("");
+
+  const fetchProtectedData = async () => {
+    try {
+      const accessToken = await getAccessTokenSilently();
+      console.log("Access Token:", accessToken);
+      setJwt(accessToken);
+    } catch (error) {
+      console.error("Error retrieving access token:", error);
+    }
+  };
+  useEffect(() => {
+    console.log(user);
+    fetchProtectedData();
+  }, [user]);
+
   const { pathname } = useLocation();
   const trimName = (name: string = ""): string => {
     return name.includes("@") ? name.split("@")[0] : name;
@@ -50,8 +75,30 @@ const NavBarAdmin = () => {
       >
         {currentTitle}
       </Heading>
-      <div></div>
-      <div></div>
+      <div>
+        <textarea
+          name="jwt"
+          id="jwtr"
+          cols={100}
+          rows={5}
+          value={jwt}
+        ></textarea>
+      </div>
+      <div>
+        <CopyButton value={jwt} timeout={2000}>
+          {({ copied, copy }) => (
+            <Tooltip
+              label={copied ? "Copied" : "Copy"}
+              withArrow
+              position="right"
+            >
+              <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
+                {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+              </ActionIcon>
+            </Tooltip>
+          )}
+        </CopyButton>
+      </div>
       <Tag
         h="50%"
         size="lg"

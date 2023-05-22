@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import {
   TextInput,
@@ -6,10 +6,14 @@ import {
   Modal,
   Select,
   SegmentedControl,
+  Image,
+  Text,
+  SimpleGrid,
 } from "@mantine/core";
 import { useApiMutation, useApiQuery } from "@hooks/useCart";
 import { Category, Supply } from "Types/types";
 import { ESTADO } from "@utils/constants";
+import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 
 type Props = {
   opened: boolean;
@@ -79,7 +83,25 @@ const ModalIForm = (props: Props) => {
       estado: item?.estado,
     });
   }, [item]);
+  const [files, setFiles] = useState<FileWithPath[]>([]);
 
+  useEffect(() => {
+    console.log(files);
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files", file));
+  }, [files]);
+
+  const previews = files.map((file, index) => {
+    const imageUrl = URL.createObjectURL(file);
+
+    return (
+      <Image
+        key={index}
+        src={imageUrl}
+        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+      />
+    );
+  });
   return (
     <Modal
       opened={opened}
@@ -106,12 +128,7 @@ const ModalIForm = (props: Props) => {
           required
           data-autofocus
         />
-        <TextInput
-          label="Imagen"
-          placeholder="Imagen"
-          {...form.getInputProps("imagen")}
-          required
-        />
+
         <TextInput
           label="Stock mínimo"
           placeholder="Stock mínimo"
@@ -133,7 +150,19 @@ const ModalIForm = (props: Props) => {
           required
           type="number"
         />
+        <div>
+          <Dropzone accept={IMAGE_MIME_TYPE} onDrop={setFiles}>
+            <Text align="center">Solta la imagen</Text>
+          </Dropzone>
 
+          <SimpleGrid
+            cols={4}
+            breakpoints={[{ maxWidth: "sm", cols: 1 }]}
+            mt={previews.length > 0 ? "xl" : 0}
+          >
+            {previews}
+          </SimpleGrid>
+        </div>
         {/* <Select
           label="Categoría"
           placeholder="Seleccione una categoría"

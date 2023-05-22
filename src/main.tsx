@@ -25,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           clientId={aut0Config.clientId}
           authorizationParams={{
             redirect_uri: aut0Config.redirectUri,
+            audience: import.meta.env.VITE_AUTH0_AUDIENCE,
           }}
         >
           <QueryClientProvider client={queryClient}>

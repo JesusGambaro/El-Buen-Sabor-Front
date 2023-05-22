@@ -8,7 +8,7 @@ import { Category, Packages, Cheese } from "tabler-icons-react";
 
 const Stock = () => {
   return (
-    <Tabs color="orange" variant="pills" radius="xl" defaultValue="categories">
+    <Tabs color="orange" variant="pills" radius="xl" defaultValue="products">
       <Tabs.List grow position="center" h={50} mt="md">
         <Tabs.Tab value="categories" icon={<Category size="1.2rem" />} fz="lg">
           Categorías

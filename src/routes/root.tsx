@@ -8,6 +8,7 @@ import { UserConfig } from "@components/app/UserConfig/UserConfig";
 import Dashboard from "@components/admin/Dashboard/Dashboard";
 import Stock from "@components/admin/Stock/Stock";
 import AdminPage from "@pages/AdminPage";
+
 const BrowserRouter = createBrowserRouter([
   {
     path: "/",

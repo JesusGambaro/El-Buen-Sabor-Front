@@ -175,6 +175,11 @@ export const fetchBackend = async (params: QueryFunctionContext | MutationFuncti
         },
     } as GenericFetch;
 
+    //
+    const formData = new FormData();
+
+
+    //
     if (params && "queryKey" in params) {
         const [query, data,] = params.queryKey as [string, any | undefined];
         const { url, method } = prepareFetch(query, data);
