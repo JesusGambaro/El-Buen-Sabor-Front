@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "server": "json-server --watch ./Server/mocks.json --routes ./Server/routes.json"
+    "server-json": "json-server --watch ./Server/mocks.json --routes ./Server/routes.json",
+    "server": "node ./Server/server.js"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.1.0",
@@ -38,6 +39,7 @@
     "framer-motion": "^10.12.2",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
+    "ngrok": "^5.0.0-beta.2",
     "react": "^18.2.0",
     "react-alice-carousel": "^2.7.1",
     "react-chartjs-2": "^5.2.0",
