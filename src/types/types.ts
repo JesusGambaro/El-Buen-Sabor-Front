@@ -8,14 +8,14 @@ type Product = {
     receta: string;
     estado: string;
     productoCategoria: Category;
-    insumoSet: number[];
+    insumoSet?: number[];
     id: number;
 };
 
 type Category = {
     id: number;
     nombre: string;
-    categoriaPadre?: number;
+    categoriaPadre?: Category;
     img?: string;
     estado: string;
 };

@@ -15,7 +15,7 @@ import { CategoryCard } from "./Cards/CategoryCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useProducts } from "@hooks/useProducts";
 import { useCategories } from "@hooks/useCategories";
-import { Product } from "Types/types";
+import { Product, Category } from "Types/types";
 import { useApiQuery } from "@hooks/useCart";
 import { getLandingFiltered } from "@api/elbuensabor";
 import useCatalogueStore from "@store/catalogueStore";
@@ -26,13 +26,20 @@ const Landing = () => {
     error: any;
     isLoading: boolean;
   };
-  const {
-    data: products,
-    error,
-    isLoading: isLoadingProds
-  } = useApiQuery("GET|getLanding") as QueryProps;
-  //q pelotu
-  const { data: categories, isLoading } = useCategories();
+  // const {
+  //   data: products,
+  //   error,
+  //   isLoading: isLoadingProds
+  // } = useApiQuery("GET|getLanding") as QueryProps;
+  //const { data: categories, isLoading } = useCategories();
+
+  //--Temporal
+  let products = [];
+  let error = false;
+  let isLoadingProds = false;
+  let isLoading = false;
+  const categories: Category[] = [];
+  //--
 
   const items = categories?.map((category) => (
     <CategoryCard key={category.id} category={category} />
@@ -121,7 +128,7 @@ const Landing = () => {
               spacing={3}
               columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
             >
-              {products
+              {/*products
                 ?.map((product: any) => {
                   console.log(product);
 
@@ -138,7 +145,7 @@ const Landing = () => {
                     key={"landing-card-" + product.id_producto}
                     product={product}
                   />
-                ))}
+                ))*/}
             </SimpleGrid>
           )}
         </Box>

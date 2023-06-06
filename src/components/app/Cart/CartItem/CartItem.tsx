@@ -80,7 +80,7 @@ const CartItem = ({
     >
       <Image
         boxSize="70px"
-        src={product.imagen}
+        src={product.imgURL}
         alt="El Buen Sabor"
         borderRadius="md"
         objectFit="cover"
@@ -91,7 +91,7 @@ const CartItem = ({
           {product.nombre}
         </Text>
         <Text fontSize="sm" fontWeight="bold">
-          ${Math.round((product.precio || 0) * cartItem.quantity)}
+          ${/*Math.round((product.precio || 0) * cartItem.quantity)*/}
         </Text>
         <Text fontSize="sm" fontWeight="bold">
           <Text as="span" color="orange.500">
@@ -122,9 +122,9 @@ const CartItem = ({
         <Popover
           placement="left"
           isOpen={!!deleteItem}
-          leastDestructiveRef={cancelRef}
+          //leastDestructiveRef={cancelRef}
           onClose={() => setDeleteItem(null)}
-          motionPreset="slideInBottom"
+          //motionPreset="slideInBottom"
         >
           <PopoverTrigger>
             <Button

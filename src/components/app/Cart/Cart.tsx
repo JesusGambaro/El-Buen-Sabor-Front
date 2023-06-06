@@ -26,19 +26,35 @@ import {
 import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
 import { btnStyle } from "@utils/theme";
-import { CartProps, CartItem as CartType } from "Types/types";
+import { CartProps, CartItem as CartType, Category, Product } from "Types/types";
 import { useCart, useEmptyCart } from "@hooks/useCart";
+import Categories from "@components/admin/Stock/Categories/Categories";
 
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
-  const { data: cartItems, isLoading } = useCart() as {
-    data: CartType[];
-    isLoading: boolean;
+  // const { data: cartItems, isLoading } = useCart() as {
+  //   data: CartType[];
+  //   isLoading: boolean;
+  // };
+  let categoria1: Category = {
+    estado: "alta",
+    id: 0,
+    nombre: "categoria1",
+    categoriaPadre: -1,
+    img:""
+  }
+  let producto1: Product = {
+    id: 1,
+    nombre: "Grand Tastyyyyy Turbo Bacon Doble",
+    estado: "alta",
+    imgURL:"https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
+    descripcion: "",
+    receta: "",
+    tiempoCocina: 10000,
+    productoCategoria:categoria1
   };
-
-  const total = cartItems?.reduce(
-    (acc, cartItem) => acc + (cartItem.product.precio || 0) * cartItem.quantity,
-    0
-  );
+  let cartItems: CartType[] = [{product:producto1,quantity:0}];
+  let isLoading: boolean = false;
+  const total = 0;
 
   return (
     <Drawer

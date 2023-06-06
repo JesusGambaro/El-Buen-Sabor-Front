@@ -24,17 +24,23 @@ import { useState } from "react";
 import { useApiMutation, useApiQuery } from "@hooks/useCart";
 import CatalogueProductsContainer from "./CatalogueProductsContainer";
 const Catalogue = () => {
-  const { data: categories } = useCategories();
-  const { filter, setFilter } = useCatalogueStore();
-  
-  let handleSetFilter = (_id_categoria?: number, _nombre_like?: string) => {
-    setFilter({
-      ...filter,
-      id_categoria: _id_categoria,
-      nombre_like: _nombre_like,
-    });
-  };
+  //const { data: categories } = useCategories();
+  //const { filter, setFilter } = useCatalogueStore();
 
+  // let handleSetFilter = (_id_categoria?: number, _nombre_like?: string) => {
+  //   setFilter({
+  //     ...filter,
+  //     id_categoria: _id_categoria,
+  //     nombre_like: _nombre_like,
+  //   });
+  // };
+  
+  //--Temploral
+  let filter = { id_categoria: 0 };
+  let handleSetFilter = () => {
+    return;
+  };
+  //--
   return (
     <Container
       maxW="container.2xl"

@@ -14,12 +14,13 @@ const CatalogueProductsContainer = () => {
     error: any;
     isLoading: boolean;
   };
+  
   const {
     data: products,
     error,
     isLoading,
-  } = useApiQuery("GET|getLanding", filter) as QueryProps;
- 
+  } = useApiQuery("GET|producto", null) as QueryProps;
+  
   return isLoading ? (
     <Loader />
   ) : (

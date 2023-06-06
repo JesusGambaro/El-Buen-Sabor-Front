@@ -11,10 +11,11 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Product } from "Types/types";
+
 import { Link } from "react-router-dom";
 import { useAddToCart } from "@hooks/useCart";
 import useCatalogueStore from "@store/catalogueStore";
+import { Product } from "Types/types";
 
 export const LandingCard = ({ product }: { product: Product }) => {
   const toast = useToast();
@@ -56,12 +57,12 @@ export const LandingCard = ({ product }: { product: Product }) => {
         justifyContent={"space-between"}
       >
         <Link
-          to={`/product/${product.id_producto}`}
+          to={`/product/${product.id}`}
           style={{ textDecoration: "none" }}
           
         >
           <Image
-            src={product.imagen}
+            src={product.imgURL}
             alt={product.nombre}
             borderRadius="50%"
             boxSize="6rem"
@@ -78,7 +79,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
         </Link>
 
         <Stack>
-          <HStack spacing=".5">
+          {/* <HStack spacing=".5">
             {new Array(5).fill("").map((_, i) => {
               return i + 1 <= Math.floor(product.rating) ? (
                 <i key={i} className="fa-solid fa-star"></i>
@@ -89,7 +90,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
                 <i key={i} className="fa-regular fa-star"></i>
               );
             })}
-          </HStack>
+          </HStack> */}
           <HStack mt="1" justify="space-between" align="center">
             <Text
               fontSize="md"
@@ -98,11 +99,13 @@ export const LandingCard = ({ product }: { product: Product }) => {
               display="flex"
               alignItems="center"
             >
-              <Text textDecoration={product.discount && "line-through"}>
+              <Text
+                //textDecoration={product.discount && "line-through"}
+              >
                 <i className="fa-solid fa-dollar-sign"></i>
-                {product.precio}
+                {9999}
               </Text>
-              {product.discount > 0 && (
+              {/* {product.discount > 0 && (
                 <Text as="span">
                   <i
                     className="fa-solid fa-chevron-right"
@@ -111,7 +114,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
                   <i className="fa-solid fa-dollar-sign"></i>
                   {discountValue(product.precio, product.discount)}
                 </Text>
-              )}
+              )} */}
             </Text>
             <IconButton
               aria-label="Añadir al carrito"
