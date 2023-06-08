@@ -39,7 +39,6 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
     estado: "alta",
     id: 0,
     nombre: "categoria1",
-    categoriaPadre: -1,
     img:""
   }
   let producto1: Product = {
