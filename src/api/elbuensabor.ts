@@ -1,173 +1,19 @@
 import { MutationFunction, QueryFunctionContext } from "@tanstack/react-query";
 import api from "../libs/axios";
-import { CartItem, Category, Product } from "Types/types";
 import { prepareFetch } from "@utils/utils";
 import useAdminStore from "@store/adminStore";
-
-
-export const getCategory = async ({ queryKey }: QueryFunctionContext) => {
-    const [_, id] = queryKey;
-    const { data: category } = await api.get(`categorias/${id}`);
-    return category;
-}
-
-type LandingFilter = {
-    query?: string;
-    id?: number;
-}
-export const getLandingFiltered = async (params?: QueryFunctionContext) => {
-    const [_, filter] = params?.queryKey as [string, LandingFilter];
-
-    let query = '/';
-    if (filter) {
-        Object.keys(filter).forEach((key) => {
-            if (!filter[key as keyof FilterParams]) return;
-            const separator = query.indexOf("?") !== -1 ? "&" : "?";
-            query += `${separator}${key}=${filter[key as keyof FilterParams]}`;
-        });
-    }
-    console.log("landingQuery: " + query);
-
-    const { data } = await api.get(`categorias${query}`);
-    return data;
-}
-export const getLanding = async () => {
-    let { data: landing } = await api.get("getLanding");
-    landing = landing.map((product: any) => {
-        return {
-            id_producto: product.id,
-            nombre: product.name,
-            imagen: product.img,
-            precio: product.price,
-            rating: product.rating,
-        } as Product
-    })
-    return landing
-}
-
-export const getProduct = async ({ queryKey }: QueryFunctionContext) => {
-    const [_, id] = queryKey;
-    let { data: product } = await api.get(`getLanding/${id}`);
-    product = {
-        id_producto: product.id,
-        nombre: product.name,
-        imagen: product.img,
-        precio: product.price,
-        rating: product.rating,
-    } as Product;
-
-    return product;
-}
-
-export const getCart = async () => {
-    const { data } = await api.get("getCartItems");
-    console.log('data');
-
-    const cart = data.map((item: any) => {
-        return {
-            product: {
-                id_producto: item.id,
-                nombre: item.name,
-                imagen: item.img,
-                precio: item.price,
-                rating: item.rating,
-            },
-            quantity: item.quantity,
-        }
-    })
-    return cart;
-}
-
-export const addToCart = async ({ product, quantity }: CartItem) => {
-    const item2 = {
-        id: product.id_producto,
-        name: product.nombre,
-        price: product.precio,
-        img: product.imagen,
-        quantity: quantity,
-        discount: product.discount,
-    }
-    const { data } = await api.post("getCartItems", item2);
-    return data;
-}
-
-export const removeFromCart = async ({ product }: CartItem) => {
-    const { data } = await api.delete(`getCartItems/${product.id_producto}`);
-    return data;
-}
-
-export const updateCart = async ({ product, quantity }: CartItem) => {
-    const item2 = {
-        id: product.id_producto,
-        name: product.nombre,
-        price: product.precio,
-        img: product.imagen,
-        quantity: quantity,
-        discount: product.discount,
-    }
-    const { data } = await api.put(`getCartItems/${item2.id}`, item2);
-    return data;
-}
-
-export const emptyCart = async (cartItemsIds: number[]) => {
-    //for each item in cartItemsIds, delete it from cart
-    const promises = cartItemsIds.map((id) => {
-        return api.delete(`getCartItems/${id}`);
-    })
-    await Promise.all(promises);
-    return;
-}
-
-export const createCategory = async (category: Category) => {
-    console.log('category', category, 'api');
-
-    const { data: newCategory } = await api.post("categorias", category);
-    return newCategory;
-}
-
-export const updateCategory = async (category: Category) => {
-    const { data } = await api.put(`categorias/${category.id}`, category);
-    return data;
-}
-
-export const deleteCategory = async (id: number) => {
-    const { data } = await api.delete(`categorias/${id}`);
-    return data;
-}
-
-type FilterParams = {
-    query?: string;
-    id?: number;
-}
-
-export const getCategories = async (params?: QueryFunctionContext) => {
-    const [_, filter] = params?.queryKey as [string, FilterParams];
-
-    let query = '/';
-    if (filter) {
-        Object.keys(filter).forEach((key) => {
-            if (!filter[key as keyof FilterParams]) return;
-            const separator = query.indexOf("?") !== -1 ? "&" : "?";
-            query += `${separator}${key}=${filter[key as keyof FilterParams]}`;
-        });
-    }
-    console.log(query);
-
-    const { data } = await api.get(`categorias${query}`);
-    return data;
-}
-
 
 type GenericFetch = {
     url: string;
     method: string;
-    data?: string;
     headers?: any;
+    body?: any;
 }
+// Fetch genérico para usar con los hooks de useApiQuery y useApiMutation
+export const genericFetch = async (requestBody: QueryFunctionContext | MutationFunction<any, any>) => {
+    // Recibe un objeto con la queryKey o params y devuelve un objeto con la url, el método y el body
+    // Configuración básica de la petición
 
-// recive data from a useQuery or useMutation and fetch the backend with it 
-
-export const fetchBackend = async (params: QueryFunctionContext | MutationFunction<any, any>) => {
     const options = {
         headers: {
             Accept: "application/json",
@@ -175,49 +21,128 @@ export const fetchBackend = async (params: QueryFunctionContext | MutationFuncti
         },
     } as GenericFetch;
 
-    //
-    const formData = new FormData();
+    // Si es una query(consulta) se prepara la url y el método
+    if (requestBody && "queryKey" in requestBody) {
+        const [query, filters] = requestBody.queryKey as [string, any | undefined];
 
+        // El método y la url se obtienen de la función prepareFetch
+        const { url, method } = prepareFetch(query, filters);
 
-    //
-    if (params && "queryKey" in params) {
-        const [query, data,] = params.queryKey as [string, any | undefined];
-        const { url, method } = prepareFetch(query, data);
-
-        if (data) {
-            options.data = JSON.stringify(data);
-        }
-
+        // Se asignan los valores a la configuración de la petición  
         options.url = url;
         options.method = method;
-    } else if (params && "params" in params) {
-        let { query, params: data } = params as any;
+    }
+    // Si es una mutación se prepara la url, el método y el body
+    else if (requestBody && "params" in requestBody) {
+        let { query, params: data } = requestBody as any;
         console.log('data', data);
 
+
+        // El método y la url se obtienen de la función prepareFetch
         const { url, method } = prepareFetch(query, data);
+
+        // Se asignan los valores a la configuración de la petición
         options.url = url;
         options.method = method;
 
         if (Object.keys(data).length > 1) {
-            if ("categoriaPadre" in data && method === "PUT") {
+            if ("categoriaPadre" in data) {
                 data.categoriaPadre = {
-                    id: Number(data.categoriaPadre),
+                    id: Number(data.categoriaPadre) || -1
                 }
             }
-            options.data = JSON.stringify(data);
+            //options.data = JSON.stringify(data);
         }
     }
 
-    //console.log('options', options);
-    console.log('options', options, 'params', params);
+    // Función que setea el total de páginas en el estado global para la paginación de las tablas
     const { setTotalPages } = useAdminStore.getState();
 
     return api(options).then((response) => {
-
+        // Si la respuesta es correcta se devuelve el contenido de la respuesta
         if ([200, 201, 204].includes(response.status)) {
-            setTotalPages(response.data.totalPages, `${options.url.split('/')[0]}Filter`);
-            return response.data.content;
-        } else {
+            // Si la respuesta tiene paginación se setea el total de páginas en el estado global y se devuelve el contenido
+            if ('totalPages' in response.data) {
+                setTotalPages(response.data.totalPages, `${options.url.split('/')[0]}Filter`);
+                return response.data.content;
+            }
+            // Si la respuesta no tiene paginación se devuelve el contenido
+            return response.data;
+        }
+        // Si la respuesta es incorrecta se devuelve un error
+        else {
+            throw new Error(response.statusText);
+        }
+    });
+}
+
+// Generic fetch para método GET
+
+export const getFetch = async <T extends QueryFunctionContext>(params?: T) => {
+    if (!params) return;
+    const { queryKey } = params;
+    const [path, filters] = queryKey as [string, any | undefined];
+
+    const options = {
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+        },
+        method: 'GET'
+    } as GenericFetch;
+
+    const { url } = prepareFetch(path, filters);
+
+    options.url = url;
+    const { setTotalPages } = useAdminStore.getState();
+
+    return api(options).then((response) => {
+        // Si la respuesta es correcta se devuelve el contenido de la respuesta
+        if ([200, 201, 204].includes(response.status)) {
+            // Si la respuesta tiene paginación se setea el total de páginas en el estado global y se devuelve el contenido
+            if ('totalPages' in response.data) {
+                setTotalPages(response.data.totalPages, `${options.url.split('/')[0]}Filter`);
+                return response.data.content;
+            }
+            // Si la respuesta no tiene paginación se devuelve el contenido
+            return response.data;
+        }
+        // Si la respuesta es incorrecta se devuelve un error
+        else {
+            throw new Error(response.statusText);
+        }
+    });
+}
+
+// Generic fetch para método POST y PUT
+
+export const postPutFetch = async <T extends MutationFunction<any, any>>(params?: T) => {
+    if (!params) return;
+    console.log('params', params);
+    const { query, data } = params as any;
+
+    const { url, method } = prepareFetch(query, data);
+    // this method is used to create or update a resource that contains a file
+
+    const options = {
+        body: data,
+        method: method,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+        },
+        url
+    } as GenericFetch;
+
+    console.log('options', options);
+
+    return api(options).then((response) => {
+        // Si la respuesta es correcta se devuelve el contenido de la respuesta
+        if ([200, 201, 204].includes(response.status)) {
+            return response.data;
+        }
+        // Si la respuesta es incorrecta se devuelve un error
+        else {
             throw new Error(response.statusText);
         }
     });

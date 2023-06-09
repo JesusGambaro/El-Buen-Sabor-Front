@@ -17,6 +17,11 @@ export const prepareFetch = (query: string, params: any): GenericFetch => {
 
     if (METHODS[method] === METHODS.GET) {
         let filter = '';
+        /*      if (query.includes('GET|categoria/filter')) {
+                 console.warn('query->⚠', query);
+                 console.log('params', params.page);
+             }
+      */
         if (params) {
             Object.keys(params).forEach((key) => {
                 if (!params[key as keyof typeof params]) return;
@@ -25,7 +30,8 @@ export const prepareFetch = (query: string, params: any): GenericFetch => {
             });
         }
         return { url: `${url}${filter}`, method };
-    } else if (METHODS[method] === METHODS.POST) {
+    }
+    else if (METHODS[method] === METHODS.POST) {
         return { url, method };
     } else if (METHODS[method] === METHODS.PUT) {
         return { url: `${url}/${params.id}`, method };

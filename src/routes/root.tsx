@@ -8,9 +8,10 @@ import { UserConfig } from "@components/app/UserConfig/UserConfig";
 import Dashboard from "@components/admin/Dashboard/Dashboard";
 import Stock from "@components/admin/Stock/Stock";
 import AdminPage from "@pages/AdminPage";
+import CategoryDetail from "@components/admin/CategoryDetail/CategoryDetail";
 
 const BrowserRouter = createBrowserRouter([
-  {
+  /*   {
     path: "/",
     element: <HomePage />,
     errorElement: <ErrorPage />,
@@ -40,7 +41,7 @@ const BrowserRouter = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
     ],
-  },
+  }, */
   {
     path: "/admin",
     element: <AdminPage />,
@@ -54,6 +55,11 @@ const BrowserRouter = createBrowserRouter([
       {
         path: "/admin/stock",
         element: <Stock />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/admin/categoria/:id",
+        element: <CategoryDetail />,
         errorElement: <ErrorPage />,
       },
       {

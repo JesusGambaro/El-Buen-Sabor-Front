@@ -1,30 +1,41 @@
-import { addToCart, emptyCart, fetchBackend, getCart, removeFromCart, updateCart } from "@api/elbuensabor";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CartItem } from "Types/types";
 import { queryClient } from "../queryClient";
+import { log } from "console";
 
 type QueryData<T> = {
     data: T;
     error: unknown;
     isLoading: boolean;
     refetch: () => void;
+    functionFetch?: () => void;
 };
 
-export const useApiQuery = <T>(query: string, params?: any, enabled = true): QueryData<T> => {
-
-    const { data, error, isLoading, refetch } = useQuery<T>([query, params], fetchBackend, {
+export const useApiQuery = <T>(query: string, functionFetch?: any, filters?: any,
+    enabled = true): QueryData<T> => {
+    const { data, error, isLoading, refetch } = useQuery<T>([query, filters],
+        functionFetch, {
         enabled,
         retry: false,
     });
+
     return { data: data as T, error, isLoading, refetch };
+    // Version nueva, pero no hace refetch
+    return useQuery<T>({
+        queryKey: [query],
+        //queryFn: () => genericFetch({ query, filters } as any),
+        enabled,
+
+    }) as QueryData<T>;
+
 };
 
-export const useApiMutation = <T>(query: string) => {
+export const useApiMutation = <T>(query: string, functionFetch?: any) => {
     const parentQuery = `GET|${query.split('|')[1]}/`;
 
     return useMutation(
-        ((params: any) => fetchBackend({ query, params } as any)), {
+        ((data: any) => functionFetch({ query, data } as any)), {
         onMutate: async (data) => {
+
             await queryClient.cancelQueries([query]);
             const previousValue = queryClient.getQueryData([query]);
             console.log('onMutate');
@@ -46,7 +57,7 @@ export const useApiMutation = <T>(query: string) => {
 };
 
 
-
+/* 
 export const useCart = () => {
     return useQuery<CartItem[]>(["cart"], getCart, {
         enabled: true
@@ -88,5 +99,5 @@ export const useEmptyCart = () => {
             refetch();
         }
     });
-}
+} */
 

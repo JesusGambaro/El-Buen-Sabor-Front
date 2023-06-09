@@ -8,7 +8,7 @@ type Product = {
     receta: string;
     estado: string;
     productoCategoria: Category;
-    insumoSet?: number[];
+    insumoSet: number[];
     id: number;
 };
 
@@ -18,6 +18,7 @@ type Category = {
     categoriaPadre?: Category;
     img?: string;
     estado: string;
+    subCategoria?: Category[];
 };
 
 type CartItem = {
@@ -62,7 +63,7 @@ type State = {
 type Supply = {
     id: number;
     nombre: string;
-    imagen: string;
+    imagen: string | File;
     stockMinimo: number;
     stockActual: number;
     estado: string;
