@@ -1,48 +1,56 @@
-import { Card, Heading, CardBody, Image, IconButton } from "@chakra-ui/react";
+import { Heading, CardBody, IconButton } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
+import {
+  createStyles,
+  Card,
+  Image,
+  ActionIcon,
+  Group,
+  Text,
+  Avatar,
+  Badge,
+  rem,
+  getStylesRef,
+  Flex,
+} from "@mantine/core";
 import { Category } from "Types/types";
-
+import { IconArrowRight, IconMathGreater } from "@tabler/icons-react";
 export const CategoryCard = ({ category }: { category: Category }) => {
   return (
-    <Card
-      w="10rem"
-      key={"category" + category.id}
-      borderRadius="2rem"
-      size="sm"
-      my="1rem"
-      boxShadow="md"
-      cursor="pointer"
-      userSelect={"none"}
+    <Flex
+      h={"3rem"}
+      
+      bg={"orange"}
+      sx={() => ({
+        backgroundColor: "white",
+        textAlign: "center",
+        borderRadius: "15px",
+        cursor: "pointer",
+
+        "&:hover": {
+          backgroundColor: "orange",
+          "& #hola": {
+            backgroundColor: "white",
+            "&:hover": {
+              backgroundColor: "orangered",
+            }
+          },
+        },
+      })}
+      gap={"md"}
+      align={"center"}
+      justify={"space-between"}
+      m={0}
+      p={"1rem"}
     >
-      <CardBody
-        display="flex"
-        flexDirection="column"
-        justifyContent={"space-between"}
-        alignItems="center"
-      >
-        <Image
-          src={category.img}
-          alt={category.nombre}
-          borderRadius="50%"
-          boxSize="4rem"
-          objectFit="cover"
-          m="auto"
-          onDragStart={(e) => e.preventDefault()}
-        />
-        <Heading size="sm" mt="4">
-          {category.nombre}
-        </Heading>
-        <IconButton
-          aria-label="Go to category"
-          icon={<ChevronRightIcon />}
-          size="sm"
-          mt="1rem"
-          borderRadius="2rem"
-          bg="orange"
-          color="white"
-          _hover={{ bg: "orange.400" }}
-        />
-      </CardBody>
-    </Card>
+      <Text fw={600}>{category.nombre}</Text>
+      <Group position="apart">
+        <Group spacing={0}>
+          <ActionIcon size="lg" id="hola">
+            <IconArrowRight size="1.625rem" color={"orange"} />
+          </ActionIcon>
+        </Group>
+      </Group>
+    </Flex>
   );
 };

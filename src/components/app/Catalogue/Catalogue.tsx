@@ -7,21 +7,11 @@ import {
   IconButton,
   Flex,
 } from "@chakra-ui/react";
-import { getLandingFiltered, getCategories } from "@api/elbuensabor";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import "./catalogue.scss";
-import Loader from "@app/Loader/Loader";
-import { LandingCard } from "../Landing/Cards/LandingProductCard";
-import { CategoryCard } from "../Landing/Cards/CategoryCard";
-import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { useProducts } from "@hooks/useProducts";
-import { useCategories } from "@hooks/useCategories";
 import CatalogueLeftFilters from "./CatalogueLeftFilters";
-import { Product, Category } from "Types/types";
-import useCatalogueStore from "@store/catalogueStore";
-import { useState } from "react";
-import { useApiMutation, useApiQuery } from "@hooks/useCart";
+
 import CatalogueProductsContainer from "./CatalogueProductsContainer";
 const Catalogue = () => {
   //const { data: categories } = useCategories();

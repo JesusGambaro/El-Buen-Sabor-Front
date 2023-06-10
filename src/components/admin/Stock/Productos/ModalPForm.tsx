@@ -10,7 +10,7 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { useApiMutation, useApiQuery } from "@hooks/useCart";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { Product, Category } from "Types/types";
 import { ESTADO } from "@utils/constants";
 

@@ -92,10 +92,11 @@ export const getFetch = async <T extends QueryFunctionContext>(params?: T) => {
     } as GenericFetch;
 
     const { url } = prepareFetch(path, filters);
-
+    
+    
     options.url = url;
     const { setTotalPages } = useAdminStore.getState();
-
+    //console.log("options", options);
     return api(options).then((response) => {
         // Si la respuesta es correcta se devuelve el contenido de la respuesta
         if ([200, 201, 204].includes(response.status)) {

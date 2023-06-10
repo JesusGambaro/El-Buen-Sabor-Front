@@ -1,5 +1,5 @@
 import Loader from "@components/app/Loader/Loader";
-import { useApiQuery } from "@hooks/useCart";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useAdminStore from "@store/adminStore";
 import { useState } from "react";
 import { Product } from "Types/types";

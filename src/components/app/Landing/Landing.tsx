@@ -13,41 +13,41 @@ import Loader from "@app/Loader/Loader";
 import { LandingCard } from "./Cards/LandingProductCard";
 import { CategoryCard } from "./Cards/CategoryCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { useProducts } from "@hooks/useProducts";
-import { useCategories } from "@hooks/useCategories";
 import { Product, Category } from "Types/types";
-import { useApiQuery } from "@hooks/useCart";
-import { getLandingFiltered } from "@api/elbuensabor";
 import useCatalogueStore from "@store/catalogueStore";
-
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
+import { Carousel } from "@mantine/carousel";
+import { useMediaQuery } from "@mantine/hooks";
+import { Flex, rem } from "@mantine/core";
 const Landing = () => {
   type QueryProps = {
     data: Product[];
     error: any;
     isLoading: boolean;
   };
-  // const {
-  //   data: products,
-  //   error,
-  //   isLoading: isLoadingProds
-  // } = useApiQuery("GET|getLanding") as QueryProps;
-  //const { data: categories, isLoading } = useCategories();
-
   //--Temporal
-  let products = [];
-  let error = false;
-  let isLoadingProds = false;
-  let isLoading = false;
-  const categories: Category[] = [];
+  // let products: Product[] = [];
+  // let isLoading: boolean = false;
+  // let categories: Category[] = [];
   //--
+  let isLoadingProds = false;
+  const {
+    data: products,
+    error,
+    isLoading,
+  } = useApiQuery("GET|producto", null) as QueryProps;
+  const { data: categories } = useApiQuery(
+    "GET|categoria/all",
+    null
+  ) as QueryProps;
 
-  const items = categories?.map((category) => (
-    <CategoryCard key={category.id} category={category} />
-  ));
+  // const items = categories?.map((category) => (
+  //   <CategoryCard key={category.id} category={category} />
+  // ));
   const responsive = {
     0: { items: 1 },
-    568: { items: 2 },
-    1024: { items: 6 },
+    568: { items: 1 },
+    1024: { items: 4 },
   };
   const handlePrevClick = () => {
     carousel.slidePrev();
@@ -58,6 +58,12 @@ const Landing = () => {
   };
 
   let carousel: any;
+  const slides = categories?.map((category) => (
+    <Carousel.Slide key={category.id}>
+      <CategoryCard key={category.id} category={category} />
+    </Carousel.Slide>
+  ));
+  const mobile = useMediaQuery(`(max-width: 700px)`);
   return (
     <Container
       maxW="container.2xl"
@@ -75,46 +81,51 @@ const Landing = () => {
         <Heading as="h2" size="lg" mb="1rem">
           Categorías
         </Heading>
-        <Box
-          px="1rem"
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <IconButton
-            aria-label="Left"
-            icon={<ChevronLeftIcon />}
-            size="sm"
-            borderRadius="2rem"
-            bg="orange"
-            color="white"
-            _hover={{ bg: "orange.400" }}
-            onClick={handlePrevClick}
-          />
-          {isLoading ? (
-            <Loader />
-          ) : (
-            <AliceCarousel
-              mouseTracking
-              items={items}
-              responsive={responsive}
-              disableDotsControls
-              infinite
-              ref={(el) => (carousel = el)}
-              disableButtonsControls
-            />
-          )}
-          <IconButton
-            aria-label="Right"
-            icon={<ChevronRightIcon />}
-            size="sm"
-            borderRadius="2rem"
-            bg="orange"
-            color="white"
-            _hover={{ bg: "orange.400" }}
-            onClick={handleNextClick}
-          />
-        </Box>
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <Carousel
+              slideSize="30%"
+              maw={"100%"}
+              height={70}
+              align="center"
+              slideGap="xl"
+              controlSize={25}
+              dragFree
+              withIndicators
+              slidesToScroll={1}
+              inViewThreshold={0}
+              loop
+              styles={{
+                indicator: {
+                  top: "5rem",
+                  width: rem(12),
+                  height: rem(4),
+                  transition: "width 250ms ease",
+                  background: "orange",
+                  "&[data-active]": {
+                    width: rem(40),
+                  },
+                },
+                control: {
+                  // "&[data-inactive]": {
+                  //   opacity: 0,
+                  //   cursor: "default",
+                  // },
+                  background: "orange",
+                  color: "white",
+                  width: "2rem",
+                  height: "2rem",
+                  boxShadow: "none",
+                  border: "none"
+                },
+              }}
+            >
+              {slides}
+            </Carousel>
+          </>
+        )}
         <Box>
           <Heading as="h2" size="lg">
             Productos destacados
@@ -128,24 +139,12 @@ const Landing = () => {
               spacing={3}
               columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
             >
-              {/*products
-                ?.map((product: any) => {
-                  console.log(product);
-
-                  return {
-                    id_producto: product.id_producto,
-                    nombre: product.nombre,
-                    imagen: product.imagen,
-                    precio: product.precio,
-                    rating: product.rating,
-                  } as Product;
-                })
-                .map((product) => (
-                  <LandingCard
-                    key={"landing-card-" + product.id_producto}
-                    product={product}
-                  />
-                ))*/}
+              {products?.map((product) => (
+                <LandingCard
+                  key={"landing-card-" + product.id}
+                  product={product}
+                />
+              ))}
             </SimpleGrid>
           )}
         </Box>

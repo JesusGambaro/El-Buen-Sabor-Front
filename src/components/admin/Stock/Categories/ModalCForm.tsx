@@ -7,7 +7,7 @@ import {
   Select,
   SegmentedControl,
 } from "@mantine/core";
-import { useApiMutation, useApiQuery } from "@hooks/useCart";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { Category } from "Types/types";
 import { ESTADO } from "@utils/constants";
 
@@ -47,7 +47,6 @@ const ModalCForm = (props: Props) => {
     setItem?.({
       id: -1,
       nombre: "",
-      categoriaPadre: -1,
       estado: ESTADO.DISPONIBLE,
     } as Category);
     close();

@@ -1,25 +1,20 @@
-import { getCategories } from "@api/elbuensabor";
+
 import {
   Accordion,
   AccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Badge,
   Box,
   Container,
   Text,
   Flex,
-  Button,
   Checkbox,
 } from "@chakra-ui/react";
 import { InputBase, RangeSlider, Title, Input } from "@mantine/core";
-import Loader from "@components/app/Loader/Loader";
-import { useApiMutation, useApiQuery } from "@hooks/useCart";
-import useAdminStore from "@store/adminStore";
-import useCatalogueStore from "@store/catalogueStore";
 import { Category } from "Types/types";
 import { useEffect, useState } from "react";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 
 type Props = {
   handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
@@ -41,8 +36,8 @@ const CatalogueLeftFilters = (props: Props) => {
     error,
     isLoading,
   } = useApiQuery("GET|categoria/all", null) as QueryProps;
-  console.log(baseCategories);
-  
+  //console.log(baseCategories);
+  //let baseCategories: Category[] = [];
   const [currentCategoriaName, setCurrentCategoriaName] = useState("");
   const [minMaxPrice, setMinMaxPrice] = useState({
     min: 0,

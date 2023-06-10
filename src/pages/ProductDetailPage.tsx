@@ -14,7 +14,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
-import { useApiQuery } from "@hooks/useCart";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { useProduct } from "@hooks/useProducts";
 import { Title } from "@mantine/core";
 import useCatalogueStore from "@store/catalogueStore";

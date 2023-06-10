@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../queryClient";
 import { log } from "console";
+import { getFetch, postPutFetch } from "@api/elbuensabor";
 
 type QueryData<T> = {
     data: T;
@@ -10,10 +11,10 @@ type QueryData<T> = {
     functionFetch?: () => void;
 };
 
-export const useApiQuery = <T>(query: string, functionFetch?: any, filters?: any,
+export const useApiQuery = <T>(query: string, filters?: any,
     enabled = true): QueryData<T> => {
     const { data, error, isLoading, refetch } = useQuery<T>([query, filters],
-        functionFetch, {
+        getFetch, {
         enabled,
         retry: false,
     });
@@ -29,11 +30,11 @@ export const useApiQuery = <T>(query: string, functionFetch?: any, filters?: any
 
 };
 
-export const useApiMutation = <T>(query: string, functionFetch?: any) => {
+export const useApiMutation = <T>(query: string) => {
     const parentQuery = `GET|${query.split('|')[1]}/`;
 
     return useMutation(
-        ((data: any) => functionFetch({ query, data } as any)), {
+        ((data: any) => postPutFetch({ query, data } as any)), {
         onMutate: async (data) => {
 
             await queryClient.cancelQueries([query]);

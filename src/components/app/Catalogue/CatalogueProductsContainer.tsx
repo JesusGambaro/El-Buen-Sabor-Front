@@ -2,10 +2,9 @@ import React from "react";
 import { Flex } from "@chakra-ui/react";
 import { Product } from "Types/types";
 import { LandingCard } from "../Landing/Cards/LandingProductCard";
-import { useApiQuery } from "@hooks/useCart";
-import { getLandingFiltered } from "@api/elbuensabor";
 import Loader from "../Loader/Loader";
 import useCatalogueStore from "@store/catalogueStore";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 
 const CatalogueProductsContainer = () => {
   const { filter, setFilter } = useCatalogueStore();
@@ -20,6 +19,8 @@ const CatalogueProductsContainer = () => {
     error,
     isLoading,
   } = useApiQuery("GET|producto", null) as QueryProps;
+  // let products: Product[] = [];
+  // let isLoading: boolean = false;
   
   return isLoading ? (
     <Loader />

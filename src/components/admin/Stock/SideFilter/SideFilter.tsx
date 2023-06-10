@@ -1,4 +1,4 @@
-import { getCategories } from "@api/elbuensabor";
+
 import { CloseIcon } from "@chakra-ui/icons";
 import {
   Accordion,
@@ -12,7 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
-import { useApiQuery } from "@hooks/useCart";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useAdminStore from "@store/adminStore";
 import { Category } from "Types/types";
 import { X } from "tabler-icons-react";
@@ -43,7 +43,7 @@ const SideFilter = () => {
         {categories.map((category) => {
           if (!isRecursive && category.categoriaPadre !== null) return null;
           const subcategories = baseCategories.filter(
-            (subCategory) => subCategory.categoriaPadre === category.id
+            (subCategory) => subCategory.categoriaPadre?.id === category.id
           );
           const hasChildren = subcategories.length > 0;
           if (!hasChildren) return;

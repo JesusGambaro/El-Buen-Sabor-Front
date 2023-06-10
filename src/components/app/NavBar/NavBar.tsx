@@ -157,7 +157,9 @@ const NavBar = () => {
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup title="Configuración">
-                  <MenuItem>Configuración</MenuItem>
+                  <MenuItem onClick={() => {
+                    navigate("/configuración")
+                  }}>Configuración</MenuItem>
                   <MenuItem
                     onClick={() =>
                       logout({

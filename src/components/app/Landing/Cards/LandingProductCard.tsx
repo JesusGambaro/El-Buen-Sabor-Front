@@ -13,11 +13,8 @@ import { AddIcon } from "@chakra-ui/icons";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import { Link } from "react-router-dom";
-import { useAddToCart } from "@hooks/useCart";
 import useCatalogueStore from "@store/catalogueStore";
-import { Product } from "Types/types";
-
-export const LandingCard = ({ product }: { product: Product }) => {
+export const LandingCard = ({ product }: { product: any }) => {
   const toast = useToast();
   const { isAuthenticated } = useAuth0();
   const { filter, setFilter } = useCatalogueStore();
@@ -25,7 +22,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
     if (!isAuthenticated) {
       return;
     }
-    addToCart({ product, quantity: 1 });
+    //addToCart({ product, quantity: 1 });
     toast({
       title: "Producto agregado al carrito",
       status: "success",
@@ -38,7 +35,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
   const discountValue = (price: number = 0, discount: number) =>
     Math.floor(price - (price * discount) / 100);
 
-  const { mutate: addToCart } = useAddToCart();
+  //const { mutate: addToCart } = useAddToCart();
 
   return (
     <Card

@@ -27,7 +27,6 @@ import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
 import { btnStyle } from "@utils/theme";
 import { CartProps, CartItem as CartType, Category, Product } from "Types/types";
-import { useCart, useEmptyCart } from "@hooks/useCart";
 import Categories from "@components/admin/Stock/Categories/Categories";
 
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
@@ -39,7 +38,7 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
     estado: "alta",
     id: 0,
     nombre: "categoria1",
-    img:""
+    img: ""
   }
   let producto1: Product = {
     id: 1,
@@ -49,7 +48,8 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
     descripcion: "",
     receta: "",
     tiempoCocina: 10000,
-    productoCategoria:categoria1
+    productoCategoria: categoria1,
+    insumoSet: [0]
   };
   let cartItems: CartType[] = [{product:producto1,quantity:0}];
   let isLoading: boolean = false;
@@ -168,10 +168,10 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
 const EmptyCartBtn = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef() as React.MutableRefObject<HTMLButtonElement>;
-  const { mutate: emptyCart } = useEmptyCart();
+  //const { mutate: emptyCart } = useEmptyCart();
 
   const handleClearCart = () => {
-    emptyCart();
+    //emptyCart();
     onClose();
   };
 

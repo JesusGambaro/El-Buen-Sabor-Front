@@ -2,7 +2,13 @@ import React from "react";
 import { Button, ButtonProps, Tab, Tooltip } from "@chakra-ui/react";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
-const SideIcon = ({ label }: { label: string }) => {
+interface SideIconProps {
+  label: string,
+  redirects?: boolean
+  onClickFunc?: () => void
+}
+
+const SideIcon = ({ label,redirects,onClickFunc }: SideIconProps) => {
   const iconsPath: { [key: string]: string } = {
     Home: "fa-solid fa-home",
     Catálogo: "fa-solid fa-utensils",
@@ -20,6 +26,11 @@ const SideIcon = ({ label }: { label: string }) => {
     >
       <NavLink
         to={`/${label === "Home" ? "" : label.toLowerCase()}`}
+        onClick={() => {
+          if (onClickFunc) {
+            onClickFunc();
+          }
+        }}
         className={({ isActive, isPending }) =>
           isActive ? "active" : isPending ? "pending" : ""
         }

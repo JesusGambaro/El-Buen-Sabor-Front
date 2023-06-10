@@ -1,5 +1,5 @@
 import Loader from "@components/app/Loader/Loader";
-import { useApiQuery } from "@hooks/useCart";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useAdminStore from "@store/adminStore";
 import { useState } from "react";
 import { Category } from "Types/types";
@@ -29,7 +29,6 @@ const Categories = () => {
   const [editItem, setEditItem] = useState<Category>({
     id: -1,
     nombre: "",
-    categoriaPadre: -1,
     estado: "DISPONIBLE",
   } as Category);
   const { categoriaFilter, setFilter, setPage } = useAdminStore();
@@ -48,7 +47,7 @@ const Categories = () => {
         <td>{category?.id}</td>
         <td>{category?.nombre}</td>
         <td>
-          {categories.find((c) => c.id === category.categoriaPadre)?.nombre ||
+          {categories.find((c) => c.id === category.categoriaPadre?.id)?.nombre ||
             "-"}
         </td>
         <td>

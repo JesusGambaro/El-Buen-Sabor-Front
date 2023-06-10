@@ -19,7 +19,6 @@ import {
 import { useRef, useState } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { CartItem, Product } from "Types/types";
-import { useRemoveFromCart, useUpdateCart } from "@hooks/useCart";
 
 const CartItem = ({
   cartItem,
@@ -32,18 +31,18 @@ const CartItem = ({
 
   const cancelRef = useRef() as any;
   const { onOpen: onOpenDeleteItem } = useDisclosure();
-  const { mutate: removeFromCart } = useRemoveFromCart();
-  const { mutate: updateCart } = useUpdateCart();
+  //const { mutate: removeFromCart } = useRemoveFromCart();
+  //const { mutate: updateCart } = useUpdateCart();
   const { product } = cartItem;
   const handleDeleteItem = () => {
     if (!deleteItem) return;
-    removeFromCart(deleteItem);
+    //removeFromCart(deleteItem);
     setDeleteItem(null);
   };
 
   const handleOpenDeleteAlert = (item: CartItem, isTheLast = false) => {
     if (cartItem.quantity > 1 && !isTheLast) {
-      updateCart({ ...item, quantity: item.quantity - 1 });
+      //updateCart({ ...item, quantity: item.quantity - 1 });
       return;
     }
     setDeleteItem(item);
@@ -51,7 +50,7 @@ const CartItem = ({
   };
 
   const handleAddItem = (item: CartItem, index: number) => {
-    updateCart({ ...item, quantity: item.quantity + 1 });
+    //updateCart({ ...item, quantity: item.quantity + 1 });
   };
 
   const btnStyles = {

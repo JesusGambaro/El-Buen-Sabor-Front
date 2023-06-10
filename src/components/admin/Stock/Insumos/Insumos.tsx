@@ -1,5 +1,5 @@
 import Loader from "@components/app/Loader/Loader";
-import { useApiQuery } from "@hooks/useCart";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useAdminStore from "@store/adminStore";
 import { useState } from "react";
 import { Supply } from "Types/types";
@@ -52,7 +52,7 @@ const Insumos = () => {
         <td>{supply?.id}</td>
         <td>{supply?.nombre}</td>
         <td>
-          <Image src={supply?.imagen} width={50} height={50} />
+          {/* <Image src={supply?.imagen} width={50} height={50} /> */}
         </td>
         <td>{supply?.stockMinimo}</td>
         <td>{supply?.stockActual}</td>
