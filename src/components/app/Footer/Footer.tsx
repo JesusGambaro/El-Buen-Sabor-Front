@@ -7,31 +7,26 @@ import {
   Spacer,
   Text,
 } from "@chakra-ui/react";
+
 import "./footer.scss";
-
+import { useMediaQuery } from "@mantine/hooks";
 export const Footer = () => {
-  return (
-    <Flex h="10rem" bgColor="orange" color="white" p={5} w="100%" 
-    zIndex={0}
-    position="fixed"
-    bottom="0"
-    width="calc(100vw - 8rem)"
-    left="8rem"
-    >
+  const mobile = useMediaQuery(`(max-width: 700px)`);
+  console.log(mobile);
 
-      {/*
-          <Center h={"maxContainer"} w={"maxContainer"}>
-            <Image
-              height={"5rem"}
-              objectFit="cover"
-              src="https://res.cloudinary.com/dquqzevft/image/upload/v1680564907/Logo.png"
-              alt="El Buen Sabor"
-              ml={2}
-            />
-          </Center>
-        
-        <Spacer />
-        */}
+  return (
+    <Flex
+      h="10rem"
+      bgColor="rgb(253, 126, 20)"
+      color="white"
+      p={5}
+      zIndex={0}
+      position="fixed"
+      bottom="0"
+      maxW={`calc(100vw - ${mobile ? "0rem" : "8rem"})`}
+      width={"100vw"}
+      left={mobile ? "0" : "8rem"}
+    >
       <Flex flexDir={"column"} gap={"0.3rem"}>
         <Text fontWeight={"bold"}>
           <i

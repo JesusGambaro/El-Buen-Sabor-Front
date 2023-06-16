@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Drawer,
   DrawerBody,
@@ -26,35 +26,41 @@ import {
 import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
 import { btnStyle } from "@utils/theme";
-import { CartProps, CartItem as CartType, Category, Product } from "Types/types";
-import Categories from "@components/admin/Stock/Categories/Categories";
+import {
+  CartItem as cartItem,
+  CartProps,
+  CartItem as CartType,
+  Category,
+  Product,
+  Carrito,
+} from "types/types";
+import { useApiQuery } from "@hooks/useQueries";
+import useMainStore from "@store/mainStore";
 
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
   // const { data: cartItems, isLoading } = useCart() as {
   //   data: CartType[];
   //   isLoading: boolean;
-  // };
-  let categoria1: Category = {
-    estado: "alta",
-    id: 0,
-    nombre: "categoria1",
-    img: ""
-  }
-  let producto1: Product = {
-    id: 1,
-    nombre: "Grand Tastyyyyy Turbo Bacon Doble",
-    estado: "alta",
-    imgURL:"https://images.deliveryhero.io/image/pedidosya/products/54802_a7af88db-f436-4889-9801-2c537c6309c2.jpg",
-    descripcion: "",
-    receta: "",
-    tiempoCocina: 10000,
-    productoCategoria: categoria1,
-    insumoSet: [0]
+  // };et: [0]
+  const { cart: carrito, loading,setCarrito } = useMainStore();
+  type QueryPropsCarrito = {
+    data: Carrito;
+    error: any;
+    isLoading: boolean;
   };
-  let cartItems: CartType[] = [{product:producto1,quantity:0}];
-  let isLoading: boolean = false;
-  const total = 0;
-
+  const {
+    data,
+    error,
+    isLoading,
+  } = useApiQuery("GET|cart/getCarrito", null) as QueryPropsCarrito;
+  useEffect(() => {
+    if (data && !carrito) {
+      console.log("holahgola");
+      
+      setCarrito(data);
+    }
+  }, [data])
+  
   return (
     <Drawer
       isOpen={isOpen}
@@ -86,15 +92,17 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
           >
             {isLoading ? (
               <Loader />
-            ) : cartItems.length > 0 ? (
+            ) : carrito && carrito.productosComprados.length > 0 ? (
               <>
-                {cartItems?.map((cartItem, i: number) => (
-                  <CartItem
-                    key={"cart-item-" + i}
-                    cartItem={cartItem}
-                    index={i}
-                  />
-                ))}
+                {carrito.productosComprados?.map(
+                  (cartItem: cartItem, i: number) => (
+                    <CartItem
+                      key={"cart-item-" + i}
+                      cartItem={cartItem}
+                      index={i}
+                    />
+                  )
+                )}
                 <EmptyCartBtn />
               </>
             ) : (
@@ -129,7 +137,11 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
               alignItems="end"
               justifyContent="center"
               px={3}
-              visibility={cartItems.length > 0 ? "visible" : "hidden"}
+              visibility={
+                carrito && carrito.productosComprados.length > 0
+                  ? "visible"
+                  : "hidden"
+              }
             >
               <Text
                 fontSize="sm"
@@ -144,7 +156,7 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
                 <Tag size="md" variant="solid" bg="orange">
                   <TagLabel>Total</TagLabel>
                 </Tag>
-                ${total.toFixed(2)}
+                ${carrito?.totalCompra.toFixed(2)}
               </Text>
               <Button
                 variant={"solid"}

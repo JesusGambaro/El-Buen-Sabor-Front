@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex } from "@chakra-ui/react";
-import { Product } from "Types/types";
+import { Product } from "types/types";
 import { LandingCard } from "../Landing/Cards/LandingProductCard";
 import Loader from "../Loader/Loader";
 import useCatalogueStore from "@store/catalogueStore";

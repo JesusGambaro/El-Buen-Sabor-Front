@@ -25,15 +25,41 @@ import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "@mantine/hooks";
+import useMainStore from "@store/mainStore";
+interface NavBarProps {
+  openSideBar: () => void;
+}
 
-const NavBar = () => {
+const NavBar = ({ openSideBar }: NavBarProps) => {
+  
+  const { setToken } = useMainStore();
   const navigate = useNavigate();
-  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
-    useAuth0();
+  const {
+    getAccessTokenSilently,
+    loginWithRedirect,
+    logout,
+    user,
+    isAuthenticated,
+  } = useAuth0();
+  const fetchProtectedData = async () => {
+    try {
+      const accessToken = await getAccessTokenSilently();
+      //console.log("Access Token:", accessToken);
+      setToken(accessToken);
 
+    } catch (error) {
+      console.error("Error retrieving access token:", error);
+    }
+  };
+  useEffect(() => {
+    //console.log(user);
+    fetchProtectedData();
+  }, [user]);
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef: any = React.useRef(null);
+  const mobile = useMediaQuery(`(max-width: 700px)`);
 
   const handleIsAuth = () => {
     if (isAuthenticated) {
@@ -70,21 +96,23 @@ const NavBar = () => {
             src="https://res.cloudinary.com/dquqzevft/image/upload/v1680564907/Logo.png"
             alt="El Buen Sabor"
             ml={2}
-            onClick={() => navigate("/")}
+            onClick={() => openSideBar()}
           />
         </Box>
         <Spacer />
-        <InputGroup size="md" w="50%" maxW="600px">
-          <InputLeftElement
-            pointerEvents="none"
-            children={<SearchIcon color="orange" />}
-          />
-          <Input
-            type="tel"
-            placeholder="Buscar comida..."
-            focusBorderColor="orange.300"
-          />
-        </InputGroup>
+        {!mobile && (
+          <InputGroup size="md" w="30%" maxW="600px">
+            <InputLeftElement
+              pointerEvents="none"
+              children={<SearchIcon color="orange" />}
+            />
+            <Input
+              type="tel"
+              placeholder="Buscar comida..."
+              focusBorderColor="orange.300"
+            />
+          </InputGroup>
+        )}
         <Spacer />
         {/**
          * ? Color Mode
@@ -157,9 +185,13 @@ const NavBar = () => {
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup title="Configuración">
-                  <MenuItem onClick={() => {
-                    navigate("/configuración")
-                  }}>Configuración</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/configuración");
+                    }}
+                  >
+                    Configuración
+                  </MenuItem>
                   <MenuItem
                     onClick={() =>
                       logout({

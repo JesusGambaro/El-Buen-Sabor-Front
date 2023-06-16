@@ -2,6 +2,7 @@ import { MutationFunction, QueryFunctionContext } from "@tanstack/react-query";
 import api from "../libs/axios";
 import { prepareFetch } from "@utils/utils";
 import useAdminStore from "@store/adminStore";
+import useMainStore from "@store/mainStore";
 
 type GenericFetch = {
     url: string;
@@ -77,16 +78,17 @@ export const genericFetch = async (requestBody: QueryFunctionContext | MutationF
 }
 
 // Generic fetch para método GET
-
 export const getFetch = async <T extends QueryFunctionContext>(params?: T) => {
     if (!params) return;
     const { queryKey } = params;
     const [path, filters] = queryKey as [string, any | undefined];
-
+    const { token } = useMainStore.getState();
+    //console.log("Estoy en el token: ",token);
     const options = {
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
+            "Authorization": `Bearer ${token}`,
         },
         method: 'GET'
     } as GenericFetch;
@@ -124,27 +126,32 @@ export const postPutFetch = async <T extends MutationFunction<any, any>>(params?
 
     const { url, method } = prepareFetch(query, data);
     // this method is used to create or update a resource that contains a file
-
+    const { token } = useMainStore.getState();
     const options = {
         body: data,
         method: method,
         headers: {
             Accept: "application/json",
             "Content-Type": "multipart/form-data",
+            "Authorization": `Bearer ${token}`,
         },
         url
     } as GenericFetch;
 
-    console.log('options', options);
 
     return api(options).then((response) => {
+        
+        
         // Si la respuesta es correcta se devuelve el contenido de la respuesta
         if ([200, 201, 204].includes(response.status)) {
+            
+            
             return response.data;
         }
         // Si la respuesta es incorrecta se devuelve un error
         else {
             throw new Error(response.statusText);
         }
+        
     });
 }

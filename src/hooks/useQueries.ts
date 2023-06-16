@@ -4,59 +4,64 @@ import { log } from "console";
 import { getFetch, postPutFetch } from "@api/elbuensabor";
 
 type QueryData<T> = {
-    data: T;
-    error: unknown;
-    isLoading: boolean;
-    refetch: () => void;
-    functionFetch?: () => void;
+  data: T;
+  error: unknown;
+  isLoading: boolean;
+  refetch: () => void;
+  functionFetch?: () => void;
 };
 
-export const useApiQuery = <T>(query: string, filters?: any,
-    enabled = true): QueryData<T> => {
-    const { data, error, isLoading, refetch } = useQuery<T>([query, filters],
-        getFetch, {
-        enabled,
-        retry: false,
-    });
+export const useApiQuery = <T>(
+  query: string,
+  filters?: any,
+  enabled = true
+): QueryData<T> => {
+  const { data, error, isLoading, refetch } = useQuery<T>(
+    [query, filters],
+    getFetch,
+    {
+      enabled,
+      retry: false,
+    }
+  );
 
-    return { data: data as T, error, isLoading, refetch };
-    // Version nueva, pero no hace refetch
-    return useQuery<T>({
-        queryKey: [query],
-        //queryFn: () => genericFetch({ query, filters } as any),
-        enabled,
-
-    }) as QueryData<T>;
-
+  return { data: data as T, error, isLoading, refetch };
+  // Version nueva, pero no hace refetch
+  return useQuery<T>({
+    queryKey: [query],
+    //queryFn: () => genericFetch({ query, filters } as any),
+    enabled,
+  }) as QueryData<T>;
 };
 
 export const useApiMutation = <T>(query: string) => {
-    const parentQuery = `GET|${query.split('|')[1]}/`;
+  const parentQuery = `GET|${query.split("|")[1]}/`;
 
-    return useMutation(
-        ((data: any) => postPutFetch({ query, data } as any)), {
-        onMutate: async (data) => {
+  return useMutation((data: any) => postPutFetch({ query, data } as any), {
+    onMutate: async (data) => {
+      //console.log("data: ", data);
 
-            await queryClient.cancelQueries([query]);
-            const previousValue = queryClient.getQueryData([query]);
-            console.log('onMutate');
-            return { previousValue };
-        },
-        onError: (err, variables, context) => {
-            queryClient.setQueryData([query], context?.previousValue);
-            console.log('onError');
-        },
-        onSuccess: () => {
-            const similarQueries = queryClient.getQueryCache().findAll();
-            similarQueries.forEach((query: any) => {
-                if (query.queryKey[0].includes(parentQuery)) {
-                    queryClient.invalidateQueries(query.queryKey);
-                }
-            });
+      await queryClient.cancelQueries([query]);
+      const previousValue = queryClient.getQueryData([query]);
+
+      return { previousValue };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData([query], context?.previousValue);
+      //console.log("onError");
+    },
+    onSuccess: (data) => {
+      const similarQueries = queryClient.getQueryCache().findAll();
+      similarQueries.forEach((query: any) => {
+        if (query.queryKey[0].includes(parentQuery)) {
+          queryClient.invalidateQueries(query.queryKey);
         }
-    });
+      });
+      //console.log("onSuccess: ", data);
+      return {data};
+    },
+  });
 };
-
 
 /* 
 export const useCart = () => {
@@ -101,4 +106,3 @@ export const useEmptyCart = () => {
         }
     });
 } */
-

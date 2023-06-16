@@ -16,9 +16,11 @@ import {
   useDisclosure,
   Card,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { CartItem, Product } from "Types/types";
+import { CartItem, Product } from "types/types";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
+import useMainStore from "@store/mainStore";
 
 const CartItem = ({
   cartItem,
@@ -28,12 +30,14 @@ const CartItem = ({
   index: number;
 }) => {
   const [deleteItem, setDeleteItem] = useState<CartItem | null>(null);
-
+  const {mutate:editCart,data} = useApiMutation("PUT|cart/addProducto");
+  
+  const { setCarrito } = useMainStore();
   const cancelRef = useRef() as any;
   const { onOpen: onOpenDeleteItem } = useDisclosure();
   //const { mutate: removeFromCart } = useRemoveFromCart();
   //const { mutate: updateCart } = useUpdateCart();
-  const { product } = cartItem;
+  
   const handleDeleteItem = () => {
     if (!deleteItem) return;
     //removeFromCart(deleteItem);
@@ -41,7 +45,7 @@ const CartItem = ({
   };
 
   const handleOpenDeleteAlert = (item: CartItem, isTheLast = false) => {
-    if (cartItem.quantity > 1 && !isTheLast) {
+    if (cartItem.cantidad > 1 && !isTheLast) {
       //updateCart({ ...item, quantity: item.quantity - 1 });
       return;
     }
@@ -49,10 +53,18 @@ const CartItem = ({
     onOpenDeleteItem();
   };
 
-  const handleAddItem = (item: CartItem, index: number) => {
+  const handleAddItem = () => {
     //updateCart({ ...item, quantity: item.quantity + 1 });
+    editCart({ id: cartItem.productoId });
+    
   };
-
+  useEffect(() => {
+    console.log("cartEdited", data);
+    if (data) {
+      setCarrito(data);
+    }
+  }, [data])
+  
   const btnStyles = {
     colorScheme: "orange",
     variant: "outline",
@@ -79,7 +91,7 @@ const CartItem = ({
     >
       <Image
         boxSize="70px"
-        src={product.imgURL}
+        src={cartItem.imgURL}
         alt="El Buen Sabor"
         borderRadius="md"
         objectFit="cover"
@@ -87,21 +99,16 @@ const CartItem = ({
       />
       <Box ml={3}>
         <Text fontSize="sm" fontWeight="bold" mb={1} mr={2}>
-          {product.nombre}
+          {cartItem.producto}
         </Text>
         <Text fontSize="sm" fontWeight="bold">
-          ${/*Math.round((product.precio || 0) * cartItem.quantity)*/}
+          ${cartItem.precioTotal}
         </Text>
-        <Text fontSize="sm" fontWeight="bold">
-          <Text as="span" color="orange.500">
-            x
-          </Text>
-          {cartItem.quantity}
-        </Text>
+        
       </Box>
       <Spacer />
 
-      <ButtonGroup size="sm" isAttached variant="outline">
+      <ButtonGroup alignItems={"center"} gap={"0.5rem"} size="sm" isAttached variant="outline">
         <Button
           {...btnStyles}
           onClick={() => {
@@ -110,10 +117,16 @@ const CartItem = ({
         >
           -
         </Button>
+        <Text fontSize="sm" fontWeight="bold">
+          {cartItem.cantidad}
+          <Text as="span" color="orange.500">
+            U
+          </Text>
+        </Text>
         <Button
           {...btnStyles}
           onClick={() => {
-            handleAddItem(cartItem, index);
+            handleAddItem();
           }}
         >
           +
@@ -142,7 +155,7 @@ const CartItem = ({
             <PopoverArrow />
             <PopoverCloseButton />
             <PopoverBody>
-              Esta seguro que desea eliminar {deleteItem?.product?.nombre} del
+              Esta seguro que desea eliminar {deleteItem?.producto} del
               carrito?
             </PopoverBody>
             <PopoverFooter display="flex" justifyContent="flex-end">

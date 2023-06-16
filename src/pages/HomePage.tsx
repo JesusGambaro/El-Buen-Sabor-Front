@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "@chakra-ui/react";
 import SideBar from "@app/SideBar/SideBar";
 import NavBar from "@app/NavBar/NavBar";
@@ -6,15 +6,16 @@ import { useAuth0 } from "@auth0/auth0-react";
 import InvalidAuthDialog from "@app/InvalidAuthDialog/InvalidAuthDialog";
 import { Outlet } from "react-router-dom";
 import { Footer } from "@components/app/Footer/Footer";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useDisclosure } from "@mantine/hooks";
+
 const HomePage = () => {
   const { isAuthenticated }: any = useAuth0();
-
   useEffect(() => {}, [isAuthenticated]);
   const mobile = useMediaQuery(`(max-width: 700px)`);
+  const [opened, { open, close }] = useDisclosure(false);
   return (
     <Container maxW="100vw" bg="#f9f6f6" p="0" h="100vh">
-      <NavBar />
+      <NavBar openSideBar={open}/>
       <InvalidAuthDialog />
       <Container
         overflowY="auto"
@@ -31,7 +32,7 @@ const HomePage = () => {
       >
         <Outlet />
       </Container>
-      <SideBar />
+      <SideBar isOpen={opened} onClose={close}/>
       <Footer />
     </Container>
   );

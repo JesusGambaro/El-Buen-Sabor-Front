@@ -13,13 +13,14 @@ import Loader from "@app/Loader/Loader";
 import { LandingCard } from "./Cards/LandingProductCard";
 import { CategoryCard } from "./Cards/CategoryCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Product, Category } from "Types/types";
+import { Product, Category } from "types/types";
 import useCatalogueStore from "@store/catalogueStore";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
-import { Flex, rem } from "@mantine/core";
 const Landing = () => {
+
+  
   type QueryProps = {
     data: Product[];
     error: any;
@@ -86,39 +87,42 @@ const Landing = () => {
         ) : (
           <>
             <Carousel
-              slideSize="30%"
+              slideSize="20%"
               maw={"100%"}
-              height={70}
-              align="center"
+              height={60}
+              align="start"
               slideGap="xl"
               controlSize={25}
               dragFree
-              withIndicators
+              //withIndicators
+                draggable
               slidesToScroll={1}
               inViewThreshold={0}
               loop
+              px={"3rem"}
               styles={{
-                indicator: {
-                  top: "5rem",
-                  width: rem(12),
-                  height: rem(4),
-                  transition: "width 250ms ease",
-                  background: "orange",
-                  "&[data-active]": {
-                    width: rem(40),
-                  },
-                },
+                // indicator: {
+                //   top: "5rem",
+                //   width: rem(12),
+                //   height: rem(4),
+                //   transition: "width 250ms ease",
+                //   background: "orange",
+                //   "&[data-active]": {
+                //     width: rem(40),
+                //   },
+                // },
                 control: {
                   // "&[data-inactive]": {
                   //   opacity: 0,
                   //   cursor: "default",
                   // },
-                  background: "orange",
+                  background: "#fd7e14",
                   color: "white",
                   width: "2rem",
                   height: "2rem",
                   boxShadow: "none",
-                  border: "none"
+                  border: "none",
+                  marginTop:"-0.55rem"
                 },
               }}
             >

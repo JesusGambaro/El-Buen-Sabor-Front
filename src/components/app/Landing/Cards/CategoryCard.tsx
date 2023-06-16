@@ -13,27 +13,35 @@ import {
   getStylesRef,
   Flex,
 } from "@mantine/core";
-import { Category } from "Types/types";
+import { Category } from "types/types";
 import { IconArrowRight, IconMathGreater } from "@tabler/icons-react";
 export const CategoryCard = ({ category }: { category: Category }) => {
   return (
     <Flex
       h={"3rem"}
-      
-      bg={"orange"}
       sx={() => ({
-        backgroundColor: "white",
+        background: "rgb(253, 126, 20)",
         textAlign: "center",
         borderRadius: "15px",
         cursor: "pointer",
-
+        color: "white",
+        fontWeight: "bold",
+        transition: "0.2s ease-in-out all",
+        border: "3px solid rgb(253, 126, 20)",
         "&:hover": {
-          backgroundColor: "orange",
-          "& #hola": {
-            backgroundColor: "white",
-            "&:hover": {
-              backgroundColor: "orangered",
-            }
+          backgroundColor: "white",
+          borderColor: "rgb(253, 126, 20)",
+          color: "rgb(253, 126, 20)",
+          "& #icon": {
+            color: "rgb(253, 126, 20)",
+          },
+        },
+        "& #icon": {
+          color: "white",
+          transition: "0s ease-in-out all",
+          backgroundColor: "transparent",
+          "&:hover": {
+            color: "rgb(202, 100, 15)",
           },
         },
       })}
@@ -46,8 +54,8 @@ export const CategoryCard = ({ category }: { category: Category }) => {
       <Text fw={600}>{category.nombre}</Text>
       <Group position="apart">
         <Group spacing={0}>
-          <ActionIcon size="lg" id="hola">
-            <IconArrowRight size="1.625rem" color={"orange"} />
+          <ActionIcon size="lg" id="icon-button">
+            <IconArrowRight id="icon" size="1.625rem" />
           </ActionIcon>
         </Group>
       </Group>

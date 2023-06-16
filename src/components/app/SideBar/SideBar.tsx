@@ -2,13 +2,19 @@ import "./sidebar.scss";
 import { Box, Flex } from "@chakra-ui/react";
 import SideIcon from "./SideIcon/SideIcon";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-const SideBar = () => {
+import { Drawer } from "@mantine/core";
+import { SideBarProps } from "types/types";
+
+const SideBar = ({ isOpen, onClose }: SideBarProps) => {
   const { isAuthenticated } = useAuth0();
-  const [isOpen, setIsOpen] = useState(false)
   const mobile = useMediaQuery(`(max-width: 700px)`);
-  return (
+  return mobile ? (
+    <Drawer opened={isOpen} w="100%" onClose={onClose} withCloseButton={true}>
+      Drawer without header, press escape or click on overlay to close
+    </Drawer>
+  ) : (
     <Box
       h="calc(100vh - 5.5rem)"
       w="8rem"
@@ -19,7 +25,6 @@ const SideBar = () => {
       bg="white"
       position="fixed"
       top="5.5rem"
-      left={mobile ? isOpen ? "100%" : "0" : "0"}
       zIndex={100}
       transition={"0.5s ease all"}
     >

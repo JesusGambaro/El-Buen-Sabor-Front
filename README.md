@@ -1,13 +1,8 @@
-### To run the project
+### Para levantar el proyecto
 
-1. Clone this repository
-2. Run `npm i`
-3. Run `npm run dev` to start the frontend
-4. Run `npm run server <back-end username> <back-end password>` to start the json-server for auth0
-5. Open `http://localhost:5173/` in your browser
-6. Enjoy!
-
-### Routes
-
-- `/` - Home page
-- `/admin` - Admin page
+1. Clonar el repositorio
+2. Runear `npm i` para cargar todas las dependencias
+3. Runear `npm run dev` para iniciar las vistas.
+4. Runear `npm run server <back-end username> <back-end password>` para iniciar el json server para Auth0(esto es para testeo, en futuras iteraciones no sera necesario)
+5. Abrir `http://localhost:5173/` en tu buscador.
+6. Disfrutar!

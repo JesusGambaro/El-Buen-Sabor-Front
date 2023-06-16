@@ -1,204 +1,210 @@
 import { ReactNode } from "react";
 
 type Product = {
-    nombre: string;
-    imgURL?: string;
-    descripcion: string;
-    tiempoCocina: number;
-    receta: string;
-    estado: string;
-    productoCategoria: Category;
-    insumoSet: number[];
-    id: number;
+  nombre: string;
+  imgURL?: string;
+  descripcion: string;
+  tiempoCocina: number;
+  receta: string;
+  estado: string;
+  productoCategoria: Category;
+  insumoSet: number[];
+  id: number;
 };
 
 type Category = {
-    id: number;
-    nombre: string;
-    categoriaPadre?: Category;
-    img?: string;
-    estado: string;
-    subCategoria?: Category[];
+  id: number;
+  nombre: string;
+  categoriaPadre?: Category;
+  img?: string;
+  estado: string;
+  subCategoria?: Category[];
 };
 
 type CartItem = {
-    product: Product;
-    quantity: number;
+  producto: string;
+  productoId: number;
+  cantidad: number;
+  precioUnitario: number;
+  precioTotal: number;
+  imgURL: string;
+};
+type Carrito = {
+  productosComprados: CartItem[];
+  totalCompra: number;
 };
 
-
 type Order = {
-    id: number;
-    items: CartItem[];
-    total: number;
-    date: string;
+  id: number;
+  items: CartItem[];
+  total: number;
+  date: string;
 };
 
 type User = {
-    id: number;
-    name: string;
-    email: string;
-    password: string;
-    orders: Order[];
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  orders: Order[];
 };
 
-
 type Auth = {
-    user: User;
-    loading: boolean;
-    hasErrors: boolean;
-    token: string;
-    isAuth: boolean;
-    attempt: boolean;
-
+  user: User;
+  loading: boolean;
+  hasErrors: boolean;
+  token: string;
+  isAuth: boolean;
+  attempt: boolean;
 };
 
 type State = {
-    products: Product[];
-    user: User;
-    auth: Auth;
-    landing: Landing;
+  products: Product[];
+  user: User;
+  auth: Auth;
+  landing: Landing;
 };
 
 type Supply = {
-    id: number;
-    nombre: string;
-    imagen: string | File;
-    stockMinimo: number;
-    stockActual: number;
-    estado: string;
-    costo: number;
+  id: number;
+  nombre: string;
+  imagen: string | File;
+  stockMinimo: number;
+  stockActual: number;
+  estado: string;
+  costo: number;
 };
 
 type AdminState = {
-    products: Product[];
-    supplies: Supply[];
-    categories: Category[];
-    loading: boolean;
-    hasErrors: boolean;
-    product: Product | null;
-    productLoading: boolean;
-    productHasErrors: boolean;
+  products: Product[];
+  supplies: Supply[];
+  categories: Category[];
+  loading: boolean;
+  hasErrors: boolean;
+  product: Product | null;
+  productLoading: boolean;
+  productHasErrors: boolean;
 };
-
 
 type CreditCard = {
-    cardNumber: number;
-    cardName: string;
-    cardDate: Date;
-    cardCvv: number;
+  cardNumber: number;
+  cardName: string;
+  cardDate: Date;
+  cardCvv: number;
 };
 
-
 type Landing = {
-    landingProducts: Product[];
-    categories: Category[];
-    loading: boolean;
-    hasErrors: boolean;
+  landingProducts: Product[];
+  categories: Category[];
+  loading: boolean;
+  hasErrors: boolean;
 };
 
 type Action = {
-    type: string;
-    payload: any;
+  type: string;
+  payload: any;
 };
 
 type Dispatch = (action: Action) => void;
 
 type Store = {
-    state: State;
-    dispatch: Dispatch;
+  state: State;
+  dispatch: Dispatch;
 };
 
 type Reducer = (state: State, action: Action) => State;
 
 type Context = {
-    store: Store;
-    dispatch: Dispatch;
+  store: Store;
+  dispatch: Dispatch;
 };
 
 type ProviderProps = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
 type Route = {
-    path: string;
-    component: ReactNode;
+  path: string;
+  component: ReactNode;
 };
 
 type Routes = {
-    [key: string]: Route;
+  [key: string]: Route;
 };
 
 type RouteProps = {
-    path: string;
-    component: ReactNode;
+  path: string;
+  component: ReactNode;
 };
 
 type RoutesProps = {
-    routes: Routes;
+  routes: Routes;
 };
 
 type LinkProps = {
-    to: string;
-    children: ReactNode;
+  to: string;
+  children: ReactNode;
 };
 
 type ProductProps = {
-    product: Product;
+  product: Product;
 };
 
 type CartItemProps = {
-    item: CartItem;
+  item: CartItem;
 };
 
 type CartProps = {
-    isOpen: boolean;
-    onClose: () => void;
-    btnRef: any;
+  isOpen: boolean;
+  onClose: () => void;
+  btnRef: any;
 };
-
+type SideBarProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 type OrderProps = {
-    order: Order;
+  order: Order;
 };
 
 type UserProps = {
-    user: User;
+  user: User;
 };
 
 type ErrorBoundaryProps = {
-    children?: React.ReactNode;
-    onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+  children?: React.ReactNode;
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 };
-
 
 //export all types
 export type {
-    ErrorBoundaryProps,
-    Product,
-    CartItem,
-    Order,
-    User,
-    State,
-    Action,
-    Dispatch,
-    Store,
-    Reducer,
-    Context,
-    ProviderProps,
-    Route,
-    Routes,
-    RouteProps,
-    RoutesProps,
-    LinkProps,
-    ProductProps,
-    CartItemProps,
-    CartProps,
-    OrderProps,
-    UserProps,
-    Category,
-    Landing,
-    CreditCard,
-    Supply,
-    AdminState,
+  ErrorBoundaryProps,
+  Product,
+  CartItem,
+  Order,
+  User,
+  State,
+  Action,
+  Dispatch,
+  Store,
+  Reducer,
+  Context,
+  ProviderProps,
+  Route,
+  Routes,
+  RouteProps,
+  RoutesProps,
+  LinkProps,
+  ProductProps,
+  CartItemProps,
+  CartProps,
+  Carrito,
+  OrderProps,
+  UserProps,
+  Category,
+  Landing,
+  CreditCard,
+  Supply,
+  AdminState,
+  SideBarProps,
 };
-
