@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Flex } from "@chakra-ui/react";
 import { Product } from "types/types";
 import { LandingCard } from "../Landing/Cards/LandingProductCard";
@@ -7,21 +7,25 @@ import useCatalogueStore from "@store/catalogueStore";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 
 const CatalogueProductsContainer = () => {
-  const { filter, setFilter } = useCatalogueStore();
+  const { filter, setFilter, setProductos, productos } = useCatalogueStore();
   type QueryProps = {
     data: Product[];
     error: any;
     isLoading: boolean;
   };
-  
-  const {
-    data: products,
-    error,
-    isLoading,
-  } = useApiQuery("GET|producto", null) as QueryProps;
+  const { data:products, error, isLoading } = useApiQuery(
+    "GET|producto",
+    null
+  ) as QueryProps;
   // let products: Product[] = [];
   // let isLoading: boolean = false;
-  
+
+  useEffect(() => {
+    if (products) {
+        setProductos(products)
+    }
+  }, [products]);
+
   return isLoading ? (
     <Loader />
   ) : (

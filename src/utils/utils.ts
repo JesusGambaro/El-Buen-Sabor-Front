@@ -33,9 +33,9 @@ export const prepareFetch = (query: string, params: any): GenericFetch => {
     }
     else if (METHODS[method] === METHODS.POST) {
         return { url, method };
-    } else if (METHODS[method] === METHODS.PUT) {
+    } else if (METHODS[method] === METHODS.PUT && params) {
         return { url: `${url}/${params.id}`, method };
-    } else if (METHODS[method] === METHODS.DELETE) {
+    } else if (METHODS[method] === METHODS.DELETE && params) {
         return { url: `${url}/${params.id}`, method };
     }
 

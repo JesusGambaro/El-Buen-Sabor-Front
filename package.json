@@ -36,6 +36,7 @@
     "colors": "^1.4.0",
     "dayjs": "^1.11.7",
     "embla-carousel-react": "^7.1.0",
+    "formik": "^2.4.2",
     "framer-motion": "^10.12.2",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
@@ -48,6 +49,7 @@
     "sass": "^1.59.3",
     "sort-by": "^1.2.0",
     "tabler-icons-react": "^1.56.0",
+    "yup": "^1.2.0",
     "zustand": "^4.3.7"
   },
   "devDependencies": {

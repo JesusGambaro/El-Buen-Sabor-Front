@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { mountStoreDevtool } from 'simple-zustand-devtools'
+import { Product } from 'types/types';
 
 type FilterCategory = {
     nombre_like?: string;
@@ -10,12 +11,15 @@ type FilterCategory = {
 type CatalogueStore = {
     filter: FilterCategory;
     setFilter: (filter: FilterCategory) => void;
+    setProductos: (productos: Product[]) => void;
+    productos: Product[];
 }
 
 
 const initialState = {
     filter: {
-    } as FilterCategory
+    } as FilterCategory,
+    productos:[] as Product[]
 }
 
 const useCatalogueStore = create<CatalogueStore>((set, get) => ({
@@ -27,6 +31,12 @@ const useCatalogueStore = create<CatalogueStore>((set, get) => ({
                 ...state.filter,
                 ...filter
             }
+        })
+    ),
+    setProductos: (productos: Product[]) => set(
+        (state) => ({
+            ...state,
+            productos: productos
         })
     )
 }))

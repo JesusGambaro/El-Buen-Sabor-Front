@@ -29,8 +29,8 @@ const CartItem = ({
   cartItem: CartItem;
   index: number;
 }) => {
-  const [deleteItem, setDeleteItem] = useState<CartItem | null>(null);
-  const {mutate:editCart,data} = useApiMutation("PUT|cart/addProducto");
+  const {mutate:addProduct,data:addedData} = useApiMutation("PUT|cart/addProduct");
+  const {mutate:delProducto,data:removedData} = useApiMutation("PUT|cart/delProduct");
   
   const { setCarrito } = useMainStore();
   const cancelRef = useRef() as any;
@@ -39,9 +39,7 @@ const CartItem = ({
   //const { mutate: updateCart } = useUpdateCart();
   
   const handleDeleteItem = () => {
-    if (!deleteItem) return;
-    //removeFromCart(deleteItem);
-    setDeleteItem(null);
+    delProducto({ id: cartItem.productoId });
   };
 
   const handleOpenDeleteAlert = (item: CartItem, isTheLast = false) => {
@@ -49,21 +47,22 @@ const CartItem = ({
       //updateCart({ ...item, quantity: item.quantity - 1 });
       return;
     }
-    setDeleteItem(item);
     onOpenDeleteItem();
   };
 
   const handleAddItem = () => {
     //updateCart({ ...item, quantity: item.quantity + 1 });
-    editCart({ id: cartItem.productoId });
-    
+    addProduct({ id: cartItem.productoId });
   };
   useEffect(() => {
-    console.log("cartEdited", data);
-    if (data) {
-      setCarrito(data);
+    console.log("entre");
+    
+    if (addedData) {
+      setCarrito(addedData);
+    }else if (removedData) {
+      setCarrito(removedData);
     }
-  }, [data])
+  }, [addedData,removedData])
   
   const btnStyles = {
     colorScheme: "orange",
@@ -112,7 +111,7 @@ const CartItem = ({
         <Button
           {...btnStyles}
           onClick={() => {
-            handleOpenDeleteAlert(cartItem);
+            handleDeleteItem();
           }}
         >
           -
@@ -131,7 +130,7 @@ const CartItem = ({
         >
           +
         </Button>
-        <Popover
+        {/* <Popover
           placement="left"
           isOpen={!!deleteItem}
           //leastDestructiveRef={cancelRef}
@@ -169,7 +168,7 @@ const CartItem = ({
               </ButtonGroup>
             </PopoverFooter>
           </PopoverContent>
-        </Popover>
+        </Popover> */}
       </ButtonGroup>
     </Card>
   );

@@ -34,33 +34,35 @@ import {
   Product,
   Carrito,
 } from "types/types";
-import { useApiQuery } from "@hooks/useQueries";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useMainStore from "@store/mainStore";
+import { Link } from "react-router-dom";
 
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
   // const { data: cartItems, isLoading } = useCart() as {
   //   data: CartType[];
   //   isLoading: boolean;
   // };et: [0]
-  const { cart: carrito, loading,setCarrito } = useMainStore();
+  const { cart: carrito, loading, setCarrito } = useMainStore();
   type QueryPropsCarrito = {
     data: Carrito;
     error: any;
     isLoading: boolean;
   };
-  const {
-    data,
-    error,
-    isLoading,
-  } = useApiQuery("GET|cart/getCarrito", null) as QueryPropsCarrito;
+  const { data, error, isLoading } = useApiQuery(
+    "GET|cart/getCarrito",
+    null
+  ) as QueryPropsCarrito;
+  // let data: Carrito = {productosComprados:[],totalCompra:0};
+  // let isLoading = false;
   useEffect(() => {
     if (data && !carrito) {
-      console.log("holahgola");
-      
+      //console.log("holahgola");
+
       setCarrito(data);
     }
-  }, [data])
-  
+  }, [data]);
+
   return (
     <Drawer
       isOpen={isOpen}
@@ -163,9 +165,9 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
                 w="100%"
                 h="4rem"
                 {...btnStyle}
-                onClick={() => {
-                  alert("Continuar");
-                }}
+                onClick={onClose}
+                as={Link}
+                to="/carrito"
               >
                 Continuar
               </Button>
@@ -181,12 +183,19 @@ const EmptyCartBtn = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef() as React.MutableRefObject<HTMLButtonElement>;
   //const { mutate: emptyCart } = useEmptyCart();
-
+  const { cart: carrito, loading, setCarrito } = useMainStore();
+  const { mutate: clearCart, data: clearCartData } =
+    useApiMutation("PUT|cart/clearCart");
   const handleClearCart = () => {
     //emptyCart();
+    clearCart(null);
     onClose();
   };
-
+  useEffect(() => {
+    if (clearCartData) {
+      setCarrito(clearCartData);
+    }
+  }, [clearCartData]);
   return (
     <>
       <Button colorScheme="red" w="100%" minH="3rem" onClick={onOpen}>

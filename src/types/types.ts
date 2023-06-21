@@ -86,12 +86,7 @@ type AdminState = {
   productHasErrors: boolean;
 };
 
-type CreditCard = {
-  cardNumber: number;
-  cardName: string;
-  cardDate: Date;
-  cardCvv: number;
-};
+
 
 type Landing = {
   landingProducts: Product[];
@@ -203,7 +198,6 @@ export type {
   UserProps,
   Category,
   Landing,
-  CreditCard,
   Supply,
   AdminState,
   SideBarProps,

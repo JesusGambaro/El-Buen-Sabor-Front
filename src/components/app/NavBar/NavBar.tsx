@@ -27,13 +27,23 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mantine/hooks";
 import useMainStore from "@store/mainStore";
+import { useLocation } from "react-router-dom";
 interface NavBarProps {
   openSideBar: () => void;
 }
 
 const NavBar = ({ openSideBar }: NavBarProps) => {
+  const location = useLocation();
   
-  const { setToken } = useMainStore();
+  const [inCartDetail, setInCartDetail] = useState(
+    location.pathname == "/carrito"
+  );
+  useEffect(() => {
+    
+    setInCartDetail(location.pathname == "/carrito");
+  }, [location.pathname]);
+  const { setToken, token } = useMainStore();
+
   const navigate = useNavigate();
   const {
     getAccessTokenSilently,
@@ -47,14 +57,15 @@ const NavBar = ({ openSideBar }: NavBarProps) => {
       const accessToken = await getAccessTokenSilently();
       //console.log("Access Token:", accessToken);
       setToken(accessToken);
-
     } catch (error) {
       console.error("Error retrieving access token:", error);
     }
   };
   useEffect(() => {
     //console.log(user);
-    fetchProtectedData();
+    if (isAuthenticated) {
+      fetchProtectedData();
+    }
   }, [user]);
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -206,20 +217,23 @@ const NavBar = ({ openSideBar }: NavBarProps) => {
             </Menu>
           )}
         </Tag>
-        <Button
-          ref={btnRef}
-          variant="solid"
-          color="orange"
-          bg="white"
-          borderRadius="full"
-          _hover={{
-            bg: "white",
-          }}
-          onClick={handleIsAuth}
-        >
-          <i className="fa-solid fa-cart-shopping"></i>
-        </Button>
-        {isAuthenticated && (
+        {!inCartDetail && (
+          <Button
+            ref={btnRef}
+            variant="solid"
+            color="orange"
+            bg="white"
+            borderRadius="full"
+            _hover={{
+              bg: "white",
+            }}
+            onClick={handleIsAuth}
+          >
+            <i className="fa-solid fa-cart-shopping"></i>
+          </Button>
+        )}
+
+        {isAuthenticated && token?.length > 0 && (
           <Cart isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
         )}
       </Flex>

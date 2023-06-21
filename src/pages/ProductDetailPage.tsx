@@ -6,12 +6,13 @@ import {
   Grid,
   Heading,
   Image,
+  Modal,
   SimpleGrid,
   Spinner,
   Stack,
   Stat,
   StatNumber,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
@@ -20,7 +21,7 @@ import { Title } from "@mantine/core";
 import useCatalogueStore from "@store/catalogueStore";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Product } from "Types/types";
+import { Product } from "types/types";
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { filter, setFilter } = useCatalogueStore();
@@ -90,9 +91,10 @@ const ProductDetailPage = () => {
           onClick={() => {
             handleSetFilter();
           }}
+          h={"3rem"}
         >
           <ChevronLeftIcon />
-          Volver a Home
+          Volver al catálogo
         </Button>
       </SimpleGrid>
       <Grid
@@ -161,5 +163,4 @@ const ProductDetailPage = () => {
     </Container>
   );
 };
-
 export default ProductDetailPage;

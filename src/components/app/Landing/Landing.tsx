@@ -19,10 +19,13 @@ import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 const Landing = () => {
-
-  
   type QueryProps = {
     data: Product[];
+    error: any;
+    isLoading: boolean;
+  };
+  type QueryPropsCategorias = {
+    data: Category[];
     error: any;
     isLoading: boolean;
   };
@@ -40,7 +43,7 @@ const Landing = () => {
   const { data: categories } = useApiQuery(
     "GET|categoria/all",
     null
-  ) as QueryProps;
+  ) as QueryPropsCategorias;
 
   // const items = categories?.map((category) => (
   //   <CategoryCard key={category.id} category={category} />
@@ -59,11 +62,15 @@ const Landing = () => {
   };
 
   let carousel: any;
-  const slides = categories?.map((category) => (
-    <Carousel.Slide key={category.id}>
-      <CategoryCard key={category.id} category={category} />
-    </Carousel.Slide>
-  ));
+  const slides = categories
+    ?.filter((category) => {
+      return category.categoriaPadre == null;
+    })
+    .map((category) => (
+      <Carousel.Slide key={category.id}>
+        <CategoryCard key={category.id} category={category} />
+      </Carousel.Slide>
+    ));
   const mobile = useMediaQuery(`(max-width: 700px)`);
   return (
     <Container
@@ -95,7 +102,7 @@ const Landing = () => {
               controlSize={25}
               dragFree
               //withIndicators
-                draggable
+              draggable
               slidesToScroll={1}
               inViewThreshold={0}
               loop
@@ -122,7 +129,7 @@ const Landing = () => {
                   height: "2rem",
                   boxShadow: "none",
                   border: "none",
-                  marginTop:"-0.55rem"
+                  marginTop: "-0.55rem",
                 },
               }}
             >

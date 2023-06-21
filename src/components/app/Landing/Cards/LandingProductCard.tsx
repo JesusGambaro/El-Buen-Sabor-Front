@@ -11,32 +11,48 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { useAuth0 } from "@auth0/auth0-react";
-
 import { Link } from "react-router-dom";
 import useCatalogueStore from "@store/catalogueStore";
-export const LandingCard = ({ product }: { product: any }) => {
+import { useApiMutation } from "@hooks/useQueries";
+import { Product } from "types/types";
+import { useEffect } from "react";
+import useMainStore from "@store/mainStore";
+export const LandingCard = ({ product }: { product: Product }) => {
   const toast = useToast();
   const { isAuthenticated } = useAuth0();
   const { filter, setFilter } = useCatalogueStore();
-  const addToCartHandler = () => {
+  const { mutate: editCart, data } = useApiMutation("PUT|cart/addProduct");
+  const { setCarrito } = useMainStore();
+  const addToCartHandler = async () => {
     if (!isAuthenticated) {
       return;
     }
-    //addToCart({ product, quantity: 1 });
-    toast({
-      title: "Producto agregado al carrito",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-      position: "top",
-      description: `${product.nombre} se ha agregado al carrito`,
-    });
+    try {
+      await addToCart();
+      toast({
+        title: "Producto agregado al carrito",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+        description: `${product.nombre} se ha agregado al carrito`,
+      });
+    } catch (error) {}
   };
   const discountValue = (price: number = 0, discount: number) =>
     Math.floor(price - (price * discount) / 100);
 
   //const { mutate: addToCart } = useAddToCart();
-
+   const addToCart = async () => {
+    //updateCart({ ...item, quantity: item.quantity + 1 });
+    await editCart({ id: product.id });
+  };
+  useEffect(() => {
+    //console.log("cartEdited", data);
+    if (data) {
+      setCarrito(data);
+    }
+  }, [data])
   return (
     <Card
       w="100%"
@@ -53,11 +69,7 @@ export const LandingCard = ({ product }: { product: any }) => {
         flexDirection="column"
         justifyContent={"space-between"}
       >
-        <Link
-          to={`/product/${product.id}`}
-          style={{ textDecoration: "none" }}
-          
-        >
+        <Link to={`/product/${product.id}`} style={{ textDecoration: "none" }}>
           <Image
             src={product.imgURL}
             alt={product.nombre}
@@ -97,7 +109,7 @@ export const LandingCard = ({ product }: { product: any }) => {
               alignItems="center"
             >
               <Text
-                //textDecoration={product.discount && "line-through"}
+              //textDecoration={product.discount && "line-through"}
               >
                 <i className="fa-solid fa-dollar-sign"></i>
                 {9999}

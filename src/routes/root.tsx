@@ -8,6 +8,7 @@ import { UserConfig } from "@components/app/UserConfig/UserConfig";
 import Dashboard from "@components/admin/Dashboard/Dashboard";
 import Stock from "@components/admin/Stock/Stock";
 import AdminPage from "@pages/AdminPage";
+import {CartDetailPage} from "@pages/CartDetailPage";
 
 const BrowserRouter = createBrowserRouter([
    {
@@ -36,7 +37,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/carrito",
-        element: <ProductDetailPage />,
+        element: <CartDetailPage />,
         errorElement: <ErrorPage />,
       },
     ],

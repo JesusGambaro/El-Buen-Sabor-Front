@@ -22,7 +22,12 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { MercadoPagoCard } from "./MercadoPagoCard/MercadoPagoCard";
-import { CreditCard } from "Types/types";
+type CreditCard = {
+  cardNumber: number;
+  cardName: string;
+  cardDate: Date;
+  cardCvv: number;
+};
 export const UserConfig = () => {
   
   const inputStyle = {
