@@ -33,7 +33,14 @@ type Carrito = {
   productosComprados: CartItem[];
   totalCompra: number;
 };
-
+interface Direccion {
+  calleNombre: string;
+  departamento: string;
+  numeracion: number;
+  aclaracion: string;
+  nroPiso: number;
+  id?: number;
+}
 type Order = {
   id: number;
   items: CartItem[];
@@ -177,6 +184,7 @@ export type {
   Product,
   CartItem,
   Order,
+  Direccion,
   User,
   State,
   Action,

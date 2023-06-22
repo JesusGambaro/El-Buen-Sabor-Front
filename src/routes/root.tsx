@@ -8,10 +8,12 @@ import { UserConfig } from "@components/app/UserConfig/UserConfig";
 import Dashboard from "@components/admin/Dashboard/Dashboard";
 import Stock from "@components/admin/Stock/Stock";
 import AdminPage from "@pages/AdminPage";
-import {CartDetailPage} from "@pages/CartDetailPage";
+import { CartDetailPage } from "@pages/CartDetailPage";
+import { Pedidos } from "@components/app/Pedidos/Pedidos";
+import { PedidoDetailPage } from "@pages/PedidoDetailPage";
 
 const BrowserRouter = createBrowserRouter([
-   {
+  {
     path: "/",
     element: <HomePage />,
     errorElement: <ErrorPage />,
@@ -38,6 +40,16 @@ const BrowserRouter = createBrowserRouter([
       {
         path: "/carrito",
         element: <CartDetailPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/pedidos",
+        element: <Pedidos />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/pedidos/:id",
+        element: <PedidoDetailPage />,
         errorElement: <ErrorPage />,
       },
     ],

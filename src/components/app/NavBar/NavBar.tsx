@@ -19,6 +19,14 @@ import {
   InputLeftElement,
   Input,
   TagLabel,
+  Drawer,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerBody,
+  DrawerFooter,
+  Text,
 } from "@chakra-ui/react";
 import { useColorMode, useColorModeValue } from "@chakra-ui/color-mode";
 import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
@@ -32,14 +40,13 @@ interface NavBarProps {
   openSideBar: () => void;
 }
 
-const NavBar = ({ openSideBar }: NavBarProps) => {
+const NavBar = () => {
   const location = useLocation();
-  
+
   const [inCartDetail, setInCartDetail] = useState(
     location.pathname == "/carrito"
   );
   useEffect(() => {
-    
     setInCartDetail(location.pathname == "/carrito");
   }, [location.pathname]);
   const { setToken, token } = useMainStore();
@@ -71,7 +78,11 @@ const NavBar = ({ openSideBar }: NavBarProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef: any = React.useRef(null);
   const mobile = useMediaQuery(`(max-width: 700px)`);
-
+  const {
+    isOpen: isOpenSideBar,
+    onOpen: OpenSideBar,
+    onClose: CloseSideBar,
+  } = useDisclosure();
   const handleIsAuth = () => {
     if (isAuthenticated) {
       onOpen();
@@ -92,6 +103,26 @@ const NavBar = ({ openSideBar }: NavBarProps) => {
       zIndex="100"
       h="5.5rem"
     >
+      {mobile && (
+        <Drawer isOpen={isOpenSideBar} onClose={CloseSideBar}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton
+              color="orange.300"
+              _hover={{
+                color: "orange.500",
+              }}
+              size="lg"
+            />
+            <DrawerHeader as="h2" fontSize="2xl" fontWeight="bold">
+              El Buen sabor
+            </DrawerHeader>
+            <DrawerBody></DrawerBody>
+            <DrawerFooter></DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      )}
+
       <Flex alignItems="center">
         <Box
           color="black"
@@ -107,12 +138,10 @@ const NavBar = ({ openSideBar }: NavBarProps) => {
             src="https://res.cloudinary.com/dquqzevft/image/upload/v1680564907/Logo.png"
             alt="El Buen Sabor"
             ml={2}
-            onClick={() => openSideBar()}
           />
         </Box>
         <Spacer />
-        {!mobile && (
-          <InputGroup size="md" w="30%" maxW="600px">
+        <InputGroup size="md" w="30%" maxW="600px">
             <InputLeftElement
               pointerEvents="none"
               children={<SearchIcon color="orange" />}
@@ -123,7 +152,6 @@ const NavBar = ({ openSideBar }: NavBarProps) => {
               focusBorderColor="orange.300"
             />
           </InputGroup>
-        )}
         <Spacer />
         {/**
          * ? Color Mode

@@ -25,19 +25,25 @@ import useMainStore from "@store/mainStore";
 const CartItem = ({
   cartItem,
   index,
+  isMobile,
 }: {
   cartItem: CartItem;
   index: number;
+  isMobile?: boolean;
 }) => {
-  const {mutate:addProduct,data:addedData} = useApiMutation("PUT|cart/addProduct");
-  const {mutate:delProducto,data:removedData} = useApiMutation("PUT|cart/delProduct");
-  
+  const { mutate: addProduct, data: addedData } = useApiMutation(
+    "PUT|cart/addProduct"
+  );
+  const { mutate: delProducto, data: removedData } = useApiMutation(
+    "PUT|cart/delProduct"
+  );
+
   const { setCarrito } = useMainStore();
   const cancelRef = useRef() as any;
   const { onOpen: onOpenDeleteItem } = useDisclosure();
   //const { mutate: removeFromCart } = useRemoveFromCart();
   //const { mutate: updateCart } = useUpdateCart();
-  
+
   const handleDeleteItem = () => {
     delProducto({ id: cartItem.productoId });
   };
@@ -56,14 +62,14 @@ const CartItem = ({
   };
   useEffect(() => {
     console.log("entre");
-    
+
     if (addedData) {
       setCarrito(addedData);
-    }else if (removedData) {
+    } else if (removedData) {
       setCarrito(removedData);
     }
-  }, [addedData,removedData])
-  
+  }, [addedData, removedData]);
+
   const btnStyles = {
     colorScheme: "orange",
     variant: "outline",
@@ -86,6 +92,7 @@ const CartItem = ({
       alignItems="center"
       justifyContent="center"
       p={3}
+      h={isMobile ? "10rem" : "5rem"}
       direction={{ base: "column", sm: "row" }}
     >
       <Image
@@ -103,11 +110,16 @@ const CartItem = ({
         <Text fontSize="sm" fontWeight="bold">
           ${cartItem.precioTotal}
         </Text>
-        
       </Box>
       <Spacer />
 
-      <ButtonGroup alignItems={"center"} gap={"0.5rem"} size="sm" isAttached variant="outline">
+      <ButtonGroup
+        alignItems={"center"}
+        gap={"0.5rem"}
+        size="sm"
+        isAttached
+        variant="outline"
+      >
         <Button
           {...btnStyles}
           onClick={() => {

@@ -4,16 +4,14 @@ import SideIcon from "./SideIcon/SideIcon";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import { Drawer } from "@mantine/core";
+
 import { SideBarProps } from "types/types";
 
-const SideBar = ({ isOpen, onClose }: SideBarProps) => {
+const SideBar = () => {
   const { isAuthenticated } = useAuth0();
   const mobile = useMediaQuery(`(max-width: 700px)`);
   return mobile ? (
-    <Drawer opened={isOpen} w="100%" onClose={onClose} withCloseButton={true}>
-      Drawer without header, press escape or click on overlay to close
-    </Drawer>
+    <></>
   ) : (
     <Box
       h="calc(100vh - 5.5rem)"
@@ -41,6 +39,7 @@ const SideBar = ({ isOpen, onClose }: SideBarProps) => {
           <>
             <SideIcon label="Carrito" />
             <SideIcon label="Configuración" />
+            <SideIcon label="Pedidos" />
           </>
         )}
       </Flex>

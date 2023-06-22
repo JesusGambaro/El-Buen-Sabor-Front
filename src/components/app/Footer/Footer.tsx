@@ -12,7 +12,7 @@ import "./footer.scss";
 import { useMediaQuery } from "@mantine/hooks";
 export const Footer = () => {
   const mobile = useMediaQuery(`(max-width: 700px)`);
-  console.log(mobile);
+ 
 
   return (
     <Flex

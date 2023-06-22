@@ -12,7 +12,7 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 import { InputBase, RangeSlider, Title, Input } from "@mantine/core";
-import { Category } from "Types/types";
+import { Category } from "types/types";
 import { useEffect, useState } from "react";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 

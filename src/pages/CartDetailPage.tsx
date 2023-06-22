@@ -25,13 +25,14 @@ import {
   FormControl,
   ModalFooter,
   border,
+  Card,
 } from "@chakra-ui/react";
 import useMainStore from "@store/mainStore";
 import * as Yup from "yup";
 import React, { useEffect, useState } from "react";
 import Loader from "@app/Loader/Loader";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-
+import { Wallet, initMercadoPago } from "@mercadopago/sdk-react";
 import {
   withFormik,
   FormikProps,
@@ -41,11 +42,6 @@ import {
   ErrorMessage,
   Formik,
 } from "formik";
-interface Values {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
 import {
   CartItem as cartItem,
   CartProps,
@@ -53,6 +49,7 @@ import {
   Category,
   Product,
   Carrito,
+  Direccion,
 } from "types/types";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import { btnStyle } from "@utils/theme";
@@ -63,10 +60,21 @@ import { InputLabel } from "@mantine/core/lib/Input/InputLabel/InputLabel";
 import { useMediaQuery } from "@mantine/hooks";
 import useCatalogueStore from "@store/catalogueStore";
 import { LandingCard } from "@components/app/Landing/Cards/LandingProductCard";
-import { useApiQuery } from "@hooks/useQueries";
+import { useApiMutation, useApiQuery } from "@hooks/useQueries";
+interface responsePrefId {
+  preferenceId: string;
+}
 export const CartDetailPage = () => {
   const { cart: carrito, loading, setCarrito } = useMainStore();
-  const { productos } = useCatalogueStore();
+  type QueryPropsProductos = {
+    data: Product[];
+    error: any;
+    isLoading: boolean;
+  };
+  const { data: productos } = useApiQuery(
+    "GET|producto",
+    null
+  ) as QueryPropsProductos;
   const [tabIndex, setTabIndex] = useState(0);
   const setActiveTab = (index: number) => {
     setTabIndex(index);
@@ -87,7 +95,7 @@ export const CartDetailPage = () => {
 
       // Obtiene el elemento aleatorio y lo elimina del array copiado
       const elemento = array.splice(indice, 1)[0];
-      console.log(elemento);
+      //console.log(elemento);
 
       // Agrega el elemento aleatorio al array de elementos al azar
       elementosAlAzar.push(elemento);
@@ -98,15 +106,34 @@ export const CartDetailPage = () => {
   const [tipoEntrega, setTipoEntrega] = useState(0);
   const [elementosAlAzar, setelementosAlAzar] = useState([] as Product[]);
   useEffect(() => {
-    if (productos.length) {
+    if (productos && productos.length) {
       setelementosAlAzar(obtenerElementosAlAzar(productos, 5));
     }
   }, [productos]);
-  let cantProductos = carrito?.productosComprados.reduce(
-    (sum, producto) => sum + producto.cantidad,
-    0
-  );
-
+  const [showPaymentButton, setShowPaymentButton] = useState(false);
+  const [prefId, setPrefId] = useState("");
+  const mercadoPagoPayment = async (cart: Carrito) => {
+    let cantArticulos = cart.productosComprados.reduce(
+      (sum, producto) => sum + producto.cantidad,
+      0
+    );
+    try {
+      initMercadoPago("TEST-f9a81470-5f5f-467c-85fe-e3d799f97788", {
+        locale: "es-AR",
+      });
+      const orderItem = {
+        code: cart.totalCompra + "-" + cantArticulos,
+        title: `${cantArticulos} artículos`,
+        description: new Date(),
+        price: cart.totalCompra,
+      };
+      // const pref_id: responsePrefId = await createPreferenceMP(orderItem);
+      setPrefId("http://localhost:5173/carrito");
+      setShowPaymentButton(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Container
       maxW="container.2xl"
@@ -131,9 +158,6 @@ export const CartDetailPage = () => {
           Volver al catálogo
         </Button>
       </SimpleGrid>
-      <Heading p={"1rem"} as="h2" textAlign={"left"} w={"100%"} size="xl">
-        Carrito de compras
-      </Heading>
       {loading ? (
         <Loader />
       ) : carrito && carrito.productosComprados.length > 0 ? (
@@ -148,20 +172,25 @@ export const CartDetailPage = () => {
               gap={"1rem"}
               p={0}
             >
-              <SimpleGrid
-                templateAreas={"2fr 1fr"}
-                background={"blackAlpha.100"}
-                columns={2}
-                minChildWidth={mobile ? "15rem" : "30rem"}
-                w={mobile ? "95%" : "75%"}
+              <Flex
+                flexWrap={"wrap"}
+                w={mobile ? "95%" : "80%"}
+                justifyContent={mobile ? "center" : "space-between"}
+                alignItems={"top"}
               >
-                <Stack p={"2rem"} spacing={10}>
+                <Stack
+                  flexBasis={"35rem"}
+                  flexShrink={"2"}
+                  height={"40rem"}
+                  background={"blackAlpha.100"}
+                  p={"1rem"}
+                  spacing={5}
+                >
                   <Heading as="h2" size="lg" mb="1rem">
                     Productos
                   </Heading>
-                  <SimpleGrid
-                    minChildWidth={mobile ? "15rem" : "30rem"}
-                    spacing={5}
+                  <Flex
+                    flexDir={"column"}
                     id="products-container"
                     margin={0}
                     height={"30rem"}
@@ -175,17 +204,24 @@ export const CartDetailPage = () => {
                           key={"cart-item-" + i}
                           cartItem={cartItem}
                           index={i}
+                          isMobile={mobile}
                         />
                       )
                     )}
-                  </SimpleGrid>
+                  </Flex>
                 </Stack>
-                <Stack id="resumen-compra" p={"2rem"} spacing={10}>
+                <Stack
+                  background={"blackAlpha.100"}
+                  id="resumen-compra"
+                  p={"1rem"}
+                  spacing={5}
+                  height={"30rem"}
+                >
                   <Heading as="h2" size="lg" mb="1rem">
                     Resumen de compra
                   </Heading>
                   <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontSize="1.3rem">
+                    <Text>
                       Productos {"("}
                       <Mark fontWeight={"bold"}>
                         {carrito?.productosComprados.reduce(
@@ -193,52 +229,49 @@ export const CartDetailPage = () => {
                           0
                         )}
                       </Mark>
-                      {")"}
                     </Text>
-                    <Text fontSize="1.3rem">
+                    <Text>
                       $<Mark fontWeight={"bold"}>{carrito.totalCompra}</Mark>
                     </Text>
                   </Flex>
                   <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontSize="1.3rem">Envio</Text>
+                    <Text>Envio</Text>
                     {tipoEntrega == 1 ? (
-                      <Text fontSize="1.3rem">
+                      <Text>
                         $
                         <Mark fontWeight={"bold"}>
                           {carrito.totalCompra * 0.1}
                         </Mark>
                       </Text>
                     ) : (
-                      <Text fontSize="1.3rem">-</Text>
+                      <Text>-</Text>
                     )}
                   </Flex>
                   <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontSize="1.3rem">Descuento</Text>
+                    <Text>Descuento</Text>
                     {tipoEntrega == 0 ? (
-                      <Text fontSize="1.3rem" textDecoration={"line-through"}>
+                      <Text textDecoration={"line-through"}>
                         $
                         <Mark fontWeight={"bold"}>
                           {carrito.totalCompra * 0.1}
                         </Mark>
                       </Text>
                     ) : (
-                      <Text fontSize="1.3rem">-</Text>
+                      <Text>-</Text>
                     )}
                   </Flex>
                   <Box w={"90%"} height={"2px"} background={"grey"}></Box>
                   <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontSize="1.4rem" fontWeight={"bold"}>
-                      Total
-                    </Text>
+                    <Text fontWeight={"bold"}>Total</Text>
                     {tipoEntrega == 0 ? (
-                      <Text fontSize="1.3rem">
+                      <Text>
                         $
                         <Mark fontWeight={"bold"}>
                           {carrito.totalCompra - carrito.totalCompra * 0.1}
                         </Mark>
                       </Text>
                     ) : (
-                      <Text fontSize="1.3rem">
+                      <Text>
                         $
                         <Mark fontWeight={"bold"}>
                           {carrito.totalCompra + carrito.totalCompra * 0.1}
@@ -256,9 +289,7 @@ export const CartDetailPage = () => {
                       }}
                       background={"white"}
                     >
-                      <option value="0" selected>
-                        Retiro en local
-                      </option>
+                      <option value="0">Retiro en local</option>
                       <option value="1">Delivery</option>
                     </Select>
                   </Stack>
@@ -270,12 +301,13 @@ export const CartDetailPage = () => {
                     {...btnStyle}
                     onClick={() => {
                       setActiveTab(1);
+                      mercadoPagoPayment(carrito);
                     }}
                   >
                     Continuar
                   </Button>
                 </Stack>
-              </SimpleGrid>
+              </Flex>
               <Heading as="h2" size="lg" mb="1rem">
                 Tambien te puede interesar
               </Heading>
@@ -297,22 +329,27 @@ export const CartDetailPage = () => {
               gap={"1rem"}
               p={0}
             >
-              <SimpleGrid
-                templateAreas={"2fr 1fr"}
-                background={"blackAlpha.100"}
-                columns={2}
-                minChildWidth={mobile ? "15rem" : "30rem"}
-                w={mobile ? "100%" : "75%"}
+              <Flex
+                flexWrap={"wrap"}
+                w={mobile ? "95%" : "80%"}
+                justifyContent={mobile ? "center" : "space-between"}
+                alignItems={"top"}
               >
-                <Stack p={"2rem"} spacing={10}>
+                <Stack
+                  flexBasis={"35rem"}
+                  flexShrink={"2"}
+                  background={"blackAlpha.100"}
+                  p={"1rem"}
+                  spacing={5}
+                >
                   <Heading as="h2" size="lg" mb="1rem">
                     Detalle del pedido
                   </Heading>
                   <CartForm />
                   <Button
                     variant={"solid"}
-                    w="20rem"
-                    h="4rem"
+                    w="10rem"
+                    h="3rem"
                     {...btnStyle}
                     onClick={() => {
                       setActiveTab(0);
@@ -321,12 +358,18 @@ export const CartDetailPage = () => {
                     Volver
                   </Button>
                 </Stack>
-                <Stack id="resumen-compra" p={"2rem"} spacing={10}>
+                <Stack
+                  background={"blackAlpha.100"}
+                  id="resumen-compra"
+                  p={"1rem"}
+                  spacing={5}
+                  height={"30rem"}
+                >
                   <Heading as="h2" size="lg" mb="1rem">
                     Resumen de compra
                   </Heading>
                   <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontSize="1.3rem">
+                    <Text>
                       Productos {"("}
                       <Mark fontWeight={"bold"}>
                         {carrito?.productosComprados.reduce(
@@ -334,52 +377,49 @@ export const CartDetailPage = () => {
                           0
                         )}
                       </Mark>
-                      {")"}
                     </Text>
-                    <Text fontSize="1.3rem">
+                    <Text>
                       $<Mark fontWeight={"bold"}>{carrito.totalCompra}</Mark>
                     </Text>
                   </Flex>
                   <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontSize="1.3rem">Envio</Text>
+                    <Text>Envio</Text>
                     {tipoEntrega == 1 ? (
-                      <Text fontSize="1.3rem">
+                      <Text>
                         $
                         <Mark fontWeight={"bold"}>
                           {carrito.totalCompra * 0.1}
                         </Mark>
                       </Text>
                     ) : (
-                      <Text fontSize="1.3rem">-</Text>
+                      <Text>-</Text>
                     )}
                   </Flex>
                   <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontSize="1.3rem">Descuento</Text>
+                    <Text>Descuento</Text>
                     {tipoEntrega == 0 ? (
-                      <Text fontSize="1.3rem" textDecoration={"line-through"}>
+                      <Text textDecoration={"line-through"}>
                         $
                         <Mark fontWeight={"bold"}>
                           {carrito.totalCompra * 0.1}
                         </Mark>
                       </Text>
                     ) : (
-                      <Text fontSize="1.3rem">-</Text>
+                      <Text>-</Text>
                     )}
                   </Flex>
                   <Box w={"90%"} height={"2px"} background={"grey"}></Box>
                   <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontSize="1.4rem" fontWeight={"bold"}>
-                      Total
-                    </Text>
+                    <Text fontWeight={"bold"}>Total</Text>
                     {tipoEntrega == 0 ? (
-                      <Text fontSize="1.3rem">
+                      <Text>
                         $
                         <Mark fontWeight={"bold"}>
                           {carrito.totalCompra - carrito.totalCompra * 0.1}
                         </Mark>
                       </Text>
                     ) : (
-                      <Text fontSize="1.3rem">
+                      <Text>
                         $
                         <Mark fontWeight={"bold"}>
                           {carrito.totalCompra + carrito.totalCompra * 0.1}
@@ -397,26 +437,29 @@ export const CartDetailPage = () => {
                       }}
                       background={"white"}
                     >
-                      <option value="0" selected>
-                        Retiro en local
-                      </option>
+                      <option value="0">Retiro en local</option>
                       <option value="1">Delivery</option>
                     </Select>
                   </Stack>
 
-                  <Button
+                  {/* <Button
                     variant={"solid"}
                     w="20rem"
                     h="4rem"
                     {...btnStyle}
                     onClick={() => {
-                      //setActiveTab(1);
+                      mercadoPagoPayment(carrito);
                     }}
                   >
-                    Confirmar Pedido
-                  </Button>
+                    Pagar
+                  </Button> */}
+                  {showPaymentButton && (
+                    <div id="wallet_container">
+                      <Wallet initialization={{ preferenceId: prefId }} />
+                    </div>
+                  )}
                 </Stack>
-              </SimpleGrid>
+              </Flex>
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -440,14 +483,7 @@ export const CartDetailPage = () => {
     </Container>
   );
 };
-interface Direccion {
-  calleNombre: string;
-  departamento: string;
-  numeracion: number;
-  aclaracion: string;
-  nroPiso: number;
-  id?: number;
-}
+
 const CartForm = () => {
   const { user, isAuthenticated } = useAuth0();
   const location = useLocation();
@@ -481,106 +517,124 @@ const CartForm = () => {
     error: any;
     isLoading: boolean;
   }
-  const {
-    data: direcciones,
-    error: dirError,
-    isLoading,
-  } = useApiQuery("GET|direcciones/getDirecciones", null) as QueryProps;
   const [isOpen, setisOpen] = useState<boolean>(false);
-  return (
-    <Formik
-      validationSchema={Yup.object({
-        nombre: Yup.string().required("Campo requerido"),
-        email: Yup.string()
-          .email("Ingrese un email valido")
-          .required("Campo requerido"),
-      })}
-      initialValues={initialValues}
-      enableReinitialize={true}
-      onSubmit={async (values) => {
-        console.log(values);
-      }}
-    >
-      {(Formik) => (
-        <>
-          <Form autoComplete="off" className="form-obraAlta">
-            <Flex flexWrap={"wrap"} gap={5}>
-              <InputGroup
-                flexBasis={"15rem"}
-                flexShrink={"2"}
-                flexGrow={"1"}
-                flexDir={"column"}
-                gap={"1rem"}
-              >
-                <FormLabel {...labelStyle}>Nombre</FormLabel>
-                <Input
-                  fontWeight={"semibold"}
-                  focusBorderColor="#ffb701"
-                  name="nombre"
-                  as={Field}
-                  background={"white"}
-                ></Input>
-                <Text fontWeight={"bold"} color={"red"}>
-                  {Formik.errors.nombre}
-                </Text>
-              </InputGroup>
-              <InputGroup
-                flexBasis={"20rem"}
-                flexGrow={"2"}
-                flexDir={"column"}
-                gap={"1rem"}
-              >
-                <FormLabel {...labelStyle}>Email</FormLabel>
-                <Input
-                  fontWeight={"semibold"}
-                  focusBorderColor="#ffb701"
-                  name="email"
-                  as={Field}
-                  background={"white"}
-                ></Input>
-                <Text fontWeight={"bold"} color={"red"}>
-                  {Formik.errors.email}
-                </Text>
-              </InputGroup>
-            </Flex>
-            <Flex flexDir={"column"} gap={"1rem"}>
-              <Text {...labelStyle}>Direccion</Text>
-              <Select background={"white"}>
-                {direcciones?.map((d) => {
-                  return (
-                    <option value={d.id} selected>
-                      {d.departamento} - {d.calleNombre} - {d.numeracion}
-                    </option>
-                  );
-                })}
-              </Select>
-              <Button
-                size="xl"
-                w="10rem"
-                h="3rem"
-                padding={"1rem"}
-                {...btnStyle}
-                onClick={() => {
-                  setisOpen(true);
-                }}
-              >
-                + Agregar Direccion
-              </Button>
 
-              {ModalAddCard(
-                isOpen,
-                () => {
-                  setisOpen(false);
-                },
-                (newDireccion: Direccion) => {
-                  setisOpen(false);
-                }
-              )}
-            </Flex>
-          </Form>
-        </>
+  const { mutate: addDirection, data: addedDataDirection } = useApiMutation(
+    "POST|direcciones/addDireccion"
+  );
+  const { direcciones, loading, setDirecciones } = useMainStore();
+  const { data: dataDirecciones, error } = useApiQuery(
+    "GET|direcciones/getDirecciones",
+    null
+  ) as QueryProps;
+  useEffect(() => {
+    if (dataDirecciones && !direcciones) {
+      setDirecciones(dataDirecciones);
+    }
+  }, [dataDirecciones]);
+  useEffect(() => {
+    if (addedDataDirection) {
+      setDirecciones(addedDataDirection);
+    }
+  }, [addedDataDirection]);
+  return (
+    <>
+      {ModalAddCard(
+        isOpen,
+        () => {
+          setisOpen(false);
+        },
+        (newDireccion: Direccion) => {
+          setisOpen(false);
+          addDirection(newDireccion);
+        }
       )}
-    </Formik>
+      <Formik
+        validationSchema={Yup.object({
+          nombre: Yup.string().required("Campo requerido"),
+          email: Yup.string()
+            .email("Ingrese un email valido")
+            .required("Campo requerido"),
+        })}
+        initialValues={initialValues}
+        enableReinitialize={true}
+        onSubmit={async (values) => {
+          console.log(values);
+        }}
+      >
+        {(Formik) => (
+          <>
+            <Form autoComplete="off" className="form-obraAlta">
+              <Flex flexWrap={"wrap"} gap={5}>
+                <InputGroup
+                  flexBasis={"15rem"}
+                  flexShrink={"2"}
+                  flexGrow={"1"}
+                  flexDir={"column"}
+                  gap={"1rem"}
+                >
+                  <FormLabel {...labelStyle}>Nombre</FormLabel>
+                  <Input
+                    fontWeight={"semibold"}
+                    focusBorderColor="#ffb701"
+                    name="nombre"
+                    as={Field}
+                    background={"white"}
+                  ></Input>
+                  <Text fontWeight={"bold"} color={"red"}>
+                    {Formik.errors.nombre}
+                  </Text>
+                </InputGroup>
+                <InputGroup
+                  flexBasis={"20rem"}
+                  flexGrow={"2"}
+                  flexDir={"column"}
+                  gap={"1rem"}
+                >
+                  <FormLabel {...labelStyle}>Email</FormLabel>
+                  <Input
+                    fontWeight={"semibold"}
+                    focusBorderColor="#ffb701"
+                    name="email"
+                    as={Field}
+                    background={"white"}
+                  ></Input>
+                  <Text fontWeight={"bold"} color={"red"}>
+                    {Formik.errors.email}
+                  </Text>
+                </InputGroup>
+              </Flex>
+              <Flex flexDir={"column"} gap={"1rem"}>
+                <Text {...labelStyle}>Direccion</Text>
+                <Flex gap={"0.5rem"}>
+                  <Select background={"white"}>
+                    {direcciones?.map((d) => {
+                      return (
+                        <option value={d.id}>
+                          {d.departamento} - {d.calleNombre} - {d.numeracion}
+                        </option>
+                      );
+                    })}
+                  </Select>
+                  <Button
+                    size="xl"
+                    w="10rem"
+                    h="2.5rem"
+                    padding={"1rem"}
+                    {...btnStyle}
+                    onClick={() => {
+                      setisOpen(true);
+                    }}
+                  >
+                    + Agregar Direccion
+                  </Button>
+                </Flex>
+              </Flex>
+            </Form>
+          </>
+        )}
+      </Formik>
+    </>
   );
 };
 
@@ -627,8 +681,9 @@ const ModalAddCard = (_isOpen = false, onClose: any, onSave: any) => {
     departamento: "",
     nroPiso: 0,
     numeracion: 0,
+    id: -1,
   });
-  const [isOpen, setisOpen] = useState<boolean>(false);
+
   return (
     <Modal
       isOpen={_isOpen}
@@ -637,6 +692,7 @@ const ModalAddCard = (_isOpen = false, onClose: any, onSave: any) => {
       }}
       size={"xl"}
       isCentered
+      closeOnOverlayClick={false}
     >
       <ModalOverlay />
       <ModalContent
@@ -650,6 +706,8 @@ const ModalAddCard = (_isOpen = false, onClose: any, onSave: any) => {
           h={"100%"}
           lineHeight={""}
           textAlign={"center"}
+          fontWeight={"bold"}
+          fontSize={"xx-large"}
         >
           Agrega una nueva direccion
         </ModalHeader>
@@ -664,52 +722,146 @@ const ModalAddCard = (_isOpen = false, onClose: any, onSave: any) => {
           fontWeight={"bold"}
           fontSize={"1.1rem"}
           border-radius="15px"
+          alignItems={"center"}
         />
 
         <ModalBody pb={6}>
-          <Flex flexDir={"column"} gap={"2rem"}>
-            <FormControl>
-              <FormLabel {...labelStyle}>Departamento</FormLabel>
-              <InputGroup>
-                <Flex justifyContent={"center"} w={"100%"}>
-                  <Input
-                    {...inputStyle}
-                    type={"text"}
-                    value={newDireccion.departamento}
-                    onChange={({ target }) => {
-                      setNewDireccion({
-                        ...newDireccion,
-                        departamento: target.value,
-                      });
-                    }}
-                  />
-                </Flex>
-              </InputGroup>
-            </FormControl>
-          </Flex>
+          <Formik
+            validationSchema={Yup.object({
+              departamento: Yup.string().required("*Campo requerido"),
+              calleNombre: Yup.string().required("*Campo requerido"),
+              numeracion: Yup.number()
+                .moreThan(0, "Ingrese un valor valido")
+                .required("*Campo requerido"),
+            })}
+            initialValues={newDireccion}
+            enableReinitialize={true}
+            onSubmit={async (values) => {
+              console.log(values);
+              onSave(values);
+            }}
+          >
+            {(Formik) => (
+              <>
+                <Form autoComplete="off" className="form-obraAlta">
+                  <Flex flexWrap={"wrap"} gap={6}>
+                    <InputGroup
+                      flexBasis={"20rem"}
+                      flexGrow={"2"}
+                      flexDir={"column"}
+                      gap={".5rem"}
+                    >
+                      <FormLabel {...labelStyle}>Departamento</FormLabel>
+                      <Input
+                        fontWeight={"semibold"}
+                        focusBorderColor="#ffb701"
+                        name="departamento"
+                        as={Field}
+                        background={"white"}
+                      ></Input>
+                      <Text fontWeight={"bold"} color={"white"}>
+                        {Formik.errors.departamento}
+                      </Text>
+                    </InputGroup>
+                    <InputGroup
+                      flexBasis={"20rem"}
+                      flexGrow={"2"}
+                      flexDir={"column"}
+                      gap={".5rem"}
+                    >
+                      <FormLabel {...labelStyle}>Calle</FormLabel>
+                      <Input
+                        fontWeight={"semibold"}
+                        focusBorderColor="#ffb701"
+                        name="calleNombre"
+                        as={Field}
+                        background={"white"}
+                      ></Input>
+                      <Text fontWeight={"bold"} color={"white"}>
+                        {Formik.errors.calleNombre}
+                      </Text>
+                    </InputGroup>
+                    <Flex
+                      justifyContent={"space-between"}
+                      flexWrap={"wrap"}
+                      gap={5}
+                    >
+                      <InputGroup
+                        flexBasis={"10rem"}
+                        flexDir={"column"}
+                        gap={".5rem"}
+                        flexGrow={"2"}
+                      >
+                        <FormLabel {...labelStyle}>Numeracion</FormLabel>
+                        <Input
+                          fontWeight={"semibold"}
+                          focusBorderColor="#ffb701"
+                          name="numeracion"
+                          as={Field}
+                          type="number"
+                          background={"white"}
+                        ></Input>
+                        <Text fontWeight={"bold"} color={"white"}>
+                          {Formik.errors.numeracion}
+                        </Text>
+                      </InputGroup>
+                      <InputGroup
+                        flexBasis={"5rem"}
+                        flexDir={"column"}
+                        gap={".5rem"}
+                        flexGrow={"2"}
+                      >
+                        <FormLabel {...labelStyle}>Numero Piso</FormLabel>
+                        <Input
+                          fontWeight={"semibold"}
+                          focusBorderColor="#ffb701"
+                          name="nroPiso"
+                          as={Field}
+                          type="number"
+                          background={"white"}
+                        ></Input>
+                      </InputGroup>
+                    </Flex>
+                  </Flex>
+                  <Flex
+                    paddingTop={"1rem"}
+                    gap={5}
+                    justifyContent={"flex-end"}
+                    alignItems={"center"}
+                    flexDir={"row"}
+                  >
+                    <Button
+                      background={"#ffb701"}
+                      _hover={{
+                        background: "#e4a400",
+                      }}
+                      color={"white"}
+                      onClick={() => {
+                        //onSave(newCard);
+                      }}
+                      type="submit"
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      color={"white"}
+                      background={"red"}
+                      _hover={{
+                        background: "red.900",
+                      }}
+                      onClick={() => {
+                        onClose();
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Flex>
+                </Form>
+              </>
+            )}
+          </Formik>
         </ModalBody>
-        <ModalFooter>
-          <Button
-            background={"#ffb701"}
-            _hover={{
-              background: "#e4a400",
-            }}
-            color={"white"}
-            mr={3}
-            onClick={() => {
-              //onSave(newCard);
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            onClick={() => {
-              onClose();
-            }}
-          >
-            Cancel
-          </Button>
-        </ModalFooter>
+        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );

@@ -13,7 +13,8 @@ const SideIcon = ({ label,redirects,onClickFunc }: SideIconProps) => {
     Home: "fa-solid fa-home",
     Catálogo: "fa-solid fa-utensils",
     Carrito: "fa-solid fa-cart-shopping",
-    Configuración: "fa-solid fa-gear",
+    Configuración: "fa-solid fa-user",
+    Pedidos: "fa-solid fa-list",
   };
 
   return (

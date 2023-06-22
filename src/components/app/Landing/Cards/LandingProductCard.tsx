@@ -55,7 +55,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
   }, [data])
   return (
     <Card
-      w="100%"
+      w="15rem"
       maxW="xs"
       key={product.id}
       borderRadius="2rem"

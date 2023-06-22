@@ -1,14 +1,16 @@
 import { create } from "zustand";
-import { Carrito, CartItem } from "types/types";
+import { Carrito, CartItem, Direccion } from "types/types";
 import createSelectors from "./selectors";
 import { mountStoreDevtool } from "simple-zustand-devtools";
 
 type MainStore = {
   cart?: Carrito;
   token: string;
+  direcciones?: Direccion[];
   loading: boolean;
   setToken: (token: string) => void;
   setCarrito: (cart: Carrito) => void;
+  setDirecciones: (direcciones: Direccion[]) => void;
 };
 
 const initialState = {
@@ -27,6 +29,12 @@ const useMainStore = create<MainStore>((set, get) => ({
     set((state) => ({
       ...state,
       cart,
+    }));
+  },
+  setDirecciones: (direcciones: Direccion[]) => {
+    set((state) => ({
+      ...state,
+      direcciones,
     }));
   },
 }));

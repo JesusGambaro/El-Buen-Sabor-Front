@@ -43,12 +43,12 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
   //   data: CartType[];
   //   isLoading: boolean;
   // };et: [0]
-  const { cart: carrito, loading, setCarrito } = useMainStore();
   type QueryPropsCarrito = {
     data: Carrito;
     error: any;
     isLoading: boolean;
   };
+  const { cart: carrito, loading, setCarrito } = useMainStore();
   const { data, error, isLoading } = useApiQuery(
     "GET|cart/getCarrito",
     null
