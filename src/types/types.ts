@@ -10,6 +10,7 @@ type Product = {
   productoCategoria: Category;
   insumoSet: number[];
   id: number;
+  precio: number;
 };
 
 type Category = {

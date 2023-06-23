@@ -43,7 +43,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
     Math.floor(price - (price * discount) / 100);
 
   //const { mutate: addToCart } = useAddToCart();
-   const addToCart = async () => {
+  const addToCart = async () => {
     //updateCart({ ...item, quantity: item.quantity + 1 });
     await editCart({ id: product.id });
   };
@@ -52,7 +52,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
     if (data) {
       setCarrito(data);
     }
-  }, [data])
+  }, [data]);
   return (
     <Card
       w="15rem"
@@ -112,7 +112,7 @@ export const LandingCard = ({ product }: { product: Product }) => {
               //textDecoration={product.discount && "line-through"}
               >
                 <i className="fa-solid fa-dollar-sign"></i>
-                {9999}
+                {product.precio}
               </Text>
               {/* {product.discount > 0 && (
                 <Text as="span">

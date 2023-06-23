@@ -36,13 +36,21 @@ import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mantine/hooks";
 import useMainStore from "@store/mainStore";
 import { useLocation } from "react-router-dom";
+import useCatalogueStore from "@store/catalogueStore";
 interface NavBarProps {
   openSideBar: () => void;
 }
 
 const NavBar = () => {
   const location = useLocation();
-
+  const [nombre_like, setNombre_like] = useState("" as string);
+  const { filter, setFilter } = useCatalogueStore();
+  let handleSetFilter = () => {
+    setFilter({
+      ...filter,
+      nombre_like,
+    });
+  };
   const [inCartDetail, setInCartDetail] = useState(
     location.pathname == "/carrito"
   );
@@ -142,16 +150,28 @@ const NavBar = () => {
         </Box>
         <Spacer />
         <InputGroup size="md" w="30%" maxW="600px">
-            <InputLeftElement
-              pointerEvents="none"
-              children={<SearchIcon color="orange" />}
-            />
-            <Input
-              type="tel"
-              placeholder="Buscar comida..."
-              focusBorderColor="orange.300"
-            />
-          </InputGroup>
+          <InputLeftElement
+            onClick={() => {
+              handleSetFilter();
+            }}
+            children={<SearchIcon color="orange" />}
+          />
+          <Input
+            type="tel"
+            placeholder="Buscar comida..."
+            focusBorderColor="orange.300"
+            onChange={(e) => {
+              setNombre_like(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSetFilter();
+              } else if (e.key === "Backspace") {
+                handleSetFilter();
+              }
+            }}
+          />
+        </InputGroup>
         <Spacer />
         {/**
          * ? Color Mode
@@ -219,8 +239,20 @@ const NavBar = () => {
               />
               <MenuList>
                 <MenuGroup title="Perfil">
-                  <MenuItem>Mi cuenta</MenuItem>
-                  <MenuItem>Pedidos </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/pedidos");
+                    }}
+                  >
+                    Pedidos
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/carrito");
+                    }}
+                  >
+                    Carrito
+                  </MenuItem>
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup title="Configuración">
@@ -229,7 +261,7 @@ const NavBar = () => {
                       navigate("/configuración");
                     }}
                   >
-                    Configuración
+                    Mi cuenta
                   </MenuItem>
                   <MenuItem
                     onClick={() =>

@@ -5,7 +5,6 @@ import { Product } from 'types/types';
 type FilterCategory = {
     nombre_like?: string;
     id_categoria?: number;
-    id?: number;
 }
 
 type CatalogueStore = {

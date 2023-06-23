@@ -13,23 +13,23 @@ import "./catalogue.scss";
 import CatalogueLeftFilters from "./CatalogueLeftFilters";
 
 import CatalogueProductsContainer from "./CatalogueProductsContainer";
+import useCatalogueStore from "@store/catalogueStore";
 const Catalogue = () => {
   //const { data: categories } = useCategories();
-  //const { filter, setFilter } = useCatalogueStore();
-
-  // let handleSetFilter = (_id_categoria?: number, _nombre_like?: string) => {
-  //   setFilter({
-  //     ...filter,
-  //     id_categoria: _id_categoria,
-  //     nombre_like: _nombre_like,
-  //   });
-  // };
+  const { filter, setFilter } = useCatalogueStore();
+  let handleSetFilter = (id_categoria?: number, nombre_like?: string) => {
+    setFilter({
+      ...filter,
+      id_categoria,
+      nombre_like,
+    });
+  };
   
   //--Temploral
-  let filter = { id_categoria: 0 };
-  let handleSetFilter = () => {
-    return;
-  };
+  // let filter = { id_categoria: 0 };
+  // let handleSetFilter = () => {
+  //   return;
+  // };
   //--
   return (
     <Container

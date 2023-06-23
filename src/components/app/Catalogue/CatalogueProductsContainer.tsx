@@ -14,7 +14,7 @@ const CatalogueProductsContainer = () => {
     isLoading: boolean;
   };
   const { data:products, error, isLoading } = useApiQuery(
-    "GET|producto",
+    "GET|producto/search" + `?${filter.id_categoria ? `id=${filter.id_categoria}&` : ""}${filter.nombre_like ? "nombre="+filter.nombre_like : ""}`,
     null
   ) as QueryProps;
   // let products: Product[] = [];
@@ -30,7 +30,7 @@ const CatalogueProductsContainer = () => {
     <Loader />
   ) : (
     <Flex flexGrow={1} gap={"2rem"} flexWrap={"wrap"}>
-      {products?.map((product: Product) => (
+      {productos?.map((product: Product) => (
         <LandingCard key={"landing-card-" + product.id} product={product} />
       ))}
     </Flex>

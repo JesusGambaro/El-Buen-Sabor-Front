@@ -161,22 +161,22 @@ export const CartDetailPage = () => {
       {loading ? (
         <Loader />
       ) : carrito && carrito.productosComprados.length > 0 ? (
-        <Tabs w={"100%"} index={tabIndex} isLazy>
-          <TabPanels>
-            <TabPanel
-              w="100%"
-              justifyContent={"center"}
-              alignItems={"center"}
-              display={"flex"}
-              flexDir={"column"}
-              gap={"1rem"}
-              p={0}
-            >
-              <Flex
-                flexWrap={"wrap"}
-                w={mobile ? "95%" : "80%"}
-                justifyContent={mobile ? "center" : "space-between"}
-                alignItems={"top"}
+        <Flex
+          flexWrap={"wrap"}
+          w={"95%"}
+          justifyContent={"center"}
+          alignItems={"top"}
+        >
+          <Tabs index={tabIndex} isLazy>
+            <TabPanels>
+              <TabPanel
+                w="100%"
+                justifyContent={"center"}
+                alignItems={"center"}
+                display={"flex"}
+                flexDir={"column"}
+                gap={"1rem"}
+                p={0}
               >
                 <Stack
                   flexBasis={"35rem"}
@@ -210,259 +210,141 @@ export const CartDetailPage = () => {
                     )}
                   </Flex>
                 </Stack>
-                <Stack
-                  background={"blackAlpha.100"}
-                  id="resumen-compra"
-                  p={"1rem"}
-                  spacing={5}
-                  height={"30rem"}
-                >
-                  <Heading as="h2" size="lg" mb="1rem">
-                    Resumen de compra
-                  </Heading>
-                  <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text>
-                      Productos {"("}
-                      <Mark fontWeight={"bold"}>
-                        {carrito?.productosComprados.reduce(
-                          (sum, producto) => sum + producto.cantidad,
-                          0
-                        )}
-                      </Mark>
-                    </Text>
-                    <Text>
-                      $<Mark fontWeight={"bold"}>{carrito.totalCompra}</Mark>
-                    </Text>
-                  </Flex>
-                  <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text>Envio</Text>
-                    {tipoEntrega == 1 ? (
-                      <Text>
-                        $
-                        <Mark fontWeight={"bold"}>
-                          {carrito.totalCompra * 0.1}
-                        </Mark>
-                      </Text>
-                    ) : (
-                      <Text>-</Text>
-                    )}
-                  </Flex>
-                  <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text>Descuento</Text>
-                    {tipoEntrega == 0 ? (
-                      <Text textDecoration={"line-through"}>
-                        $
-                        <Mark fontWeight={"bold"}>
-                          {carrito.totalCompra * 0.1}
-                        </Mark>
-                      </Text>
-                    ) : (
-                      <Text>-</Text>
-                    )}
-                  </Flex>
-                  <Box w={"90%"} height={"2px"} background={"grey"}></Box>
-                  <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontWeight={"bold"}>Total</Text>
-                    {tipoEntrega == 0 ? (
-                      <Text>
-                        $
-                        <Mark fontWeight={"bold"}>
-                          {carrito.totalCompra - carrito.totalCompra * 0.1}
-                        </Mark>
-                      </Text>
-                    ) : (
-                      <Text>
-                        $
-                        <Mark fontWeight={"bold"}>
-                          {carrito.totalCompra + carrito.totalCompra * 0.1}
-                        </Mark>
-                      </Text>
-                    )}
-                  </Flex>
-                  <Stack>
-                    <Heading as="h6" fontSize="1.3rem">
-                      Seleccione el tipo de entrega
-                    </Heading>
-                    <Select
-                      onChange={(e) => {
-                        setTipoEntrega(parseInt(e.target.value));
-                      }}
-                      background={"white"}
-                    >
-                      <option value="0">Retiro en local</option>
-                      <option value="1">Delivery</option>
-                    </Select>
-                  </Stack>
-
-                  <Button
-                    variant={"solid"}
-                    w="20rem"
-                    h="4rem"
-                    {...btnStyle}
-                    onClick={() => {
-                      setActiveTab(1);
-                      mercadoPagoPayment(carrito);
-                    }}
-                  >
-                    Continuar
-                  </Button>
-                </Stack>
-              </Flex>
-              <Heading as="h2" size="lg" mb="1rem">
-                Tambien te puede interesar
-              </Heading>
-              <Flex flexGrow={1} w={"100%"} gap={"2rem"} flexWrap={"wrap"}>
-                {elementosAlAzar.map((product: Product) => (
-                  <LandingCard
-                    key={"landing-card-" + product.id}
-                    product={product}
-                  />
-                ))}
-              </Flex>
-            </TabPanel>
-            <TabPanel
-              w="100%"
-              justifyContent={"center"}
-              alignItems={"center"}
-              display={"flex"}
-              flexDir={"column"}
-              gap={"1rem"}
-              p={0}
-            >
-              <Flex
-                flexWrap={"wrap"}
-                w={mobile ? "95%" : "80%"}
-                justifyContent={mobile ? "center" : "space-between"}
-                alignItems={"top"}
+              </TabPanel>
+              <TabPanel
+                w="100%"
+                justifyContent={"center"}
+                alignItems={"center"}
+                display={"flex"}
+                flexDir={"column"}
+                gap={"1rem"}
+                p={0}
               >
                 <Stack
-                  flexBasis={"35rem"}
-                  flexShrink={"2"}
-                  background={"blackAlpha.100"}
-                  p={"1rem"}
-                  spacing={5}
-                >
-                  <Heading as="h2" size="lg" mb="1rem">
-                    Detalle del pedido
-                  </Heading>
-                  <CartForm />
-                  <Button
-                    variant={"solid"}
-                    w="10rem"
-                    h="3rem"
-                    {...btnStyle}
-                    onClick={() => {
-                      setActiveTab(0);
-                    }}
+                    flexBasis={"35rem"}
+                    flexShrink={"2"}
+                    background={"blackAlpha.100"}
+                    p={"1rem"}
+                    spacing={5}
                   >
-                    Volver
-                  </Button>
-                </Stack>
-                <Stack
-                  background={"blackAlpha.100"}
-                  id="resumen-compra"
-                  p={"1rem"}
-                  spacing={5}
-                  height={"30rem"}
-                >
-                  <Heading as="h2" size="lg" mb="1rem">
-                    Resumen de compra
-                  </Heading>
-                  <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text>
-                      Productos {"("}
-                      <Mark fontWeight={"bold"}>
-                        {carrito?.productosComprados.reduce(
-                          (sum, producto) => sum + producto.cantidad,
-                          0
-                        )}
-                      </Mark>
-                    </Text>
-                    <Text>
-                      $<Mark fontWeight={"bold"}>{carrito.totalCompra}</Mark>
-                    </Text>
-                  </Flex>
-                  <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text>Envio</Text>
-                    {tipoEntrega == 1 ? (
-                      <Text>
-                        $
-                        <Mark fontWeight={"bold"}>
-                          {carrito.totalCompra * 0.1}
-                        </Mark>
-                      </Text>
-                    ) : (
-                      <Text>-</Text>
-                    )}
-                  </Flex>
-                  <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text>Descuento</Text>
-                    {tipoEntrega == 0 ? (
-                      <Text textDecoration={"line-through"}>
-                        $
-                        <Mark fontWeight={"bold"}>
-                          {carrito.totalCompra * 0.1}
-                        </Mark>
-                      </Text>
-                    ) : (
-                      <Text>-</Text>
-                    )}
-                  </Flex>
-                  <Box w={"90%"} height={"2px"} background={"grey"}></Box>
-                  <Flex w={"90%"} justifyContent={"space-between"}>
-                    <Text fontWeight={"bold"}>Total</Text>
-                    {tipoEntrega == 0 ? (
-                      <Text>
-                        $
-                        <Mark fontWeight={"bold"}>
-                          {carrito.totalCompra - carrito.totalCompra * 0.1}
-                        </Mark>
-                      </Text>
-                    ) : (
-                      <Text>
-                        $
-                        <Mark fontWeight={"bold"}>
-                          {carrito.totalCompra + carrito.totalCompra * 0.1}
-                        </Mark>
-                      </Text>
-                    )}
-                  </Flex>
-                  <Stack>
-                    <Heading as="h6" fontSize="1.3rem">
-                      Seleccione el tipo de entrega
+                    <Heading as="h2" size="lg" mb="1rem">
+                      Detalle del pedido
                     </Heading>
-                    <Select
-                      onChange={(e) => {
-                        setTipoEntrega(parseInt(e.target.value));
+                    <CartForm />
+                    <Button
+                      variant={"solid"}
+                      w="10rem"
+                      h="3rem"
+                      {...btnStyle}
+                      onClick={() => {
+                        setActiveTab(0);
                       }}
-                      background={"white"}
                     >
-                      <option value="0">Retiro en local</option>
-                      <option value="1">Delivery</option>
-                    </Select>
+                      Volver
+                    </Button>
                   </Stack>
-
-                  {/* <Button
-                    variant={"solid"}
-                    w="20rem"
-                    h="4rem"
-                    {...btnStyle}
-                    onClick={() => {
-                      mercadoPagoPayment(carrito);
-                    }}
-                  >
-                    Pagar
-                  </Button> */}
-                  {showPaymentButton && (
-                    <div id="wallet_container">
-                      <Wallet initialization={{ preferenceId: prefId }} />
-                    </div>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+          <Stack
+            background={"blackAlpha.100"}
+            id="resumen-compra"
+            p={"1rem"}
+            spacing={5}
+              height={"30rem"}
+            w={mobile ? "100%" : ""}
+          >
+            <Heading as="h2" size="lg" mb="1rem">
+              Resumen de compra
+            </Heading>
+            <Flex w={"90%"} justifyContent={"space-between"}>
+              <Text>
+                Productos {"("}
+                <Mark fontWeight={"bold"}>
+                  {carrito?.productosComprados.reduce(
+                    (sum, producto) => sum + producto.cantidad,
+                    0
                   )}
-                </Stack>
-              </Flex>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+                </Mark>
+              </Text>
+              <Text>
+                $<Mark fontWeight={"bold"}>{carrito.totalCompra}</Mark>
+              </Text>
+            </Flex>
+            <Flex w={"90%"} justifyContent={"space-between"}>
+              <Text>Envio</Text>
+              {tipoEntrega == 1 ? (
+                <Text>
+                  $<Mark fontWeight={"bold"}>{carrito.totalCompra * 0.1}</Mark>
+                </Text>
+              ) : (
+                <Text>-</Text>
+              )}
+            </Flex>
+            <Flex w={"90%"} justifyContent={"space-between"}>
+              <Text>Descuento</Text>
+              {tipoEntrega == 0 ? (
+                <Text textDecoration={"line-through"}>
+                  $<Mark fontWeight={"bold"}>{carrito.totalCompra * 0.1}</Mark>
+                </Text>
+              ) : (
+                <Text>-</Text>
+              )}
+            </Flex>
+            <Box w={"90%"} height={"2px"} background={"grey"}></Box>
+            <Flex w={"90%"} justifyContent={"space-between"}>
+              <Text fontWeight={"bold"}>Total</Text>
+              {tipoEntrega == 0 ? (
+                <Text>
+                  $
+                  <Mark fontWeight={"bold"}>
+                    {carrito.totalCompra - carrito.totalCompra * 0.1}
+                  </Mark>
+                </Text>
+              ) : (
+                <Text>
+                  $
+                  <Mark fontWeight={"bold"}>
+                    {carrito.totalCompra + carrito.totalCompra * 0.1}
+                  </Mark>
+                </Text>
+              )}
+            </Flex>
+            <Stack>
+              <Heading as="h6" fontSize="1.3rem">
+                Seleccione el tipo de entrega
+              </Heading>
+              <Select
+                onChange={(e) => {
+                  setTipoEntrega(parseInt(e.target.value));
+                }}
+                background={"white"}
+              >
+                <option value="0">Retiro en local</option>
+                <option value="1">Delivery</option>
+              </Select>
+            </Stack>
+
+            {showPaymentButton && tabIndex == 1 ? (
+              <div id="wallet_container">
+                <Wallet initialization={{ preferenceId: prefId }} />
+              </div>
+            ) : (
+              <Button
+                variant={"solid"}
+                w="20rem"
+                h="4rem"
+                {...btnStyle}
+                onClick={() => {
+                  setActiveTab(1);
+                  mercadoPagoPayment(carrito);
+                }}
+              >
+                Continuar
+              </Button>
+            )}
+          </Stack>
+        </Flex>
       ) : (
         <Alert
           status="warning"
@@ -480,6 +362,22 @@ export const CartDetailPage = () => {
           </AlertTitle>
         </Alert>
       )}
+      <Heading as="h2" size="lg" mb="1rem">
+        Tambien te puede interesar
+      </Heading>
+      <Flex
+        marginBottom={"2rem"}
+        flexGrow={1}
+        align={"center"}
+        justify={"center"}
+        w={"100%"}
+        gap={"2rem"}
+        flexWrap={"wrap"}
+      >
+        {elementosAlAzar.map((product: Product) => (
+          <LandingCard key={"landing-card-" + product.id} product={product} />
+        ))}
+      </Flex>
     </Container>
   );
 };

@@ -18,6 +18,7 @@ import useCatalogueStore from "@store/catalogueStore";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
+import { useEffect } from "react";
 const Landing = () => {
   type QueryProps = {
     data: Product[];
@@ -34,37 +35,31 @@ const Landing = () => {
   // let isLoading: boolean = false;
   // let categories: Category[] = [];
   //--
+  const { filter, setFilter, setProductos, productos } = useCatalogueStore();
   let isLoadingProds = false;
   const {
     data: products,
     error,
     isLoading,
-  } = useApiQuery("GET|producto", null) as QueryProps;
+  } = useApiQuery(
+    "GET|producto/search" +
+      `?${filter.id_categoria ? `id=${filter.id_categoria}&` : ""}${
+        filter.nombre_like ? "nombre=" + filter.nombre_like : ""
+      }`,
+    filter
+  ) as QueryProps;
   const { data: categories } = useApiQuery(
     "GET|categoria/all",
     null
   ) as QueryPropsCategorias;
-
-  // const items = categories?.map((category) => (
-  //   <CategoryCard key={category.id} category={category} />
-  // ));
-  const responsive = {
-    0: { items: 1 },
-    568: { items: 1 },
-    1024: { items: 4 },
-  };
-  const handlePrevClick = () => {
-    carousel.slidePrev();
-  };
-
-  const handleNextClick = () => {
-    carousel.slideNext();
-  };
-
-  let carousel: any;
+  useEffect(() => {
+    if (products) {
+      setProductos(products);
+    }
+  }, [products]);
   const slides = categories
     ?.filter((category) => {
-      return category.categoriaPadre == null;
+      return category.subCategoria?.length == 0;
     })
     .map((category) => (
       <Carousel.Slide key={category.id}>
@@ -150,7 +145,7 @@ const Landing = () => {
               spacing={3}
               columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
             >
-              {products?.map((product) => (
+              {productos?.map((product) => (
                 <LandingCard
                   key={"landing-card-" + product.id}
                   product={product}

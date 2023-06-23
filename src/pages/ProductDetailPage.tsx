@@ -3,16 +3,17 @@ import {
   Box,
   Button,
   Container,
+  Flex,
   Grid,
   Heading,
   Image,
+  Mark,
   Modal,
   SimpleGrid,
   Spinner,
   Stack,
-  Stat,
-  StatNumber,
-  Text
+  Text,
+  useToast,
 } from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
@@ -20,59 +21,78 @@ import { useProduct } from "@hooks/useProducts";
 import { Title } from "@mantine/core";
 import useCatalogueStore from "@store/catalogueStore";
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, redirect } from "react-router-dom";
 import { Product } from "types/types";
+import { useMediaQuery } from "@mantine/hooks";
+import { useAuth0 } from "@auth0/auth0-react";
+import useMainStore from "@store/mainStore";
+
 const ProductDetailPage = () => {
+  const toast = useToast();
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { setCarrito } = useMainStore();
+  const { mutate: editCart, data } = useApiMutation("PUT|cart/addProduct");
+  const addToCartHandler = async () => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
+    try {
+      await addToCart();
+      toast({
+        title: "Producto agregado al carrito",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+        description: `${currentProduct.nombre} se ha agregado al carrito`,
+      });
+    } catch (error) {}
+  };
+  const addToCart = async () => {
+    //updateCart({ ...item, quantity: item.quantity + 1 });
+    await editCart({ id: currentProduct.id });
+  };
+  useEffect(() => {
+    //console.log("cartEdited", data);
+    if (data) {
+      setCarrito(data);
+    }
+  }, [data]);
   const { id } = useParams<{ id: string }>();
   const { filter, setFilter } = useCatalogueStore();
   const [currentFilter, setCurrentFilter] = useState(filter);
-  const [currentProduct, setCurrentProduct] = useState({} as Product);
   type QueryProps = {
-    data: Product[];
+    data: Product;
     error: any;
     isLoading: boolean;
   };
-
+  let isError = false;
+  let idproducto = id ? id : -1;
   const {
-    data: products,
-    error: isError,
+    data: currentProduct,
+    error,
     isLoading,
-  } = useApiQuery("GET|producto", null) as QueryProps;
+  } = useApiQuery("GET|producto/" + idproducto, null) as QueryProps;
 
-  console.log("Detail: ", id);
-  setTimeout(() => {
-    console.log("Detail productos: ", products);
-  }, 5000);
-  useEffect(() => {
-    setFilter({
-      id: Number(id),
-      nombre_like: undefined,
-      id_categoria: undefined,
-    });
-  }, []);
-  useEffect(() => {
-    let _currentProduct;
-    let _id: Number = -1;
-    if (id) {
-      _id = parseFloat(id);
-    }
-    _currentProduct = products?.find((e) => {
-      return e.id == _id;
-    });
+  // const {
+  //   data: p,
+  //   error: isError,
+  //   isLoading,
+  // } = useApiQuery("GET|producto/"+id, null) as QueryProps;
+  // useEffect(() => {
+  //   if (p) {
+  //     setCurrentProduct(currentProduct);
+  //   }
+  // }, [p])
 
-    if (_currentProduct) {
-      setCurrentProduct(_currentProduct);
-    }
-  }, [products]);
-  const handleSetFilter = () => {
-    setFilter({ ...currentFilter, id: undefined });
-  };
   if (isError) {
     throw isError;
   }
   if (isLoading) {
     return <Loader />;
   }
+  //let mobile = useMediaQuery(`(max-width: 700px)`) ? true : false;
   return (
     <Container
       maxW="container.2xl"
@@ -82,70 +102,128 @@ const ProductDetailPage = () => {
       justifyContent="start"
       alignItems="center"
       bg="#f9f6f6"
+      p={"0"}
+      gap={"1rem"}
     >
-      <SimpleGrid w="100%" columns={2} spacing={10} templateColumns="1fr 5fr">
+      <Flex w="100%">
         <Button
           colorScheme="orange"
           as={Link}
           to="/catálogo"
-          onClick={() => {
-            handleSetFilter();
-          }}
           h={"3rem"}
+          w={"15rem"}
         >
           <ChevronLeftIcon />
           Volver al catálogo
         </Button>
-      </SimpleGrid>
-      <Grid
-        templateColumns="1fr 1fr"
-        gap={6}
-        mt="2rem"
-        alignItems="center"
-        justifyContent="center"
-        h="90%"
-      >
-        {id && currentProduct ? (
-          <>
-            <Heading as="h1" size="xl" textAlign="center">
+      </Flex>
+      <Heading p={"1rem"} w={"100%"} as="h1" size="1rem" textAlign="left">
+        Detalle del producto
+      </Heading>
+      {id && currentProduct ? (
+        <Flex
+          flexDir={"column"}
+          w="100%"
+          align={"center"}
+          justifyContent={"center"}
+          gap={"1rem"}
+          flexWrap={"wrap"}
+        >
+          <Flex
+            gap={"5rem 5rem"}
+            width={"90%"}
+            justifyContent={"center"}
+            align={"center"}
+            flexWrap={"wrap"}
+          >
+            <Heading w={"20rem"} as="h1" size="2rem" textAlign="start">
               {currentProduct.nombre}
             </Heading>
-            <Box w="100%" display="flex" justifyContent="center">
-              <Image
-                src={currentProduct.imgURL}
-                alt={currentProduct.nombre}
-                w="20rem"
-                borderRadius="md"
-              />
-            </Box>
-            <Stack spacing={3}>
+            <Flex w={"20rem"}>
+              <Box
+                boxSize={"15rem"}
+                bg={"orange.500"}
+                borderRadius={"50%"}
+                alignItems={"center"}
+                display="flex"
+                justifyContent="center"
+                order={0}
+                position={"relative"}
+              >
+                <Image
+                  src={currentProduct.imgURL}
+                  alt={currentProduct.nombre}
+                  w={"13rem"}
+                  objectFit={"cover"}
+                  borderRadius="50%"
+                  overflow={"hidden"}
+                />
+              </Box>
+            </Flex>
+          </Flex>
+          {/* <Box
+            width={"90%"}
+            height={".3rem"}
+            color={"transparent"}
+            background="#FB9300"
+          >
+            -
+          </Box> */}
+          <Flex
+            gap={"3rem 5rem"}
+            width={"90%"}
+            align={"center"}
+            justifyContent={"center"}
+            flexWrap={"wrap"}
+          >
+            <Stack
+              h={"30rem"}
+              w={"20rem"}
+              spacing={3}
+              justifyContent={"flex-start"}
+              boxSize={"20rem"}
+            >
               <Heading as="h2" size="lg">
                 Descripción
               </Heading>
-              <Text>
-                {currentProduct.descripcion}
-              </Text>
-              <Heading as="h2" size="lg">
-                Precio
-              </Heading>
-              <Stat>
-                <StatNumber fontSize="1.4rem">
-                  $9999
-                </StatNumber>
-              </Stat>
-              <Button colorScheme="orange" size="lg" w="50%">
-                Agregar al carrito
-              </Button>
-            </Stack>
-            <Stack spacing={3}>
+              <Text fontSize={"1.3rem"}>{currentProduct.descripcion}</Text>
               <Heading as="h2" size="lg">
                 Receta
               </Heading>
-              <Text>
-                {currentProduct.receta}
-              </Text>
+              <Text fontSize={"1.3rem"}>{currentProduct.receta}</Text>
             </Stack>
-            {/* 
+            <Stack
+              h={"30rem"}
+              spacing={3}
+              justifyContent={"flex-start"}
+              boxSize={"20rem"}
+            >
+              <Heading as="h2" size="lg">
+                Precio
+              </Heading>
+              <Text fontSize="1.4rem">
+                <Mark color={"orange"}>$</Mark>
+                {currentProduct.precio}
+              </Text>
+              <Heading as="h2" size="lg">
+                Preparacion
+              </Heading>
+              <Text fontSize={"1.3rem"}>
+                {currentProduct.tiempoCocina / 60}min
+              </Text>
+              <Button
+                colorScheme="orange"
+                w="10rem"
+                onClick={() => {
+                  addToCartHandler();
+                }}
+              >
+                Agregar al carrito
+              </Button>
+            </Stack>
+          </Flex>
+
+          {/* 
           <Heading as="h2" size="lg">
             Ingredientes
           </Heading>
@@ -155,11 +233,10 @@ const ProductDetailPage = () => {
           </Heading>
           <Text>"Lorem ipsum dolor sit amet consectetur"</Text>
         </Stack> */}
-          </>
-        ) : (
-          <Title>No se encontro el producto</Title>
-        )}
-      </Grid>
+        </Flex>
+      ) : (
+        <Title>No se encontro el producto</Title>
+      )}
     </Container>
   );
 };

@@ -15,7 +15,18 @@ import {
 } from "@mantine/core";
 import { Category } from "types/types";
 import { IconArrowRight, IconMathGreater } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
+import useCatalogueStore from "@store/catalogueStore";
 export const CategoryCard = ({ category }: { category: Category }) => {
+  const navigate = useNavigate();
+  const { filter, setFilter } = useCatalogueStore();
+  let handleSetFilter = (id_categoria?: number, nombre_like?: string) => {
+    setFilter({
+      ...filter,
+      id_categoria,
+      nombre_like,
+    });
+  };
   return (
     <Flex
       h={"3rem"}
@@ -50,11 +61,15 @@ export const CategoryCard = ({ category }: { category: Category }) => {
       justify={"space-between"}
       m={0}
       p={"1rem"}
+      onClick={() => {
+        handleSetFilter(category.id)
+        navigate("/catálogo")
+      }}
     >
       <Text fw={600}>{category.nombre}</Text>
       <Group position="apart">
         <Group spacing={0}>
-          <ActionIcon size="lg" id="icon-button">
+          <ActionIcon bg={"transparent"} size="lg" id="icon-button">
             <IconArrowRight id="icon" size="1.625rem" />
           </ActionIcon>
         </Group>

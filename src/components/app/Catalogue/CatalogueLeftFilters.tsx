@@ -1,4 +1,3 @@
-
 import {
   Accordion,
   AccordionButton,
@@ -10,6 +9,7 @@ import {
   Text,
   Flex,
   Checkbox,
+  Button,
 } from "@chakra-ui/react";
 import { InputBase, RangeSlider, Title, Input } from "@mantine/core";
 import { Category } from "types/types";
@@ -73,22 +73,19 @@ const CatalogueLeftFilters = (props: Props) => {
                     _hover={{
                       background: "orange",
                       color: "white",
+                      cursor: hasChildren ? "default" : "pointer",
                     }}
                     borderRadius="15px"
+                    onClick={() => {
+                      if (hasChildren) return;
+                      props.handleSetFilter(category.id);
+                      setCurrentCategoriaName(category.nombre);
+                    }}
                   >
                     <Text
                       fontSize="md"
                       fontWeight={hasChildren ? "bold" : "normal"}
                       textDecorationColor="orange.500"
-                      _hover={{
-                        textDecoration: "underline",
-                        textDecorationColor: "orange.500",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        props.handleSetFilter(category.id);
-                        setCurrentCategoriaName(category.nombre);
-                      }}
                     >
                       {category.nombre}
                     </Text>
@@ -120,7 +117,7 @@ const CatalogueLeftFilters = (props: Props) => {
   };
   return (
     <Container margin={0} borderRadius="md" minW={"15rem"} maxWidth={"20rem"}>
-      {/* <Flex marginBottom={"1rem"}>
+      <Flex marginBottom={"1rem"}>
         {props.currentIdCategoria && (
           <Box
             color={"white"}
@@ -153,8 +150,7 @@ const CatalogueLeftFilters = (props: Props) => {
             </Flex>
           </Box>
         )}
-      </Flex> */}
-
+      </Flex>
       <Flex gap={"1rem"} className="ofertaFilter">
         <Title order={3}>En Oferta</Title>
         <Checkbox colorScheme="orange" defaultChecked />
