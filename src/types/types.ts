@@ -8,11 +8,10 @@ type Product = {
   receta: string;
   estado: string;
   productoCategoria: Category;
-  insumoSet: number[];
+  insumosIDS: number[];
   id: number;
   precio: number;
 };
-
 type Category = {
   id: number;
   nombre: string;
@@ -50,11 +49,12 @@ type Order = {
 };
 
 type User = {
-  id: number;
-  name: string;
+  id: string;
+  username: string;
   email: string;
-  password: string;
-  orders: Order[];
+  bloqueado: boolean;
+  direccionList?: Direccion[];
+  rol?: string;
 };
 
 type Auth = {
@@ -76,7 +76,7 @@ type State = {
 type Supply = {
   id: number;
   nombre: string;
-  imagen: string | File;
+  imagen: string;
   stockMinimo: number;
   stockActual: number;
   estado: string;

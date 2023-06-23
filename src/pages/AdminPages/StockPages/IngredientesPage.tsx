@@ -1,8 +1,8 @@
 import Loader from "@components/app/Loader/Loader";
-import { useApiMutation, useApiQuery } from "@hooks/useQueries";
+import { useApiQuery } from "@hooks/useQueries";
 import useAdminStore from "@store/adminStore";
-import { useState } from "react";
-import { Supply } from "Types/types";
+import { useEffect, useState } from "react";
+import { Supply } from "types/types";
 import { useDisclosure, usePagination } from "@mantine/hooks";
 import {
   Badge,
@@ -14,8 +14,12 @@ import {
   Flex,
   Input,
   Image,
+  rem,
+  ScrollArea,
+  Space,
+  useMantineTheme,
 } from "@mantine/core";
-import ModalForm from "./ModalIForm";
+import ModalForm from "@components/admin/Stock/Insumos/ModalIForm";
 import { Edit, Plus, ListSearch } from "tabler-icons-react";
 
 type QueryProps = {
@@ -44,15 +48,13 @@ const Insumos = () => {
     isLoading,
   } = useApiQuery("GET|insumo", insumoFilter) as QueryProps;
 
-  if (isLoading) return <Loader />;
-
   const rows = supplies ? (
     supplies.map((supply, i) => (
       <tr key={"supply" + i + supply.id}>
         <td>{supply?.id}</td>
         <td>{supply?.nombre}</td>
         <td>
-          {/* <Image src={supply?.imagen} width={50} height={50} /> */}
+          <Image src={supply?.imagen} width={50} height={50} />
         </td>
         <td>{supply?.stockMinimo}</td>
         <td>{supply?.stockActual}</td>
@@ -82,17 +84,15 @@ const Insumos = () => {
       </td>
     </tr>
   );
+
+  const maxTableHeight = rem(window.innerHeight - 300);
+  const currentTheme = useMantineTheme();
+
   return (
     <Container w="100%" maw="100%" p="0">
+      {isLoading && <Loader />}
       <Flex justify="space-between" align="center" mb="1rem">
-        <Button
-          leftIcon={<Plus />}
-          color="orange"
-          size="md"
-          onClick={() => {
-            open();
-          }}
-        >
+        <Button leftIcon={<Plus />} color="orange" size="md" onClick={open}>
           Crear insumo
         </Button>
         <Input.Wrapper
@@ -124,39 +124,52 @@ const Insumos = () => {
           />
         </Input.Wrapper>
       </Flex>
-      <Table
-        verticalSpacing={"sm"}
-        striped
-        captionSide="bottom"
-        highlightOnHover
-        withBorder
-        withColumnBorders
-      >
-        <caption>
-          <Pagination
-            color="orange"
-            total={insumoFilter.totalPages}
-            onChange={(value) => setPage(value - 1, "insumoFilter")}
-            value={insumoFilter.page + 1 || 1}
-          />
-        </caption>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Imagen</th>
-            <th>Stock mínimo</th>
-            <th>Stock actual</th>
-            <th>Costo</th>
-            <th>Disponibilidad</th>
-            <th>Editar</th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </Table>
+      <ScrollArea h={maxTableHeight}>
+        <Table
+          verticalSpacing={"sm"}
+          striped
+          captionSide="bottom"
+          highlightOnHover
+          withBorder
+          withColumnBorders
+          style={{ tableLayout: "fixed" }}
+        >
+          <thead
+            style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+              backgroundColor:
+                currentTheme.colorScheme === "dark"
+                  ? currentTheme.colors.dark[7]
+                  : currentTheme.colors.gray[0],
+            }}
+          >
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Imagen</th>
+              <th>Stock mínimo</th>
+              <th>Stock actual</th>
+              <th>Costo</th>
+              <th>Disponibilidad</th>
+              <th>Editar</th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </Table>
+      </ScrollArea>
+      <Space h={20} />
+      <Pagination
+        color="orange"
+        total={insumoFilter.totalPages}
+        onChange={(value) => setPage(value - 1, "insumoFilter")}
+        value={insumoFilter.page + 1 || 1}
+      />
+
       <ModalForm
-        opened={opened}
         close={close}
+        opened={opened}
         title={`${editItem.id === -1 ? "Crear" : "Editar"} insumo`}
         item={editItem}
         setItem={setEditItem}

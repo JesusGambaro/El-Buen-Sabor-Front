@@ -71,6 +71,4 @@ const useAdminStore = create<AdminStore>((set, get) => ({
     )
 }))
 
-mountStoreDevtool('Store', useAdminStore);
-
 export default useAdminStore;

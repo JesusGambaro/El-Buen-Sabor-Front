@@ -4,16 +4,18 @@ import {
   TextInput,
   Button,
   Modal,
-  Select,
   SegmentedControl,
-  Image,
   Text,
-  SimpleGrid,
+  Group,
+  rem,
+  Image,
+  NumberInput,
 } from "@mantine/core";
-import { useApiMutation, useApiQuery } from "@hooks/useCart";
-import { Category, Supply } from "Types/types";
+import { useApiMutation } from "@hooks/useQueries";
+import { Supply } from "types/types";
 import { ESTADO } from "@utils/constants";
-import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 
 type Props = {
   opened: boolean;
@@ -26,37 +28,35 @@ type Props = {
 const ModalIForm = (props: Props) => {
   const { opened, close, title, item, setItem } = props;
 
-  const { data: categories, isLoading } = useApiQuery("GET|categoria/all") as {
-    data: Category[];
-    error: any;
-    isLoading: boolean;
-  };
   const { mutate: createSupply } = useApiMutation("POST|insumo");
   const { mutate: editSupply } = useApiMutation("PUT|insumo");
 
   const form = useForm({
     initialValues: {
       nombre: "",
-      imagen: "",
       stockMinimo: 0,
       stockActual: 0,
       costo: 0,
       estado: "DISPONIBLE",
-    },
+      imagen: "",
+    } as Supply,
     validate: {
       nombre: (value) =>
         value.length < 3 ? "El nombre debe tener al menos 3 caracteres" : null,
-      imagen: (value) =>
-        value.includes("http") && value.includes(".")
-          ? null
-          : "Ingrese una url válida",
-      stockMinimo: (value) =>
-        value < 0 ? "El stock mínimo debe ser mayor a 0" : null,
-      stockActual: (value, values) =>
-        value < 0 || value < values.stockMinimo
-          ? "Ingrese un valor válido"
-          : null,
+      stockMinimo: (value) => {
+        console.log(value);
+        return value <= 0 ? "El stock mínimo debe ser mayor a 0" : null;
+      },
+      stockActual: (value, values) => {
+        console.log(value, values);
+        return value <= 0
+          ? "El stock actual debe ser mayor a 0"
+          : value < values.stockMinimo
+          ? "El stock actual debe ser mayor al stock mínimo"
+          : null;
+      },
       costo: (value) => (value < 0 ? "El costo debe ser mayor a 0" : null),
+      // imagen: (value) => (value.length === 0 ? "Debe subir una imagen" : null),
     },
   });
 
@@ -73,35 +73,60 @@ const ModalIForm = (props: Props) => {
     } as Supply);
     close();
   };
+
   useEffect(() => {
     form.setValues({
       nombre: item?.nombre,
-      imagen: item?.imagen,
       stockMinimo: item?.stockMinimo,
       stockActual: item?.stockActual,
       costo: item?.costo,
       estado: item?.estado,
+      imagen: item?.imagen,
     });
   }, [item]);
-  const [files, setFiles] = useState<FileWithPath[]>([]);
 
-  useEffect(() => {
-    console.log(files);
+  const [image, setImage] = useState<File>();
+  const [isLoaded, setIsLoaded] = useState(true);
+
+  const handleDrop = (files: File[]): void => {
+    setIsLoaded(false);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      form.setValues({ ...form.values, imagen: e.target?.result as string });
+      setImage(files[0]);
+      setIsLoaded(true);
+    };
+    reader.readAsDataURL(files[0]);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(form);
+    if (!form.isValid()) return;
+
     const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
-  }, [files]);
+    formData.append("img", image as Blob);
+    if (item.id > 0) {
+      formData.append(
+        "insumo",
+        new Blob([JSON.stringify(form.values)], {
+          type: "application/json",
+        })
+      );
+      editSupply({
+        id: item.id,
+        formData,
+      });
+    } else {
+      formData.append(
+        "insumo",
+        new Blob([JSON.stringify(form.values)], { type: "application/json" })
+      );
+      createSupply(formData);
+    }
+    handleClose();
+  };
 
-  const previews = files.map((file, index) => {
-    const imageUrl = URL.createObjectURL(file);
-
-    return (
-      <Image
-        key={index}
-        src={imageUrl}
-        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
-      />
-    );
-  });
   return (
     <Modal
       opened={opened}
@@ -111,16 +136,7 @@ const ModalIForm = (props: Props) => {
       transitionProps={{ transition: "rotate-left" }}
       size="md"
     >
-      <form
-        onSubmit={form.onSubmit((values) => {
-          if (item.id > 0) {
-            editSupply({ ...values, id: item.id });
-          } else {
-            createSupply(values);
-          }
-          handleClose();
-        })}
-      >
+      <form onSubmit={handleSubmit}>
         <TextInput
           label="Nombre"
           placeholder="Nombre"
@@ -129,70 +145,89 @@ const ModalIForm = (props: Props) => {
           data-autofocus
         />
 
-        <TextInput
+        <NumberInput
           label="Stock mínimo"
           placeholder="Stock mínimo"
+          //if value = 0 not show value
           {...form.getInputProps("stockMinimo")}
           required
           type="number"
+          min={0}
         />
-        <TextInput
+        <NumberInput
           label="Stock actual"
           placeholder="Stock actual"
           {...form.getInputProps("stockActual")}
           required
           type="number"
+          min={0}
         />
-        <TextInput
+        <NumberInput
           label="Costo"
           placeholder="Costo"
           {...form.getInputProps("costo")}
           required
           type="number"
+          icon="$"
+          min={0}
         />
-        <div>
-          <Dropzone accept={IMAGE_MIME_TYPE} onDrop={setFiles}>
-            <Text align="center">Solta la imagen</Text>
-          </Dropzone>
 
-          <SimpleGrid
-            cols={4}
-            breakpoints={[{ maxWidth: "sm", cols: 1 }]}
-            mt={previews.length > 0 ? "xl" : 0}
+        <Dropzone
+          onDrop={handleDrop}
+          onReject={(files) => console.log("rejected files", files)}
+          maxSize={3 * 1024 ** 2}
+          accept={IMAGE_MIME_TYPE}
+          mt={10}
+          loading={!isLoaded}
+        >
+          <Group
+            position="center"
+            spacing="xl"
+            style={{ minHeight: rem(100), pointerEvents: "none" }}
           >
-            {previews}
-          </SimpleGrid>
-        </div>
-        {/* <Select
-          label="Categoría"
-          placeholder="Seleccione una categoría"
-          searchable
-          clearable
-          maxDropdownHeight={100}
-          dropdownPosition="bottom"
-          data={categories?.map((category: Category) => ({
-            value: "" + category.id,
-            label: category.nombre,
-          }))}
-          {...form.getInputProps("categoriaPadre")}
-          styles={(theme) => ({
-            item: {
-              // applies styles to selected item
-              "&[data-selected]": {
-                "&, &:hover": {
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.orange[9]
-                      : theme.colors.orange[1],
-                  color:
-                    theme.colorScheme === "dark"
-                      ? theme.white
-                      : theme.colors.orange[9],
-                },
-              },
-            },
-          })}
-        /> */}
+            {image || form.values.imagen ? (
+              <Image
+                alt="Uploaded"
+                src={form.values.imagen}
+                style={{ maxWidth: "100%", maxHeight: "100%" }}
+              />
+            ) : (
+              <>
+                <Dropzone.Accept>
+                  <IconUpload size="3.2rem" stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size="3.2rem" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size="3.2rem" stroke={1.5} />
+                </Dropzone.Idle>
+                <div>
+                  <Text size="md" inline>
+                    Arrastra o da click para subir una imagen
+                  </Text>
+                  <Text size="sm" color="dimmed" inline mt={7}>
+                    Tamaño máximo: 5mb
+                  </Text>
+                </div>
+              </>
+            )}
+          </Group>
+        </Dropzone>
+        {image || form.values.imagen ? (
+          <Button
+            variant="outline"
+            color="red"
+            onClick={() => {
+              setImage(undefined);
+              form.setValues({ ...form.values, imagen: "" });
+            }}
+            w="100%"
+            mt="md"
+          >
+            Eliminar imagen
+          </Button>
+        ) : null}
         <SegmentedControl
           w="100%"
           mt="md"

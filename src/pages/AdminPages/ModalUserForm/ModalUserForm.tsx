@@ -6,41 +6,34 @@ import {
   Modal,
   Select,
   SegmentedControl,
-  Box,
   LoadingOverlay,
 } from "@mantine/core";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
-import { Category } from "types/types";
+import { Direccion, User } from "types/types";
 import { ESTADO } from "@utils/constants";
 import { useDisclosure } from "@mantine/hooks";
 
 type ModalProps = {
   opened: boolean;
   onClose: () => void;
-  item: Category;
+  item: User;
 };
 
-const ModalCForm = (props: ModalProps) => {
+const ModalUserForm = (props: ModalProps) => {
   const { opened, onClose, item } = props;
 
-  const { data: categories } = useApiQuery("GET|categoria/allWOPage") as {
-    data: Category[];
-    error: any;
-    isLoading: boolean;
-  };
-  const { mutate: createCategory } = useApiMutation("POST|categoria");
-  const { mutate: editCategory } = useApiMutation("PUT|categoria");
+  const { mutate: editUser } = useApiMutation("PUT|user");
 
   const form = useForm({
     initialValues: {
-      nombre: "",
-      categoriaPadre: -1,
-      estado: ESTADO.DISPONIBLE,
+      username: "",
+      email: "",
+      bloqueado: false,
+      rol: "",
+      direccionList: [] as Direccion[],
+      id: "",
     },
-    validate: {
-      nombre: (value) =>
-        value.length < 3 ? "El nombre debe tener al menos 3 caracteres" : null,
-    },
+    validate: {},
   });
   const [visible, { toggle }] = useDisclosure(false);
 
@@ -52,17 +45,22 @@ const ModalCForm = (props: ModalProps) => {
 
   useEffect(() => {
     form.setValues({
-      nombre: item?.nombre,
-      categoriaPadre: item?.categoriaPadre?.id,
-      estado: item?.estado,
-    } as any);
+      id: item.id,
+      bloqueado: item.bloqueado,
+      email: item.email,
+      username: item.username,
+      direccionList: item.direccionList,
+      rol: item.rol,
+    });
   }, [item]);
 
   return (
     <Modal
       opened={opened}
       onClose={handleClose}
-      title={item.id > 0 ? "Editar categoría" : "Crear categoría"}
+      title={`Modificar información del ${
+        item.rol === "ADMIN" ? "administrador" : "usuario"
+      }`}
       centered
       transitionProps={{ transition: "rotate-left" }}
       size="md"
@@ -75,16 +73,7 @@ const ModalCForm = (props: ModalProps) => {
             "🚀 ~ file: ModalCForm.tsx:83 ~ onSubmit={form.onSubmit ~ values:",
             values
           );
-          if (item.id > 0) {
-            editCategory({
-              ...values,
-              id: item.id,
-            });
-          } else {
-            createCategory({
-              ...values,
-            });
-          }
+          editUser({ ...values, id: item.id });
           handleClose();
         })}
       >
@@ -153,4 +142,4 @@ const ModalCForm = (props: ModalProps) => {
   );
 };
 
-export default ModalCForm;
+export default ModalUserForm;

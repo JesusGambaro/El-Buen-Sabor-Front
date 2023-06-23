@@ -1,9 +1,31 @@
-type Path = {
+import {
+    IconNotes,
+    IconCalendarStats,
+    IconGauge,
+    IconPresentationAnalytics,
+    IconFileAnalytics,
+    IconAdjustments,
+    IconLock,
+    IconBuildingStore,
+    IconClipboardList,
+    IconUsers,
+} from "@tabler/icons-react";
+
+interface Path {
+    label: string;
+    icon: (props: any) => JSX.Element;
+    link: string;
+    initiallyOpened?: boolean;
+    links?: { label: string; link: string }[];
+}
+interface Path2 {
     name: string;
     icon: string;
     route: string;
 }
-const paths: Path[] = [
+
+
+const paths: Path2[] = [
     {
         name: "Home",
         icon: "fa-solid fa-home",
@@ -29,30 +51,43 @@ const paths: Path[] = [
 ];
 
 const adminPaths: Path[] = [
+
     {
-        name: "Dashboard",
-        icon: 'fa-solid fa-table-columns',
-        route: "/admin/",
+        label: "Dashboard",
+        icon: IconGauge,
+        initiallyOpened: false,
+        links: [
+            { label: "Ranking comidas", link: "dashboard/rankingComidas" },
+            { label: "Ingresos", link: "dashboard/ingresos" },
+            { label: "Ranking clientes", link: "dashboard/rankingClientes" },
+        ],
+        link: "/admin/stock"
     },
     {
-        name: "Stock",
-        icon: "fa-solid fa-boxes-stacked",
-        route: "/admin/stock",
+        label: "Stock",
+        icon: IconNotes,
+        initiallyOpened: false,
+        links: [
+            { label: "Categorias", link: "stock/categorias" },
+            { label: "Productos", link: "stock/productos" },
+            { label: "Insumos", link: "stock/insumos" },
+        ],
+        link: "/admin/stock"
     },
     {
-        name: "Pedidos",
-        icon: "fa-solid fa-truck-ramp-box",
-        route: "/admin/pedidos",
+        label: "Pedidos",
+        link: "/admin/pedidos",
+        icon: IconCalendarStats
     },
     {
-        name: "Usuarios",
-        icon: 'fa-solid fa-users',
-        route: '/admin/usuarios'
+        label: "Usuarios",
+        icon: IconUsers,
+        link: '/admin/usuarios'
     },
     {
-        name: "Configuración",
-        icon: "fa-solid fa-gear",
-        route: "/admin/configuracion",
+        label: "Configuración",
+        icon: IconAdjustments,
+        link: "/admin/configuracion",
     },
 ];
 const ESTADO = Object.freeze({
@@ -64,5 +99,5 @@ export {
     paths, adminPaths, ESTADO
 };
 
-export type { Path };
+export type { Path, Path2 };
 

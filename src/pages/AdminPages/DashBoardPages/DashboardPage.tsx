@@ -1,4 +1,3 @@
-import { useRef, useEffect } from "react";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import {
@@ -21,13 +20,15 @@ ChartJS.register(
   Title,
   BarElement
 );
+import { Paper, Tabs } from "@mantine/core";
 
-import { TabList, Tab, Tabs, TabPanels, TabPanel } from "@chakra-ui/react";
 type Props = {};
 import { Container } from "@mantine/core";
+import { useNavigate, useParams } from "react-router";
+import { ChartPie, ReportMoney, Users } from "tabler-icons-react";
 //REGISTER CHARTS
 
-const Dashboard = (props: Props) => {
+const DashboardPage = (props: Props) => {
   const dataDoughnut = {
     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
     datasets: [
@@ -131,38 +132,53 @@ const Dashboard = (props: Props) => {
       },
     ],
   };
+  const navigate = useNavigate();
+  const { tabValue } = useParams();
   return (
     <Tabs
-      isFitted
-      variant="solid-rounded"
-      colorScheme="orange"
-      mt={10}
-      size="lg"
+      color="orange"
+      variant="default"
+      radius="md"
+      keepMounted={false}
+      value={tabValue}
+      onTabChange={(value) => navigate(`/admin/dashboard/${value}`)}
     >
-      <TabList mb="1em">
-        <Tab>Ranking de comidas</Tab>
-        <Tab>Ingresos</Tab>
-        <Tab>Ranking de clientes</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel>
-          <Container size={500}>
-            <Doughnut data={dataDoughnut} />
-          </Container>
-        </TabPanel>
-        <TabPanel>
-          <Container size={1000}>
-            <Line options={optionsLine} data={dataLine} />;
-          </Container>
-        </TabPanel>
-        <TabPanel>
-          <Container size={1000}>
-            <Bar options={optionsBar} data={dataBar} />;
-          </Container>
-        </TabPanel>
-      </TabPanels>
+      <Tabs.List grow position="center" h={50} mt="md">
+        <Tabs.Tab
+          value="rankingComidas"
+          icon={<ChartPie size="1.2rem" />}
+          fz="lg"
+        >
+          Ranking de comidas
+        </Tabs.Tab>
+        <Tabs.Tab value="ingresos" icon={<ReportMoney size="1.2rem" />} fz="lg">
+          Ingresos
+        </Tabs.Tab>
+        <Tabs.Tab
+          value="rankingClientes"
+          icon={<Users size="1.2rem" />}
+          fz="lg"
+        >
+          Ranking de clientes
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="rankingComidas" mt="xl">
+        <Container size={500}>
+          <Doughnut data={dataDoughnut} />
+        </Container>
+      </Tabs.Panel>
+      <Tabs.Panel value="ingresos" mt="xl">
+        <Container size={1000}>
+          <Line options={optionsLine} data={dataLine} />
+        </Container>
+      </Tabs.Panel>
+      <Tabs.Panel value="rankingClientes" mt="xl">
+        <Container size={1000}>
+          <Bar options={optionsBar} data={dataBar} />
+        </Container>
+      </Tabs.Panel>
     </Tabs>
   );
 };
 
-export default Dashboard;
+export default DashboardPage;

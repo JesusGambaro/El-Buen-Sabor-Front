@@ -29,6 +29,8 @@ export const prepareFetch = (query: string, params: any): GenericFetch => {
                 filter += `${separator}${key}=${params[key as keyof typeof params]}`;
             });
         }
+
+
         return { url: `${url}${filter}`, method };
     }
     else if (METHODS[method] === METHODS.POST) {

@@ -1,4 +1,3 @@
-
 import { CloseIcon } from "@chakra-ui/icons";
 import {
   Accordion,
@@ -12,10 +11,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
-import { useApiMutation, useApiQuery } from "@hooks/useQueries";
+import { useApiQuery } from "@hooks/useQueries";
 import useAdminStore from "@store/adminStore";
-import { Category } from "Types/types";
-import { X } from "tabler-icons-react";
+import { Category } from "types/types";
 type NestedAccordionProps = {
   categories: Category[];
   isRecursive: boolean;
@@ -25,14 +23,12 @@ const SideFilter = () => {
   const { categoriaFilter, setFilter } = useAdminStore();
 
   const { data: baseCategories, isLoading } = useApiQuery(
-    "GET|categoria/all",
-    categoriaFilter
+    "GET|categoria/allWOPage"
   ) as {
     data: Category[];
     error: any;
     isLoading: boolean;
   };
-  if (isLoading) return <Loader />;
 
   const NestedAccordion = ({
     categories,
@@ -41,11 +37,12 @@ const SideFilter = () => {
     return (
       <Accordion allowMultiple>
         {categories.map((category) => {
-          if (!isRecursive && category.categoriaPadre !== null) return null;
-          const subcategories = baseCategories.filter(
-            (subCategory) => subCategory.categoriaPadre?.id === category.id
-          );
-          const hasChildren = subcategories.length > 0;
+          const hasChildren = category.subCategoria
+            ? category.subCategoria.length > 0
+            : false;
+          const subcategories = category.subCategoria
+            ? category.subCategoria
+            : [];
           if (!hasChildren) return;
           return (
             <AccordionItem key={category.id} border="none">
@@ -129,6 +126,7 @@ const SideFilter = () => {
       <Text fontSize="xl" fontWeight="bold" mb={4}>
         Categorías
       </Text>
+      {isLoading && <Loader />}
       {baseCategories ? (
         <NestedAccordion categories={baseCategories} isRecursive={false} />
       ) : (

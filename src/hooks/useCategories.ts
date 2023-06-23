@@ -1,6 +1,6 @@
 import { getCategories, getCategory } from "@api/elbuensabor";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
-import { Category } from "Types/types";
+import { Category } from "types/types";
 
 export const useCategories = () => {
     return useQuery<Category[]>(["categories"], getCategories, {

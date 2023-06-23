@@ -1,192 +1,97 @@
-import React, { useEffect, useState } from "react";
-import "./navbaradmin.scss";
-import { useAuth0 } from "@auth0/auth0-react";
 import {
-  Menu,
-  Button,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuGroup,
-  MenuDivider,
-  Tag,
-  Heading,
-  TagLabel,
+  Navbar,
+  Group,
+  ScrollArea,
+  createStyles,
+  rem,
   Image,
-  SimpleGrid,
-} from "@chakra-ui/react";
-import { useLocation } from "react-router-dom";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { adminPaths } from "@utils/constants";
-import { CopyButton, ActionIcon, Tooltip } from "@mantine/core";
-import { IconCopy, IconCheck } from "@tabler/icons-react";
+  LoadingOverlay,
+  Box,
+} from "@mantine/core";
 
-const NavBarAdmin = () => {
+import { UserButton } from "./UserButton";
+import { LinksGroup } from "./NavbarLinksGroup";
+import { Auth0ContextInterface, useAuth0 } from "@auth0/auth0-react";
+import { adminPaths } from "@utils/constants";
+
+const useStyles = createStyles((theme) => ({
+  navbar: {
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+    paddingBottom: 0,
+  },
+
+  header: {
+    padding: theme.spacing.md,
+    paddingTop: 0,
+    marginLeft: `calc(${theme.spacing.md} * -1)`,
+    marginRight: `calc(${theme.spacing.md} * -1)`,
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    borderBottom: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+    }`,
+  },
+
+  links: {
+    marginLeft: `calc(${theme.spacing.md} * -1)`,
+    marginRight: `calc(${theme.spacing.md} * -1)`,
+  },
+
+  linksInner: {
+    paddingTop: theme.spacing.xl,
+    paddingBottom: theme.spacing.xl,
+  },
+
+  footer: {
+    marginLeft: `calc(${theme.spacing.md} * -1)`,
+    marginRight: `calc(${theme.spacing.md} * -1)`,
+    borderTop: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+    }`,
+  },
+}));
+
+export function NavBarAdmin() {
+  const { classes } = useStyles();
+  const links = adminPaths.map((item) => (
+    <LinksGroup {...item} key={item.label} />
+  ));
+
   const {
-    loginWithRedirect,
-    logout,
-    user,
     isAuthenticated,
     isLoading,
-    getAccessTokenSilently,
-  } = useAuth0();
-  const [jwt, setJwt] = useState<string>("");
-
-  const fetchProtectedData = async () => {
-    try {
-      const accessToken = await getAccessTokenSilently();
-      console.log("Access Token:", accessToken);
-      setJwt(accessToken);
-    } catch (error) {
-      console.error("Error retrieving access token:", error);
-    }
-  };
-  useEffect(() => {
-    console.log(user);
-    fetchProtectedData();
-  }, [user]);
-
-  const { pathname } = useLocation();
-  const trimName = (name: string = ""): string => {
-    return name.includes("@") ? name.split("@")[0] : name;
-  };
-  const currentTitle: string =
-    adminPaths.find((route) => pathname.includes(route.route))?.name || "";
+    user,
+    loginWithRedirect,
+    logout,
+  }: Auth0ContextInterface = useAuth0();
   return (
-    <SimpleGrid
-      h="5.5rem"
-      w="100%"
-      pos="fixed"
-      top="0"
-      left="0"
-      style={{ zIndex: 100 }}
-      columns={4}
-      alignItems="center"
-      bg="white"
-      boxShadow="0 0 10px rgba(0,0,0,0.2)"
-    >
-      <Heading
-        h="100%"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {currentTitle}
-      </Heading>
-      <div>
-        <textarea
-          name="jwt"
-          id="jwtr"
-          cols={100}
-          rows={5}
-          value={jwt}
-        ></textarea>
-      </div>
-      <div>
-        <CopyButton value={jwt} timeout={2000}>
-          {({ copied, copy }) => (
-            <Tooltip
-              label={copied ? "Copied" : "Copy"}
-              withArrow
-              position="right"
-            >
-              <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
-                {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
-              </ActionIcon>
-            </Tooltip>
-          )}
-        </CopyButton>
-      </div>
-      <Tag
-        h="50%"
-        size="lg"
-        colorScheme="orange"
-        borderRadius="full"
-        py={1}
-        bg="orange"
-        w="fit-content"
-        ml="auto"
-        mr={4}
-      >
-        {isAuthenticated && (
-          <Image
-            boxSize="2rem"
-            borderRadius="full"
-            src={user?.picture}
-            alt={user?.name}
-            mr={2}
+    <Navbar width={{ sm: 300 }} p="md" className={classes.navbar} h="100vh">
+      <Navbar.Section className={classes.header}>
+        <Group position="center">
+          <Image src="/logo.png" width={60} height={60} />
+        </Group>
+      </Navbar.Section>
+
+      <Navbar.Section grow className={classes.links} component={ScrollArea}>
+        <div className={classes.linksInner}>{links}</div>
+      </Navbar.Section>
+
+      <Navbar.Section className={classes.footer}>
+        <Box pos="relative">
+          <LoadingOverlay
+            loaderProps={{ size: "sm", color: "orange", variant: "bars" }}
+            overlayBlur={2}
+            visible={isLoading}
           />
-        )}
-        <TagLabel
-          _hover={{
-            cursor: "pointer",
-          }}
-          onClick={() => {
-            if (!isAuthenticated) {
-              loginWithRedirect({
-                appState: {
-                  returnTo: "http://localhost:5173/admin/",
-                },
-              });
-            }
-          }}
-          color="white"
-        >
-          {isAuthenticated ? trimName(user?.name || "") : "Iniciar sesión"}
-        </TagLabel>
-        {isAuthenticated && (
-          <Menu isLazy>
-            <MenuButton
-              aria-label="Options"
-              size="sm"
-              cursor="pointer"
-              as={Button}
-              rightIcon={<ChevronDownIcon />}
-              variant="unstyled"
-              bg="orange"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              transition="all 0.2s"
-              color="white"
-              colorScheme="orange"
-              _hover={{
-                color: "white",
-                bg: "orange",
-              }}
-              _expanded={{
-                color: "white",
-                bg: "orange",
-              }}
-              ml={1}
-            />
-            <MenuList>
-              <MenuGroup title="Perfil">
-                <MenuItem>Mi cuenta</MenuItem>
-                <MenuItem>Pedidos </MenuItem>
-              </MenuGroup>
-              <MenuDivider />
-              <MenuGroup title="Configuración">
-                <MenuItem>Configuración</MenuItem>
-                <MenuItem
-                  onClick={() =>
-                    logout({
-                      logoutParams: {
-                        returnTo: "http://localhost:5173/admin/",
-                      },
-                    })
-                  }
-                >
-                  Salir
-                </MenuItem>
-              </MenuGroup>
-            </MenuList>
-          </Menu>
-        )}
-      </Tag>
-    </SimpleGrid>
+          <UserButton
+            image={user?.picture}
+            name={user?.name}
+            email={user?.email}
+            logout={logout}
+            login={loginWithRedirect}
+          />
+        </Box>
+      </Navbar.Section>
+    </Navbar>
   );
-};
-export default NavBarAdmin;
+}

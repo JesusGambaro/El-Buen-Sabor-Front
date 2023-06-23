@@ -7,6 +7,7 @@ const run = async () => {
         addr: 3306, // port or network address, defaults to 80
         authtoken: '2QLu4yuQNJgOLsvSiIIAR6d8fk0_6ygpcmnTLFrKuVvbbMVH1', // http basic authentication for tunnel
     });
+    console.log('URL', url);
     const user = process.argv[2];
     const password = process.argv[3];
     const host = url.split('//')[1].split(':')[0];

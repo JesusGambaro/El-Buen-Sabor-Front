@@ -3,37 +3,47 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { Auth0Provider } from "@auth0/auth0-react";
-import theme, { mantineTheme } from "./utils/theme";
+import theme from "./utils/theme";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
 import App from "./App";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { MantineProvider } from "@mantine/core";
 
-const aut0Config = {
+const auth0Config = {
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
   redirectUri: import.meta.env.VITE_AUTH0_REDIRECT_URI,
+  audience: import.meta.env.VITE_AUTH0_AUDIENCE,
 };
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+
+root.render(
   <React.StrictMode>
-    <MantineProvider withGlobalStyles withNormalizeCSS theme={mantineTheme}>
-      <ChakraProvider>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <Auth0Provider
-          domain={aut0Config.domain}
-          clientId={aut0Config.clientId}
-          authorizationParams={{
-            redirect_uri: aut0Config.redirectUri,
-            audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-          }}
-        >
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <App />
-          </QueryClientProvider>
-        </Auth0Provider>
-      </ChakraProvider>
-    </MantineProvider>
+    <ChakraProvider>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <Auth0Provider
+        domain={auth0Config.domain}
+        clientId={auth0Config.clientId}
+        authorizationParams={{
+          redirect_uri: auth0Config.redirectUri,
+          audience: auth0Config.audience,
+        }}
+        onRedirectCallback={(appState) => {
+          window.history.replaceState(
+            {},
+            document.title,
+            appState?.returnTo || window.location.pathname
+          );
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} position="top-left" />
+          <App />
+        </QueryClientProvider>
+      </Auth0Provider>
+    </ChakraProvider>
   </React.StrictMode>
 );

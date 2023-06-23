@@ -5,12 +5,15 @@ import ProductDetailPage from "@pages/ProductDetailPage";
 import { createBrowserRouter } from "react-router-dom";
 import Catalogue from "@components/app/Catalogue/Catalogue";
 import { UserConfig } from "@components/app/UserConfig/UserConfig";
-import Dashboard from "@components/admin/Dashboard/Dashboard";
-import Stock from "@components/admin/Stock/Stock";
-import AdminPage from "@pages/AdminPage";
+import StockPage from "@pages/AdminPages/StockPages/StockPage";
+import AdminPage from "@pages/AdminPages/AdminPage";
+import IngredientesPage from "@pages/AdminPages/StockPages/IngredientesPage";
+import { UsersPage } from "@pages/AdminPages/UsersPage";
+import { ProductoFormPage } from "@pages/AdminPages/StockPages/ProductosPages/ProductoFormPage";
 import { CartDetailPage } from "@pages/CartDetailPage";
 import { Pedidos } from "@components/app/Pedidos/Pedidos";
 import { PedidoDetailPage } from "@pages/PedidoDetailPage";
+import DashboardPage from "@pages/AdminPages/DashBoardPages/DashboardPage";
 
 const BrowserRouter = createBrowserRouter([
   {
@@ -54,43 +57,50 @@ const BrowserRouter = createBrowserRouter([
       },
     ],
   },
-  // {
-  //   path: "/admin",
-  //   element: <AdminPage />,
-  //   errorElement: <ErrorPage />,
-  //   children: [
-  //     {
-  //       path: "/admin/",
-  //       element: <Dashboard />,
-  //       errorElement: <ErrorPage />,
-  //     },
-  //     {
-  //       path: "/admin/stock",
-  //       element: <Stock />,
-  //       errorElement: <ErrorPage />,
-  //     },
-  //     // {
-  //     //   path: "/admin/categoria/:id",
-  //     //   element: <CategoryDetail />,
-  //     //   errorElement: <ErrorPage />,
-  //     // },
-  //     {
-  //       path: "/admin/pedidos",
-  //       element: <Stock />,
-  //       errorElement: <ErrorPage />,
-  //     },
-  //     {
-  //       path: "/admin/usuarios",
-  //       element: <Stock />,
-  //       errorElement: <ErrorPage />,
-  //     },
-  //     {
-  //       path: "/admin/configuracion",
-  //       element: <Stock />,
-  //       errorElement: <ErrorPage />,
-  //     },
-  //   ],
-  // },
+  {
+    path: "/admin",
+    element: <AdminPage />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "/admin/dashboard/:tabValue",
+        element: <DashboardPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/admin/stock/:tabValue",
+        element: <StockPage />,
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            path: "/admin/stock/:tabValue/edit/:id",
+            element: <ProductoFormPage />,
+            errorElement: <ErrorPage />,
+          },
+          {
+            path: "/admin/stock/:tabValue/create",
+            element: <ProductoFormPage />,
+            errorElement: <ErrorPage />,
+          },
+        ],
+      },
+      {
+        path: "/admin/pedidos",
+        element: <IngredientesPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/admin/usuarios",
+        element: <UsersPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/admin/configuracion",
+        element: <></>,
+        errorElement: <ErrorPage />,
+      },
+    ],
+  },
 ]);
 
 export default BrowserRouter;

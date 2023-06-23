@@ -1,6 +1,6 @@
 import { fetchBackend, getLanding, getProduct } from "@api/elbuensabor";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
-import { Product } from "Types/types";
+import { Product } from "types/types";
 
 export const useProducts = () => {
     //params = query: string
