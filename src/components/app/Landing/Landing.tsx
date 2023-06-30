@@ -1,11 +1,4 @@
-import {
-  SimpleGrid,
-  Heading,
-  Container,
-  Stack,
-  Box,
-  IconButton,
-} from "@chakra-ui/react";
+import { SimpleGrid, Title as Heading, Flex, Stack, Box } from "@mantine/core";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import "./landing.scss";
@@ -68,20 +61,20 @@ const Landing = () => {
     ));
   const mobile = useMediaQuery(`(max-width: 700px)`);
   return (
-    <Container
-      maxW="container.2xl"
-      minH="100vh"
+    <Flex
+      maw="container.2xl"
+      miw={"100vh"}
       display="flex"
-      flexDirection="column"
-      justifyContent="start"
-      alignItems="center"
+      dir="column"
+      c="start"
+      align="center"
       bg="#f9f6f6"
     >
-      <Heading as="h1" size="xl" mb="2rem">
+      <Heading order={1} size="xl" mb="2rem">
         El Buen Sabor
       </Heading>
       <Stack spacing={3} w="100%">
-        <Heading as="h2" size="lg" mb="1rem">
+        <Heading order={3} size="lg" mb="1rem">
           Categorías
         </Heading>
         {isLoading ? (
@@ -133,7 +126,7 @@ const Landing = () => {
           </>
         )}
         <Box>
-          <Heading as="h2" size="lg">
+          <Heading order={3} size="lg">
             Productos destacados
           </Heading>
           {isLoadingProds ? (
@@ -143,7 +136,11 @@ const Landing = () => {
               w="100%"
               mt={4}
               spacing={3}
-              columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
+              breakpoints={[
+                { maxWidth: "62rem", cols: 3, spacing: "md" },
+                { maxWidth: "48rem", cols: 2, spacing: "sm" },
+                { maxWidth: "36rem", cols: 1, spacing: "sm" },
+              ]}
             >
               {productos?.map((product) => (
                 <LandingCard
@@ -155,12 +152,12 @@ const Landing = () => {
           )}
         </Box>
         <Box>
-          <Heading as="h2" size="lg" mb="1rem">
+          <Heading order={3} size="lg" mb="1rem">
             Ofertas
           </Heading>
         </Box>
       </Stack>
-    </Container>
+    </Flex>
   );
 };
 export default Landing;

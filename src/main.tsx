@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { Auth0Provider } from "@auth0/auth0-react";
 import theme from "./utils/theme";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -22,8 +21,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <ChakraProvider>
-      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <Auth0Provider
         domain={auth0Config.domain}
         clientId={auth0Config.clientId}
@@ -44,6 +41,5 @@ root.render(
           <App />
         </QueryClientProvider>
       </Auth0Provider>
-    </ChakraProvider>
   </React.StrictMode>
 );
