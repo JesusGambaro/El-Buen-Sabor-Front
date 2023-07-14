@@ -1,23 +1,5 @@
-import {
-  ButtonGroup,
-  Spacer,
-  Box,
-  Image,
-  Text,
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  useDisclosure,
-  Card,
-} from "@chakra-ui/react";
+import { Box, Image, Text, Button, Card } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
-import { DeleteIcon } from "@chakra-ui/icons";
 import { CartItem, Product } from "types/types";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useMainStore from "@store/mainStore";
@@ -40,7 +22,7 @@ const CartItem = ({
 
   const { setCarrito } = useMainStore();
   const cancelRef = useRef() as any;
-  const { onOpen: onOpenDeleteItem } = useDisclosure();
+  //const { onOpen: onOpenDeleteItem } = useDisclosure();
   //const { mutate: removeFromCart } = useRemoveFromCart();
   //const { mutate: updateCart } = useUpdateCart();
 
@@ -53,7 +35,7 @@ const CartItem = ({
       //updateCart({ ...item, quantity: item.quantity - 1 });
       return;
     }
-    onOpenDeleteItem();
+    //onOpenDeleteItem();
   };
 
   const handleAddItem = () => {
@@ -82,106 +64,117 @@ const CartItem = ({
   };
 
   return (
-    <Card
-      w="100%"
-      bg="white"
-      boxShadow="md"
-      mb={2}
-      borderRadius="md"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      p={3}
-      h={isMobile ? "10rem" : "5rem"}
-      direction={{ base: "column", sm: "row" }}
-    >
-      <Image
-        boxSize="70px"
-        src={cartItem.imgURL}
-        alt="El Buen Sabor"
-        borderRadius="md"
-        objectFit="cover"
-        maxW={{ base: "100%", sm: "200px" }}
-      />
-      <Box ml={3}>
-        <Text fontSize="sm" fontWeight="bold" mb={1} mr={2}>
-          {cartItem.producto}
-        </Text>
-        <Text fontSize="sm" fontWeight="bold">
-          ${cartItem.precioTotal}
-        </Text>
-      </Box>
-      <Spacer />
+    // <Card
+    //   w="100%"
+    //   bg="white"
+    //   shadow="md"
+    //   mb={2}
+    //   radius="md"
+    //   display="flex"
+    //   justifyContent="center"
+    //   p={3}
+    //   h={isMobile ? "10rem" : "5rem"}
+    //   direction={{ base: "column", sm: "row" }}
+    // >
+    //   <Image
+    //     boxSize="70px"
+    //     src={cartItem.imgURL}
+    //     alt="El Buen Sabor"
+    //     borderRadius="md"
+    //     objectFit="cover"
+    //     maxW={{ base: "100%", sm: "200px" }}
+    //   />
+    //   <Box ml={3}>
+    //     <Text fontSize="sm" fontWeight="bold" mb={1} mr={2}>
+    //       {cartItem.producto}
+    //     </Text>
+    //     <Text fontSize="sm" fontWeight="bold">
+    //       ${cartItem.precioTotal}
+    //     </Text>
+    //   </Box>
+    //   <Spacer />
 
-      <ButtonGroup
-        alignItems={"center"}
-        gap={"0.5rem"}
-        size="sm"
-        isAttached
-        variant="outline"
-      >
-        <Button
-          {...btnStyles}
-          onClick={() => {
-            handleDeleteItem();
-          }}
-        >
-          -
-        </Button>
-        <Text fontSize="sm" fontWeight="bold">
-          {cartItem.cantidad}
-          <Text as="span" color="orange.500">
-            U
-          </Text>
-        </Text>
-        <Button
-          {...btnStyles}
-          onClick={() => {
-            handleAddItem();
-          }}
-        >
-          +
-        </Button>
-        {/* <Popover
-          placement="left"
-          isOpen={!!deleteItem}
-          //leastDestructiveRef={cancelRef}
-          onClose={() => setDeleteItem(null)}
-          //motionPreset="slideInBottom"
-        >
-          <PopoverTrigger>
-            <Button
-              colorScheme="red"
-              variant={deleteItem ? "solid" : "outline"}
-              _hover={{ bg: "red.500", color: "white" }}
-              onClick={() => {
-                handleOpenDeleteAlert(cartItem, true);
-              }}
-            >
-              <DeleteIcon />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverHeader fontWeight="semibold">Confirmación</PopoverHeader>
-            <PopoverArrow />
-            <PopoverCloseButton />
-            <PopoverBody>
-              Esta seguro que desea eliminar {deleteItem?.producto} del
-              carrito?
-            </PopoverBody>
-            <PopoverFooter display="flex" justifyContent="flex-end">
-              <ButtonGroup size="sm">
-                <Button ref={cancelRef} onClick={() => setDeleteItem(null)}>
-                  Cancelar
-                </Button>
-                <Button colorScheme="red" ml={3} onClick={handleDeleteItem}>
-                  Borrar
-                </Button>
-              </ButtonGroup>
-            </PopoverFooter>
-          </PopoverContent>
-        </Popover> */}
-      </ButtonGroup>
+    //   <ButtonGroup
+    //     alignItems={"center"}
+    //     gap={"0.5rem"}
+    //     size="sm"
+    //     isAttached
+    //     variant="outline"
+    //   >
+    //     <Button
+    //       {...btnStyles}
+    //       onClick={() => {
+    //         handleDeleteItem();
+    //       }}
+    //     >
+    //       -
+    //     </Button>
+    //     <Text fontSize="sm" fontWeight="bold">
+    //       {cartItem.cantidad}
+    //       <Text as="span" color="orange.500">
+    //         U
+    //       </Text>
+    //     </Text>
+    //     <Button
+    //       {...btnStyles}
+    //       onClick={() => {
+    //         handleAddItem();
+    //       }}
+    //     >
+    //       +
+    //     </Button>
+    //     {/* <Popover
+    //       placement="left"
+    //       isOpen={!!deleteItem}
+    //       //leastDestructiveRef={cancelRef}
+    //       onClose={() => setDeleteItem(null)}
+    //       //motionPreset="slideInBottom"
+    //     >
+    //       <PopoverTrigger>
+    //         <Button
+    //           colorScheme="red"
+    //           variant={deleteItem ? "solid" : "outline"}
+    //           _hover={{ bg: "red.500", color: "white" }}
+    //           onClick={() => {
+    //             handleOpenDeleteAlert(cartItem, true);
+    //           }}
+    //         >
+    //           <DeleteIcon />
+    //         </Button>
+    //       </PopoverTrigger>
+    //       <PopoverContent>
+    //         <PopoverHeader fontWeight="semibold">Confirmación</PopoverHeader>
+    //         <PopoverArrow />
+    //         <PopoverCloseButton />
+    //         <PopoverBody>
+    //           Esta seguro que desea eliminar {deleteItem?.producto} del
+    //           carrito?
+    //         </PopoverBody>
+    //         <PopoverFooter display="flex" justifyContent="flex-end">
+    //           <ButtonGroup size="sm">
+    //             <Button ref={cancelRef} onClick={() => setDeleteItem(null)}>
+    //               Cancelar
+    //             </Button>
+    //             <Button colorScheme="red" ml={3} onClick={handleDeleteItem}>
+    //               Borrar
+    //             </Button>
+    //           </ButtonGroup>
+    //         </PopoverFooter>
+    //       </PopoverContent>
+    //     </Popover> */}
+    //   </ButtonGroup>
+    // </Card>
+    <Card w={"100%"} h={"5rem"}>
+      <Box w={"100%"} pos={"absolute"}>
+        <Image
+          width="70px"
+          src={cartItem.imgURL}
+          alt="El Buen Sabor"
+          radius="md"
+          fit="cover"
+          maw={{ base: "100%", sm: "200px" }}
+        />
+      </Box>
     </Card>
   );
 };

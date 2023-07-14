@@ -1,6 +1,9 @@
-a.active {
-  background-color: rgb(253, 126, 20);
-  color: #fff;
-  border-radius: 50%;
-  transition: all 0.3s ease-in-out;
+a {
+  color: #757575;
+  &.active {
+    background-color: rgb(253, 126, 20);
+    color: #fff;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+  }
 }

@@ -1,50 +1,42 @@
-import {
-  Box,
-  Center,
-  Flex,
-  SimpleGrid,
-  Link,
-  Spacer,
-  Text,
-} from "@chakra-ui/react";
-
+import { Box, Center, Flex, SimpleGrid, Text } from "@mantine/core";
 import "./footer.scss";
 import { useMediaQuery } from "@mantine/hooks";
+import { Link } from "react-router-dom";
 export const Footer = () => {
   const mobile = useMediaQuery(`(max-width: 700px)`);
- 
 
   return (
     <Flex
       h="10rem"
-      bgColor="rgb(253, 126, 20)"
+      bg="rgb(253, 126, 20)"
       color="white"
       p={5}
-      zIndex={0}
-      position="fixed"
+      pos="fixed"
       bottom="0"
-      maxW={`calc(100vw - ${mobile ? "0rem" : "8rem"})`}
-      width={"100vw"}
+      maw={`calc(100vw - ${mobile ? "0rem" : "8rem"})`}
+      w={"100vw"}
       left={mobile ? "0" : "8rem"}
+      justify="center"
+      align="center"
+      gap={"5rem"}
     >
-      <Flex flexDir={"column"} gap={"0.3rem"}>
-        <Text fontWeight={"bold"}>
+      <Flex direction={"column"} gap={"0.3rem"}>
+        <Text>
           <i
             className="fa-solid fa-location-dot"
             style={{ fontSize: "1.2rem" }}
           ></i>
           &nbsp; Luzuriaga 1413, Godoy Cruz, Mendoza
         </Text>
-        <Spacer />
-        <Text fontWeight={"bold"}>
+
+        <Text>
           <i
             className="fa-brands fa-whatsapp"
             style={{ fontSize: "1.2rem" }}
           ></i>
           &nbsp; +542615166191
         </Text>
-        <Spacer />
-        <Text fontWeight={"bold"}>
+        <Text>
           <i
             className="fa-solid fa-envelope"
             style={{ fontSize: "1.2rem" }}
@@ -52,42 +44,36 @@ export const Footer = () => {
           &nbsp; elbuensabor@gmail.com
         </Text>
       </Flex>
-      <Spacer />
-      <Flex flexDir={"column"}>
-        <Text fontWeight={"bold"}>Métodos De Pago</Text>
-        <Center>
-          <SimpleGrid columns={2}>
-            <Box w={"3rem"} fontSize={"2rem"}>
-              <i className="fa-brands fa-cc-mastercard"></i>
-            </Box>
-            <Box w={"3rem"} fontSize={"2rem"}>
-              <i className="fa-brands fa-cc-mastercard"></i>
-            </Box>
-            <Box w={"3rem"} fontSize={"2rem"}>
-              <i className="fa-brands fa-cc-mastercard"></i>
-            </Box>
-            <Box w={"3rem"} fontSize={"2rem"}>
-              <i className="fa-brands fa-cc-mastercard"></i>
-            </Box>
-          </SimpleGrid>
-        </Center>
+      <Flex direction={"column"} align={"center"} justify={"center"}>
+        <Text>Métodos De Pago</Text>
+        <SimpleGrid cols={2}>
+          <Flex w={"3rem"} h={"1.5rem"} align={"center"} justify={"center"}>
+            <i className="fa-brands fa-cc-mastercard"></i>
+          </Flex>
+          <Flex w={"3rem"} h={"1.5rem"} align={"center"} justify={"center"}>
+            <i className="fa-brands fa-cc-mastercard"></i>
+          </Flex>
+          <Flex w={"3rem"} h={"1.5rem"} align={"center"} justify={"center"}>
+            <i className="fa-brands fa-cc-mastercard"></i>
+          </Flex>
+          <Flex w={"3rem"} h={"1.5rem"} align={"center"} justify={"center"}>
+            <i className="fa-brands fa-cc-mastercard"></i>
+          </Flex>
+        </SimpleGrid>
       </Flex>
 
-      <Spacer></Spacer>
-      <Flex flexDir={"column"} gap={"0.3rem"}>
-        <Text gap={"1rem"} fontWeight={"bold"}>
+      <Flex direction={"column"} gap={"0.3rem"}>
+        <Text>
           ¿Tienes alguna queja?&nbsp;
-          <Link fontWeight={"normal"}>Click aqui para dejar la queja</Link>
+          <Link to={""}>Click aqui para dejar la queja</Link>
         </Text>
-        <Spacer />
-        <Text gap={"1rem"} fontWeight={"bold"}>
+        <Text>
           ¿Tienes alguna queja?&nbsp;
-          <Link fontWeight={"normal"}>Click aqui para dejar la queja</Link>
+          <Link to={""}>Click aqui para dejar la queja</Link>
         </Text>
-        <Spacer />
-        <Text gap={"1rem"} fontWeight={"bold"}>
+        <Text>
           ¿Tienes alguna queja?&nbsp;
-          <Link fontWeight={"normal"}>Click aqui para dejar la queja</Link>
+          <Link to={""}>Click aqui para dejar la queja</Link>
         </Text>
       </Flex>
     </Flex>

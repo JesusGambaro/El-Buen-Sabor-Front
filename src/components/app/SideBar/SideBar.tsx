@@ -1,5 +1,5 @@
 import "./sidebar.scss";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, useMantineColorScheme } from "@mantine/core";
 import SideIcon from "./SideIcon/SideIcon";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMediaQuery, useDisclosure } from "@mantine/hooks";
@@ -10,28 +10,27 @@ import { SideBarProps } from "types/types";
 const SideBar = () => {
   const { isAuthenticated } = useAuth0();
   const mobile = useMediaQuery(`(max-width: 700px)`);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
   return mobile ? (
     <></>
   ) : (
-    <Box
+    <Flex
       h="calc(100vh - 5.5rem)"
       w="8rem"
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      alignItems="center"
-      bg="white"
-      position="fixed"
-      top="5.5rem"
-      zIndex={100}
-      transition={"0.5s ease all"}
+      bg={dark ? "#181818" : "white"}
+      justify="space-between"
+      align="center"
+      pos="fixed"
+        top="5.5rem"
+        style={{zIndex:99}}
     >
       <Flex
         h="50%"
-        flexDirection="column"
-        justifyContent="space-evenly"
-        alignItems="center"
+        justify={"space-evenly"}
+        align="center"
         w="100%"
+        direction={"column"}
       >
         <SideIcon label="Home" />
         <SideIcon label="Catálogo" />
@@ -43,7 +42,7 @@ const SideBar = () => {
           </>
         )}
       </Flex>
-    </Box>
+    </Flex>
   );
 };
 export default SideBar;

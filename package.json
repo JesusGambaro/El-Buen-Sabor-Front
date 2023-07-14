@@ -12,8 +12,6 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.1.0",
-    "@chakra-ui/icons": "^2.0.17",
-    "@chakra-ui/react": "^2.5.5",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.10.6",
     "@mantine/carousel": "^6.0.10",

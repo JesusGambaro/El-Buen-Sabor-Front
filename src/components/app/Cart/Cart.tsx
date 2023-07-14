@@ -1,28 +1,5 @@
 import { useEffect, useRef } from "react";
-import {
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  Text,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  Button,
-  Flex,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  useDisclosure,
-  Tag,
-  TagLabel,
-} from "@chakra-ui/react";
+import { Drawer, Text, Button, Flex, Alert, Title } from "@mantine/core";
 import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
 import { btnStyle } from "@utils/theme";
@@ -37,7 +14,8 @@ import {
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useMainStore from "@store/mainStore";
 import { Link } from "react-router-dom";
-
+import { useDisclosure } from "@mantine/hooks";
+import { IconAlertCircle } from "@tabler/icons-react";
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
   // const { data: cartItems, isLoading } = useCart() as {
   //   data: CartType[];
@@ -64,132 +42,181 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
   }, [data]);
 
   return (
+    // <Drawer
+    //   isOpen={isOpen}
+    //   onClose={onClose}
+    //   finalFocusRef={btnRef}
+    //   placement="right"
+    //   size="md"
+    // >
+    //   <DrawerOverlay />
+    //   <DrawerContent>
+    //     <DrawerCloseButton
+    //       color="orange.300"
+    //       _hover={{
+    //         color: "orange.500",
+    //       }}
+    //       size="lg"
+    //     />
+    //     <DrawerHeader as="h2" fontSize="2xl" fontWeight="bold">
+    //       Tu carro de compras
+    //     </DrawerHeader>
+    //     <DrawerBody>
+    //       <Flex
+    //         flexDir="column"
+    //         alignItems="center"
+    //         overflowY="auto"
+    //         h="100%"
+    //         bg="white"
+    //         pr={2}
+    //       >
+    //         {isLoading ? (
+    //           <Loader />
+    //         ) : carrito && carrito.productosComprados.length > 0 ? (
+    //           <>
+    //             {carrito.productosComprados?.map(
+    //               (cartItem: cartItem, i: number) => (
+    //                 <CartItem
+    //                   key={"cart-item-" + i}
+    //                   cartItem={cartItem}
+    //                   index={i}
+    //                 />
+    //               )
+    //             )}
+    //             <EmptyCartBtn />
+    //           </>
+    //         ) : (
+    //           <Alert
+    //             status="warning"
+    //             variant="subtle"
+    //             flexDirection="column"
+    //             alignItems="center"
+    //             justifyContent="center"
+    //             textAlign="center"
+    //             height="100%"
+    //             bg={"white"}
+    //           >
+    //             <AlertIcon boxSize="40px" mr={0} />
+    //             <AlertTitle mt={4} mb={1} fontSize="lg">
+    //               No hay productos en el carrito
+    //             </AlertTitle>
+    //           </Alert>
+    //         )}
+    //       </Flex>
+    //     </DrawerBody>
+    //     <DrawerFooter>
+    //       {isLoading ? null : (
+    //         <Flex
+    //           w="100%"
+    //           h="7rem"
+    //           bg="white"
+    //           mb={2}
+    //           borderRadius="md"
+    //           display="flex"
+    //           flexDir="column"
+    //           alignItems="end"
+    //           justifyContent="center"
+    //           px={3}
+    //           visibility={
+    //             carrito && carrito.productosComprados.length > 0
+    //               ? "visible"
+    //               : "hidden"
+    //           }
+    //         >
+    //           <Text
+    //             fontSize="sm"
+    //             fontWeight="bold"
+    //             as="span"
+    //             h="3rem"
+    //             display="flex"
+    //             alignItems="center"
+    //             justifyContent="space-between"
+    //             gap={2}
+    //           >
+    //             <Tag size="md" variant="solid" bg="orange">
+    //               <TagLabel>Total</TagLabel>
+    //             </Tag>
+    //             ${carrito?.totalCompra.toFixed(2)}
+    //           </Text>
+    //           <Button
+    //             variant={"solid"}
+    //             w="100%"
+    //             h="4rem"
+    //             {...btnStyle}
+    //             onClick={onClose}
+    //             as={Link}
+    //             to="/carrito"
+    //           >
+    //             Continuar
+    //           </Button>
+    //         </Flex>
+    //       )}
+    //     </DrawerFooter>
+    //   </DrawerContent>
+    // </Drawer>
     <Drawer
-      isOpen={isOpen}
+      opened={isOpen}
       onClose={onClose}
-      finalFocusRef={btnRef}
-      placement="right"
-      size="md"
+      title={<p style={{fontSize:"1.5rem",fontWeight:"bolder"}}>Carrito</p>}
+      position="right"
+      transitionProps={{
+        transition: "slide-left",
+        duration: 200,
+        timingFunction: "ease-in-out",
+      }}
+      overlayProps={{ opacity: 0.5, blur: 4 }}
     >
-      <DrawerOverlay />
-      <DrawerContent>
-        <DrawerCloseButton
-          color="orange.300"
-          _hover={{
-            color: "orange.500",
-          }}
-          size="lg"
-        />
-        <DrawerHeader as="h2" fontSize="2xl" fontWeight="bold">
-          Tu carro de compras
-        </DrawerHeader>
-        <DrawerBody>
-          <Flex
-            flexDir="column"
-            alignItems="center"
-            overflowY="auto"
-            h="100%"
-            bg="white"
-            pr={2}
-          >
-            {isLoading ? (
-              <Loader />
-            ) : carrito && carrito.productosComprados.length > 0 ? (
-              <>
-                {carrito.productosComprados?.map(
-                  (cartItem: cartItem, i: number) => (
-                    <CartItem
-                      key={"cart-item-" + i}
-                      cartItem={cartItem}
-                      index={i}
-                    />
-                  )
-                )}
-                <EmptyCartBtn />
-              </>
-            ) : (
-              <Alert
-                status="warning"
-                variant="subtle"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                textAlign="center"
-                height="100%"
-                bg={"white"}
-              >
-                <AlertIcon boxSize="40px" mr={0} />
-                <AlertTitle mt={4} mb={1} fontSize="lg">
-                  No hay productos en el carrito
-                </AlertTitle>
-              </Alert>
+      <Flex direction={"column"} align="center" h="100%" bg="white" pr={2}>
+        {isLoading ? (
+          <Loader />
+        ) : carrito && carrito.productosComprados.length > 0 ? (
+          <>
+            {carrito.productosComprados?.map(
+              (cartItem: cartItem, i: number) => (
+                <CartItem
+                  key={"cart-item-" + i}
+                  cartItem={cartItem}
+                  index={i}
+                />
+              )
             )}
-          </Flex>
-        </DrawerBody>
-        <DrawerFooter>
-          {isLoading ? null : (
-            <Flex
-              w="100%"
-              h="7rem"
-              bg="white"
-              mb={2}
-              borderRadius="md"
-              display="flex"
-              flexDir="column"
-              alignItems="end"
-              justifyContent="center"
-              px={3}
-              visibility={
-                carrito && carrito.productosComprados.length > 0
-                  ? "visible"
-                  : "hidden"
-              }
-            >
-              <Text
-                fontSize="sm"
-                fontWeight="bold"
-                as="span"
-                h="3rem"
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                gap={2}
-              >
-                <Tag size="md" variant="solid" bg="orange">
-                  <TagLabel>Total</TagLabel>
-                </Tag>
-                ${carrito?.totalCompra.toFixed(2)}
-              </Text>
-              <Button
-                variant={"solid"}
-                w="100%"
-                h="4rem"
-                {...btnStyle}
-                onClick={onClose}
-                as={Link}
-                to="/carrito"
-              >
-                Continuar
-              </Button>
-            </Flex>
-          )}
-        </DrawerFooter>
-      </DrawerContent>
+            {carrito.productosComprados?.map(
+              (cartItem: cartItem, i: number) => (
+                <CartItem
+                  key={"cart-item-" + i}
+                  cartItem={cartItem}
+                  index={i}
+                />
+              )
+            )}
+            <EmptyCartBtn />
+          </>
+        ) : (
+          <Alert
+            icon={<IconAlertCircle size="1rem" />}
+            title="El carrito esta vacio!"
+            color="red"
+          >
+            Agrega productos para verlos aqui.
+          </Alert>
+        )}
+      </Flex>
     </Drawer>
   );
 };
 
 const EmptyCartBtn = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
   const cancelRef = useRef() as React.MutableRefObject<HTMLButtonElement>;
   //const { mutate: emptyCart } = useEmptyCart();
+  
   const { cart: carrito, loading, setCarrito } = useMainStore();
   const { mutate: clearCart, data: clearCartData } =
     useApiMutation("PUT|cart/clearCart");
   const handleClearCart = () => {
     //emptyCart();
     clearCart(null);
-    onClose();
+    close();
   };
   useEffect(() => {
     if (clearCartData) {
@@ -198,10 +225,10 @@ const EmptyCartBtn = () => {
   }, [clearCartData]);
   return (
     <>
-      <Button colorScheme="red" w="100%" minH="3rem" onClick={onOpen}>
+      <Button  w="100%" mih="3rem" onClick={handleClearCart}>
         Vaciar carrito
       </Button>
-      <AlertDialog
+      {/* <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
         onClose={onClose}
@@ -223,7 +250,7 @@ const EmptyCartBtn = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>
-      </AlertDialog>
+      </AlertDialog> */}
     </>
   );
 };

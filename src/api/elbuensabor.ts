@@ -125,13 +125,13 @@ export const postPutFetch = async <T extends MutationFunction<any, any>>(
 
     const { url, method } = prepareFetch(query, data);
     // this method is used to create or update a resource that contains a file
-    const formData = 'formData' in data;
+    const formData = data ? 'formData' in data : null;
     console.log('formData', formData);
 
     const { token } = useMainStore.getState();
 
     const options: AxiosRequestConfig = {
-        data: 'formData' in data ? data.formData : data,
+        data: data ? 'formData' in data : data,
         method: method,
         headers: {
             Accept: "application/json",

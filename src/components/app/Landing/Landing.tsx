@@ -1,11 +1,10 @@
-import { SimpleGrid, Title as Heading, Flex, Stack, Box } from "@mantine/core";
+import { SimpleGrid, Title as Heading, Flex, Stack, Box, useMantineColorScheme, createStyles } from "@mantine/core";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import "./landing.scss";
 import Loader from "@app/Loader/Loader";
 import { LandingCard } from "./Cards/LandingProductCard";
 import { CategoryCard } from "./Cards/CategoryCard";
-import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Product, Category } from "types/types";
 import useCatalogueStore from "@store/catalogueStore";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
@@ -60,21 +59,31 @@ const Landing = () => {
       </Carousel.Slide>
     ));
   const mobile = useMediaQuery(`(max-width: 700px)`);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+  const useStyles = createStyles((theme) => ({
+    text: {
+        color:dark ? "white" : "black"
+    },
+  }))
+  const { classes } = useStyles();
   return (
     <Flex
       maw="container.2xl"
       miw={"100vh"}
       display="flex"
-      dir="column"
+      direction="column"
       c="start"
       align="center"
-      bg="#f9f6f6"
+      bg={dark ? "#3e3e3e" : "#f9f6f6"}
+      p={"1rem"}
+      mih="100vh"
     >
-      <Heading order={1} size="xl" mb="2rem">
+      <Heading className={classes.text} order={1} mb="2rem">
         El Buen Sabor
       </Heading>
       <Stack spacing={3} w="100%">
-        <Heading order={3} size="lg" mb="1rem">
+        <Heading className={classes.text} order={3} mb="1rem">
           Categorías
         </Heading>
         {isLoading ? (
@@ -126,16 +135,15 @@ const Landing = () => {
           </>
         )}
         <Box>
-          <Heading order={3} size="lg">
-            Productos destacados
-          </Heading>
+          <Heading className={classes.text} order={3}>Productos destacados</Heading>
           {isLoadingProds ? (
             <Loader />
           ) : (
             <SimpleGrid
               w="100%"
               mt={4}
-              spacing={3}
+              cols={4}
+              spacing="lg"
               breakpoints={[
                 { maxWidth: "62rem", cols: 3, spacing: "md" },
                 { maxWidth: "48rem", cols: 2, spacing: "sm" },
@@ -146,13 +154,21 @@ const Landing = () => {
                 <LandingCard
                   key={"landing-card-" + product.id}
                   product={product}
+                  isThemeBlack={dark}
+                />
+              ))}
+              {productos?.map((product) => (
+                <LandingCard
+                  key={"landing-card-" + product.id}
+                  product={product}
+                  isThemeBlack={dark}
                 />
               ))}
             </SimpleGrid>
           )}
         </Box>
         <Box>
-          <Heading order={3} size="lg" mb="1rem">
+          <Heading order={3} mb="1rem">
             Ofertas
           </Heading>
         </Box>

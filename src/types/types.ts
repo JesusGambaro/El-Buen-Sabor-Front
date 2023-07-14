@@ -11,6 +11,8 @@ type Product = {
   insumosIDS: number[];
   id: number;
   precio: number;
+  valoracion: number;
+  descuento: number;
 };
 type Category = {
   id: number;

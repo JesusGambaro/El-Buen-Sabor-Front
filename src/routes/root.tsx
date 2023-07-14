@@ -1,20 +1,14 @@
-import Landing from "@components/app/Landing/Landing";
+
 import { ErrorPage } from "@pages/ErrorPage";
 import HomePage from "@pages/HomePage";
-import ProductDetailPage from "@pages/ProductDetailPage";
 import { createBrowserRouter } from "react-router-dom";
-import Catalogue from "@components/app/Catalogue/Catalogue";
-import { UserConfig } from "@components/app/UserConfig/UserConfig";
 import StockPage from "@pages/AdminPages/StockPages/StockPage";
 import AdminPage from "@pages/AdminPages/AdminPage";
 import IngredientesPage from "@pages/AdminPages/StockPages/IngredientesPage";
 import { UsersPage } from "@pages/AdminPages/UsersPage";
 import { ProductoFormPage } from "@pages/AdminPages/StockPages/ProductosPages/ProductoFormPage";
-import { CartDetailPage } from "@pages/CartDetailPage";
-import { Pedidos } from "@components/app/Pedidos/Pedidos";
-import { PedidoDetailPage } from "@pages/PedidoDetailPage";
 import DashboardPage from "@pages/AdminPages/DashBoardPages/DashboardPage";
-
+import Landing from "@components/app/Landing/Landing";
 const BrowserRouter = createBrowserRouter([
   {
     path: "/",
@@ -23,36 +17,36 @@ const BrowserRouter = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Landing />,
+        element: <Landing/>,
       },
       {
         path: "/product/:id",
-        element: <ProductDetailPage />,
+        element: <></>,
         errorElement: <ErrorPage />,
       },
       {
         path: "/catálogo",
-        element: <Catalogue />,
+        element: <></>,
         errorElement: <ErrorPage />,
       },
       {
         path: "/configuración",
-        element: <UserConfig />,
+        element: <></>,
         errorElement: <ErrorPage />,
       },
       {
         path: "/carrito",
-        element: <CartDetailPage />,
+        element: <></>,
         errorElement: <ErrorPage />,
       },
       {
         path: "/pedidos",
-        element: <Pedidos />,
+        element: <></>,
         errorElement: <ErrorPage />,
       },
       {
         path: "/pedidos/:id",
-        element: <PedidoDetailPage />,
+        element: <></>,
         errorElement: <ErrorPage />,
       },
     ],

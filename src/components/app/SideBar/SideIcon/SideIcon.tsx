@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ButtonProps, Tab, Tooltip } from "@chakra-ui/react";
+import { Tooltip } from "@mantine/core";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
 interface SideIconProps {
@@ -20,10 +20,10 @@ const SideIcon = ({ label,redirects,onClickFunc }: SideIconProps) => {
   return (
     <Tooltip
       label={label}
-      placement="right"
-      hasArrow
+      position="right"
       openDelay={500}
       closeDelay={500}
+      withArrow
     >
       <NavLink
         to={`/${label === "Home" ? "" : label.toLowerCase()}`}
