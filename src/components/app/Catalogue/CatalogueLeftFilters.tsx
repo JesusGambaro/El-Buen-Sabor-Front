@@ -1,20 +1,18 @@
 import {
   Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Container,
   Text,
   Flex,
   Checkbox,
   Button,
-} from "@chakra-ui/react";
+  UnstyledButton,
+} from "@mantine/core";
 import { InputBase, RangeSlider, Title, Input } from "@mantine/core";
 import { Category } from "types/types";
 import { useEffect, useState } from "react";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
+import { CategoriaFilter } from "./LeftFilters/CategoriaFilter";
 
 type Props = {
   handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
@@ -51,7 +49,7 @@ const CatalogueLeftFilters = (props: Props) => {
 
     return (
       <>
-        {categories?.length ? (
+        {/* {categories?.length ? (
           <Accordion allowMultiple>
             {categories?.map((category) => {
               if (!isRecursive && category.categoriaPadre) return null;
@@ -111,94 +109,97 @@ const CatalogueLeftFilters = (props: Props) => {
           </Accordion>
         ) : (
           <Text>No hay categorias</Text>
-        )}
+        )} */}
       </>
     );
   };
   return (
-    <Container margin={0} borderRadius="md" minW={"15rem"} maxWidth={"20rem"}>
-      <Flex marginBottom={"1rem"}>
-        {props.currentIdCategoria && (
-          <Box
-            color={"white"}
-            background={"orange"}
-            padding={"0.5rem 0.7rem"}
-            minW={"10rem"}
-            borderRadius={"20px"}
-          >
-            <Flex
-              w={"100%"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              gap={"1rem"}
-            >
-              {
-                baseCategories.find((c) => {
-                  return c.id == props.currentIdCategoria;
-                })?.nombre
-              }
-              <Button
-                w={"1rem"}
-                borderRadius={"50%"}
-                colorScheme="orange"
-                onClick={() => {
-                  props.handleSetFilter(undefined);
-                }}
-              >
-                X
-              </Button>
-            </Flex>
-          </Box>
-        )}
-      </Flex>
-      <Flex gap={"1rem"} className="ofertaFilter">
-        <Title order={3}>En Oferta</Title>
-        <Checkbox colorScheme="orange" defaultChecked />
-      </Flex>
-      <br></br>
-      <Flex flexDir={"column"} gap={".5rem"}>
-        <Title order={3}>Filtro por precio min-max</Title>
-        <Flex gap={"1rem"}>
-          <Input
-            value={minMaxPrice.min}
-            onChange={(e) => {
-              let _min = parseFloat(e.target.value);
-              if (_min >= 0 && minMaxPrice.max - _min >= 1000) {
-                setMinMaxPrice({ ...minMaxPrice, min: _min });
-              }
-            }}
-          />
-          <Input
-            value={minMaxPrice.max}
-            onChange={(e) => {
-              let _max = parseFloat(e.target.value);
-              if (_max >= 0 && _max - minMaxPrice.min >= 1000) {
-                setMinMaxPrice({ ...minMaxPrice, max: _max });
-              }
-            }}
-          />
-        </Flex>
-        <RangeSlider
-          color="orange"
-          size="lg"
-          min={0}
-          max={10000}
-          defaultValue={[0, 10000]}
-          value={[minMaxPrice.min, minMaxPrice.max]}
-          label={null}
-          minRange={1000}
-          onChange={(e: any) => {
-            //console.log(e[0], e[1]);
-            setMinMaxPrice({ ...minMaxPrice, min: e[0], max: e[1] });
-          }}
-        />
-      </Flex>
-      <br></br>
-      <Flex flexDir={"column"} gap={".5rem"}>
-        <Title order={3}>Categorias</Title>
-        <NestedAccordion categories={baseCategories} isRecursive={false} />
-      </Flex>
-    </Container>
+    // <Container margin={0} borderRadius="md" minW={"15rem"} maxWidth={"20rem"}>
+    //   <Flex marginBottom={"1rem"}>
+    //     {props.currentIdCategoria && (
+    //       <Box
+    //         color={"white"}
+    //         background={"orange"}
+    //         padding={"0.5rem 0.7rem"}
+    //         minW={"10rem"}
+    //         borderRadius={"20px"}
+    //       >
+    //         <Flex
+    //           w={"100%"}
+    //           justifyContent={"space-between"}
+    //           alignItems={"center"}
+    //           gap={"1rem"}
+    //         >
+    //           {
+    //             baseCategories.find((c) => {
+    //               return c.id == props.currentIdCategoria;
+    //             })?.nombre
+    //           }
+    //           <Button
+    //             w={"1rem"}
+    //             borderRadius={"50%"}
+    //             colorScheme="orange"
+    //             onClick={() => {
+    //               props.handleSetFilter(undefined);
+    //             }}
+    //           >
+    //             X
+    //           </Button>
+    //         </Flex>
+    //       </Box>
+    //     )}
+    //   </Flex>
+    //   <Flex gap={"1rem"} className="ofertaFilter">
+    //     <Title order={3}>En Oferta</Title>
+    //     <Checkbox colorScheme="orange" defaultChecked />
+    //   </Flex>
+    //   <br></br>
+    //   <Flex flexDir={"column"} gap={".5rem"}>
+    //     <Title order={3}>Filtro por precio min-max</Title>
+    //     <Flex gap={"1rem"}>
+    //       <Input
+    //         value={minMaxPrice.min}
+    //         onChange={(e) => {
+    //           let _min = parseFloat(e.target.value);
+    //           if (_min >= 0 && minMaxPrice.max - _min >= 1000) {
+    //             setMinMaxPrice({ ...minMaxPrice, min: _min });
+    //           }
+    //         }}
+    //       />
+    //       <Input
+    //         value={minMaxPrice.max}
+    //         onChange={(e) => {
+    //           let _max = parseFloat(e.target.value);
+    //           if (_max >= 0 && _max - minMaxPrice.min >= 1000) {
+    //             setMinMaxPrice({ ...minMaxPrice, max: _max });
+    //           }
+    //         }}
+    //       />
+    //     </Flex>
+    //     <RangeSlider
+    //       color="orange"
+    //       size="lg"
+    //       min={0}
+    //       max={10000}
+    //       defaultValue={[0, 10000]}
+    //       value={[minMaxPrice.min, minMaxPrice.max]}
+    //       label={null}
+    //       minRange={1000}
+    //       onChange={(e: any) => {
+    //         //console.log(e[0], e[1]);
+    //         setMinMaxPrice({ ...minMaxPrice, min: e[0], max: e[1] });
+    //       }}
+    //     />
+    //   </Flex>
+    //   <br></br>
+    //   <Flex flexDir={"column"} gap={".5rem"}>
+    //     <Title order={3}>Categorias</Title>
+    //     <NestedAccordion categories={baseCategories} isRecursive={false} />
+    //   </Flex>
+    // </Container>
+    <Flex direction={"column"} w={"13rem"}>
+      <CategoriaFilter label="Carne" links={[{ label: "Hamburguesa", link: "a" }]}></CategoriaFilter>
+    </Flex>
   );
 };
 export default CatalogueLeftFilters;

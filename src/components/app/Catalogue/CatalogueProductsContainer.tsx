@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Flex } from "@chakra-ui/react";
+import { Flex } from "@mantine/core";
 import { Product } from "types/types";
 import { LandingCard } from "../Landing/Cards/LandingProductCard";
 import Loader from "../Loader/Loader";
@@ -13,8 +13,8 @@ const CatalogueProductsContainer = () => {
     error: any;
     isLoading: boolean;
   };
-  const { data:products, error, isLoading } = useApiQuery(
-    "GET|producto/search" + `?${filter.id_categoria ? `id=${filter.id_categoria}&` : ""}${filter.nombre_like ? "nombre="+filter.nombre_like : ""}`,
+  const { data: products, error, isLoading } = useApiQuery(
+    "GET|producto/search" + `?${filter.id_categoria ? `id=${filter.id_categoria}&` : ""}${filter.nombre_like ? "nombre=" + filter.nombre_like : ""}`,
     null
   ) as QueryProps;
   // let products: Product[] = [];
@@ -22,14 +22,14 @@ const CatalogueProductsContainer = () => {
 
   useEffect(() => {
     if (products) {
-        setProductos(products)
+      setProductos(products)
     }
   }, [products]);
 
   return isLoading ? (
     <Loader />
   ) : (
-    <Flex flexGrow={1} gap={"2rem"} flexWrap={"wrap"}>
+    <Flex style={{flexGrow:1,flexWrap:"wrap"}} gap={"2rem"}>
       {productos?.map((product: Product) => (
         <LandingCard key={"landing-card-" + product.id} product={product} />
       ))}

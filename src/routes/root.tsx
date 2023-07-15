@@ -9,6 +9,7 @@ import { UsersPage } from "@pages/AdminPages/UsersPage";
 import { ProductoFormPage } from "@pages/AdminPages/StockPages/ProductosPages/ProductoFormPage";
 import DashboardPage from "@pages/AdminPages/DashBoardPages/DashboardPage";
 import Landing from "@components/app/Landing/Landing";
+import Catalogue from "@components/app/Catalogue/Catalogue";
 const BrowserRouter = createBrowserRouter([
   {
     path: "/",
@@ -26,7 +27,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/catálogo",
-        element: <></>,
+        element: <Catalogue />,
         errorElement: <ErrorPage />,
       },
       {

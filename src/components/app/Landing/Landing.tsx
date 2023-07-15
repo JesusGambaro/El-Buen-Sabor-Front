@@ -75,7 +75,7 @@ const Landing = () => {
       direction="column"
       c="start"
       align="center"
-      bg={dark ? "#3e3e3e" : "#f9f6f6"}
+      bg={dark ? "#3e3e3e" : "#e6e6e6"}
       p={"1rem"}
       mih="100vh"
     >

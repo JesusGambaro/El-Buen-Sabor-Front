@@ -28,6 +28,7 @@ type CartItem = {
   productoId: number;
   cantidad: number;
   precioUnitario: number;
+  descuento: number;
   precioTotal: number;
   imgURL: string;
 };

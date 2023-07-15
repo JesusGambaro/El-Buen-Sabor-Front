@@ -138,7 +138,7 @@ const NavBar = () => {
       color: "white",
       width: isAuthenticated ? "15rem" : "8rem",
       cursor: !isAuthenticated ? "pointer" : "default",
-      minHeight: "4rem",
+      minHeight: isAuthenticated ? "4rem" : "2rem",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -489,7 +489,6 @@ const NavBar = () => {
             variant="outline"
             color={dark ? "yellow" : "blue"}
             onClick={() => toggleColorScheme()}
-            title="Toggle color scheme"
           >
             {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
           </ActionIcon>
@@ -497,7 +496,6 @@ const NavBar = () => {
             <ActionIcon
               variant="transparent"
               color={dark ? "yellow" : "blue"}
-              title="Toggle color scheme"
               onClick={handleIsAuth}
               
             >

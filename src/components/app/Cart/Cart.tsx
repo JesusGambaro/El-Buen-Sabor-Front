@@ -1,5 +1,15 @@
 import { useEffect, useRef } from "react";
-import { Drawer, Text, Button, Flex, Alert, Title } from "@mantine/core";
+import {
+  Drawer,
+  Text,
+  Button,
+  Flex,
+  Alert,
+  Title,
+  Mark,
+  Box,
+  Card,
+} from "@mantine/core";
 import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
 import { btnStyle } from "@utils/theme";
@@ -157,7 +167,9 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
     <Drawer
       opened={isOpen}
       onClose={onClose}
-      title={<p style={{fontSize:"1.5rem",fontWeight:"bolder"}}>Carrito</p>}
+      title={
+        <p style={{ fontSize: "1.5rem", fontWeight: "bolder" }}>Carrito</p>
+      }
       position="right"
       transitionProps={{
         transition: "slide-left",
@@ -165,8 +177,9 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
         timingFunction: "ease-in-out",
       }}
       overlayProps={{ opacity: 0.5, blur: 4 }}
+      bg={"#f9f6f6"}
     >
-      <Flex direction={"column"} align="center" h="100%" bg="white" pr={2}>
+      <Flex direction={"column"} gap={3} align="center" h="100%" pr={2}>
         {isLoading ? (
           <Loader />
         ) : carrito && carrito.productosComprados.length > 0 ? (
@@ -180,22 +193,41 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
                 />
               )
             )}
-            {carrito.productosComprados?.map(
-              (cartItem: cartItem, i: number) => (
-                <CartItem
-                  key={"cart-item-" + i}
-                  cartItem={cartItem}
-                  index={i}
-                />
-              )
-            )}
+            <Card w={"100%"} p={"0.5rem"} style={{gap:"1rem"}} display={"flex"}>
+              <Text weight={"bold"}>Total</Text>
+              <Text color="black" display={"flex"}>
+                <Text color="orange">
+                  <i className="fa-solid fa-dollar-sign"></i>
+                </Text>
+                <Text>{carrito?.totalCompra.toFixed(2)}</Text>
+              </Text>
+            </Card>
+
+            <Link
+              style={{
+                textDecoration: "none",
+                color: "white",
+                background: "orange",
+                width: "100%",
+                height: "4rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "5px",
+              }}
+              onClick={onClose}
+              to="/carrito"
+            >
+              Continuar
+            </Link>
             <EmptyCartBtn />
           </>
         ) : (
           <Alert
-            icon={<IconAlertCircle size="1rem" />}
+            icon={<></>}
             title="El carrito esta vacio!"
             color="red"
+            w={"100%"}
           >
             Agrega productos para verlos aqui.
           </Alert>
@@ -209,7 +241,7 @@ const EmptyCartBtn = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const cancelRef = useRef() as React.MutableRefObject<HTMLButtonElement>;
   //const { mutate: emptyCart } = useEmptyCart();
-  
+
   const { cart: carrito, loading, setCarrito } = useMainStore();
   const { mutate: clearCart, data: clearCartData } =
     useApiMutation("PUT|cart/clearCart");
@@ -225,7 +257,7 @@ const EmptyCartBtn = () => {
   }, [clearCartData]);
   return (
     <>
-      <Button  w="100%" mih="3rem" onClick={handleClearCart}>
+      <Button w="100%" color="red" mih="3rem" onClick={handleClearCart}>
         Vaciar carrito
       </Button>
       {/* <AlertDialog

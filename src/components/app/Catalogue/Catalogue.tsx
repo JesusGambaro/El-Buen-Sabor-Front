@@ -1,12 +1,10 @@
 import {
   SimpleGrid,
-  Heading,
   Container,
   Stack,
   Box,
-  IconButton,
-  Flex,
-} from "@chakra-ui/react";
+  Flex,Title, useMantineColorScheme, createStyles
+} from "@mantine/core";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import "./catalogue.scss";
@@ -24,33 +22,42 @@ const Catalogue = () => {
       nombre_like,
     });
   };
-  
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark"
   //--Temploral
   // let filter = { id_categoria: 0 };
   // let handleSetFilter = () => {
   //   return;
   // };
   //--
+   const useStyles = createStyles((theme) => ({
+    text: {
+        color:dark ? "white" : "black"
+    },
+  }))
+  const { classes } = useStyles();
   return (
-    <Container
-      maxW="container.2xl"
-      minH="100vh"
+    <Flex
+      maw="container.2xl"
+      miw={"100vh"}
       display="flex"
-      flexDirection="column"
-      justifyContent="start"
-      alignItems="center"
-      bg="#f9f6f6"
+      direction="column"
+      c="start"
+      align="center"
+      bg={dark ? "#3e3e3e" : "#e6e6e6"}
+      p={"1rem"}
+      mih="100vh"
     >
-      <Heading as="h1" size="xl" mb="2rem">
+      <Title className={classes.text} order={1} mb="2rem">
         El Buen Sabor
-      </Heading>
-      <Stack spacing={3} w="100%" flexDirection={"column"}>
-        <Heading as="h2" size="lg" mb="1rem">
+      </Title>
+      <Stack spacing={3} w="100%" dir={"column"}>
+        <Title className={classes.text} order={1} mb="2rem">
           Catálogo
-        </Heading>
+        </Title>
 
         <Box>
-          <Flex gap={"0rem 2rem"} justifyContent={"flex-start"}>
+          <Flex gap={"0rem 2rem"} justify={"flex-start"}>
             <CatalogueLeftFilters
               currentIdCategoria={filter.id_categoria}
               handleSetFilter={handleSetFilter}
@@ -59,7 +66,7 @@ const Catalogue = () => {
           </Flex>
         </Box>
       </Stack>
-    </Container>
+    </Flex>
   );
 };
 export default Catalogue;
