@@ -7,12 +7,18 @@ import {
   Checkbox,
   Button,
   UnstyledButton,
+  Drawer,
+  Switch,
+  Stack,
+  rem,
+  createStyles,
 } from "@mantine/core";
 import { InputBase, RangeSlider, Title, Input } from "@mantine/core";
 import { Category } from "types/types";
 import { useEffect, useState } from "react";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { CategoriaFilter } from "./LeftFilters/CategoriaFilter";
+import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
@@ -41,78 +47,34 @@ const CatalogueLeftFilters = (props: Props) => {
     min: 0,
     max: 10000,
   });
-  const NestedAccordion = ({
-    categories,
-    isRecursive,
-  }: NestedAccordionProps) => {
-    //console.log(categories.length);
+  const [opened, { open, close }] = useDisclosure(false);
+  const useStyles = createStyles((theme) => ({
+    label: {
+      top: 0,
+      height: rem(28),
+      lineHeight: rem(28),
+      width: rem(34),
+      padding: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      fontWeight: 700,
+      backgroundColor: "transparent",
+    },
 
-    return (
-      <>
-        {/* {categories?.length ? (
-          <Accordion allowMultiple>
-            {categories?.map((category) => {
-              if (!isRecursive && category.categoriaPadre) return null;
-              const subcategories = baseCategories.filter(
-                (subCategory) => subCategory.categoriaPadre?.id === category.id
-              );
-              const hasChildren = subcategories.length > 0;
-              return (
-                <AccordionItem
-                  key={category.id + Math.random() * 100}
-                  border="none"
-                >
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    p={1}
-                    width="100%"
-                    _hover={{
-                      background: "orange",
-                      color: "white",
-                      cursor: hasChildren ? "default" : "pointer",
-                    }}
-                    borderRadius="15px"
-                    onClick={() => {
-                      if (hasChildren) return;
-                      props.handleSetFilter(category.id);
-                      setCurrentCategoriaName(category.nombre);
-                    }}
-                  >
-                    <Text
-                      fontSize="md"
-                      fontWeight={hasChildren ? "bold" : "normal"}
-                      textDecorationColor="orange.500"
-                    >
-                      {category.nombre}
-                    </Text>
-                    <AccordionButton
-                      width="10%"
-                      justifyContent="center"
-                      visibility={hasChildren ? "visible" : "hidden"}
-                    >
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </Box>
-                  {hasChildren && (
-                    <AccordionPanel p={1} pr={0}>
-                      <NestedAccordion
-                        categories={subcategories}
-                        isRecursive={true}
-                      />
-                    </AccordionPanel>
-                  )}
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        ) : (
-          <Text>No hay categorias</Text>
-        )} */}
-      </>
-    );
-  };
+    thumb: {
+      backgroundColor: "orange",
+      height: rem(28),
+      width: rem(34),
+      border: "none",
+    },
+
+    dragging: {
+      transform: "translate(-50%, -50%)",
+    },
+  }));
+  const { classes } = useStyles();
+
   return (
     // <Container margin={0} borderRadius="md" minW={"15rem"} maxWidth={"20rem"}>
     //   <Flex marginBottom={"1rem"}>
@@ -197,9 +159,116 @@ const CatalogueLeftFilters = (props: Props) => {
     //     <NestedAccordion categories={baseCategories} isRecursive={false} />
     //   </Flex>
     // </Container>
-    <Flex direction={"column"} w={"13rem"}>
-      <CategoriaFilter label="Carne" links={[{ label: "Hamburguesa", link: "a" }]}></CategoriaFilter>
-    </Flex>
+    <>
+      <Flex direction={"column"} p={"1rem"} gap={"1rem"} w={"25rem"}>
+        <Title order={2}>Filtros</Title>
+        <Flex mb={"1rem"}>
+          {props.currentIdCategoria ? (
+            <>
+              <Flex
+                w={"15rem"}
+                sx={{ borderRadius: "20px" }}
+                h={"4rem"}
+                p={"1rem"}
+                justify={"space-between"}
+                align={"center"}
+                bg={"orange"}
+              >
+                <Title color="white" align="left" weight={"500"} order={4}>
+                  {
+                    baseCategories?.find((c) => {
+                      return c.id == props.currentIdCategoria;
+                    })?.nombre
+                  }
+                </Title>
+                <Button
+                  w={"3.5rem"}
+                  h={"3.5rem"}
+                  sx={{
+                    background: "white",
+                    color: "orange",
+                    borderRadius: "100%",
+                    ":hover": {
+                      background: "orange",
+                      color: "white",
+                      border: "4px solid white",
+                    },
+                  }}
+                  onClick={() => {
+                    props.handleSetFilter(undefined);
+                  }}
+                >
+                  X
+                </Button>
+              </Flex>
+            </>
+          ) : (
+            <></>
+          )}
+        </Flex>
+        <Flex
+          gap={"1rem"}
+          w={"100%"}
+          justify={"space-between"}
+          align={"center"}
+          bg={"white"}
+          p={"1rem"}
+          style={{ borderRadius: "10px" }}
+        >
+          <Title weight={"500"} order={3}>
+            En Oferta
+          </Title>
+          <Switch size="md" onLabel="SI" offLabel="NO" />
+        </Flex>
+        <Flex
+          gap={"1rem"}
+          w={"100%"}
+          justify={"center"}
+          align={"center"}
+          bg={"white"}
+          p={"1rem"}
+          direction={"column"}
+          style={{ borderRadius: "10px" }}
+        >
+          <Title w={"100%"} align="left" weight={"500"} order={3}>
+            Precio
+          </Title>
+          <Flex justify={"space-between"} display={"flex"} w={"100%"}>
+            <Stack w={"5rem"}>
+              <Title w={"100%"} align="left" weight={"400"} order={4}>
+                Min
+              </Title>
+            </Stack>
+            <Stack w={"5rem"}>
+              <Title w={"100%"} align="right" weight={"400"} order={4}>
+                Max
+              </Title>
+            </Stack>
+          </Flex>
+          <RangeSlider
+            w={"100%"}
+            size="xl"
+            color="orange"
+            labelAlwaysOn
+            classNames={classes}
+          ></RangeSlider>
+        </Flex>
+        {!props.currentIdCategoria && (
+          <Flex
+            gap={"1rem"}
+            w={"100%"}
+            justify={"space-between"}
+            align={"center"}
+            bg={"white"}
+            p={"1rem"}
+            direction={"column"}
+            style={{ borderRadius: "10px" }}
+          >
+            <CategoriaFilter handleSetFilter={props.handleSetFilter} />
+          </Flex>
+        )}
+      </Flex>
+    </>
   );
 };
 export default CatalogueLeftFilters;

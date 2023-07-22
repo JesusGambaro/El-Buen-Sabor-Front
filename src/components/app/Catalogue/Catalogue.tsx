@@ -3,7 +3,10 @@ import {
   Container,
   Stack,
   Box,
-  Flex,Title, useMantineColorScheme, createStyles
+  Flex,
+  Title,
+  useMantineColorScheme,
+  createStyles,
 } from "@mantine/core";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
@@ -22,19 +25,21 @@ const Catalogue = () => {
       nombre_like,
     });
   };
+  console.log("filter ", filter);
+  
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark"
+  const dark = colorScheme === "dark";
   //--Temploral
   // let filter = { id_categoria: 0 };
   // let handleSetFilter = () => {
   //   return;
   // };
   //--
-   const useStyles = createStyles((theme) => ({
+  const useStyles = createStyles((theme) => ({
     text: {
-        color:dark ? "white" : "black"
+      color: dark ? "white" : "black",
     },
-  }))
+  }));
   const { classes } = useStyles();
   return (
     <Flex
@@ -56,15 +61,13 @@ const Catalogue = () => {
           Catálogo
         </Title>
 
-        <Box>
-          <Flex gap={"0rem 2rem"} justify={"flex-start"}>
-            <CatalogueLeftFilters
-              currentIdCategoria={filter.id_categoria}
-              handleSetFilter={handleSetFilter}
-            />
-            <CatalogueProductsContainer></CatalogueProductsContainer>
-          </Flex>
-        </Box>
+        <Flex gap={"0rem 2rem"} w={"100%"}  direction={"row"} justify={"flex-start"}>
+          <CatalogueLeftFilters
+            currentIdCategoria={filter.id_categoria}
+            handleSetFilter={handleSetFilter}
+          />
+          <CatalogueProductsContainer/>
+        </Flex>
       </Stack>
     </Flex>
   );

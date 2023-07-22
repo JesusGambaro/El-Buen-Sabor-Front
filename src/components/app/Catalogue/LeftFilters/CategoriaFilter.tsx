@@ -6,122 +6,190 @@ import {
   createStyles,
   Group,
   Box,
+  Accordion,
+  Title,
 } from "@mantine/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { Tex } from "tabler-icons-react";
+import { Category } from "types/types";
+import { useApiQuery } from "@hooks/useQueries";
 const useStyles = createStyles((theme) => ({
   categoriaPadre: {
-    fontWeight: 500,
-    background: "white",
-    padding: ".5rem",
+    width: "100%",
+    display: "flex",
+    cursor: "pointer",
+    height: "4rem",
+    alignItems: "center",
     "&:hover": {
-      backgroundColor: "orange",
+      background: "orange",
     },
-
+    borderRadius: "10px",
     "&.active": {},
   },
 
   categoriaHijo: {
-    fontWeight: 500,
-    display: "block",
-    textDecoration: "none",
-    padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-    paddingLeft: rem(31),
-    marginLeft: rem(30),
-    fontSize: theme.fontSizes.sm,
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[0]
-        : theme.colors.gray[7],
-    borderLeft: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`,
-    transition: "background-color 200ms ease",
+    width: "90%",
+    margin: 0,
+    padding: 0,
+
+    "&.active": {},
+  },
+
+  categoriaHijoSinSub: {
+    width: "90%",
+    margin: 0,
+    padding: 0,
+    borderRadius: "10px",
+    display: "flex",
+    alignItems: "center",
+    height: "4rem",
     cursor: "pointer",
     "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? "black" : "white",
-      color: theme.colorScheme === "dark" ? theme.white : theme.black,
+      background: "orange",
     },
-
-    "&.active": {
-      backgroundColor: theme.colorScheme === "dark" ? "black" : "white",
-      color: theme.colorScheme === "dark" ? theme.white : theme.black,
-      "&:hover": {
-        backgroundColor: "orange",
-        color: theme.colorScheme === "dark" ? theme.white : theme.black,
-      },
-    },
+    "&.active": {},
   },
 
   chevron: {
     transition: "transform 200ms ease",
   },
+  categoriaControl: {
+    padding: 0,
+    span: {
+      margin: 0,
+    },
+    height: "4rem",
+    borderRadius: "10px",
+    "&:hover": {
+      background: "orange",
+    },
+    "span:last-child": {
+      padding: "1rem",
+    },
+  },
+  panel: {
+    padding: 0,
+    background: "",
+    position: "relative",
+    "&::after": {
+      position: "absolute",
+      content: '""',
+      width: rem(3),
+      height: "100%",
+      top: 0,
+      left: 20,
+      background: "orange",
+    },
+  },
 }));
-interface LinksGroupProps {
-  label: string;
-  initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
-  link?: string;
-}
-export const CategoriaFilter = ({
-  label,
-  initiallyOpened,
-  links,
-  link,
-}: LinksGroupProps) => {
+type Props = {
+  handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
+};
+export const CategoriaFilter = (props: Props) => {
   const { classes, theme } = useStyles();
-  const hasLinks = Array.isArray(links);
-  const [opened, setOpened] = useState(initiallyOpened || false);
-  const ChevronIcon = theme.dir === "ltr" ? IconChevronRight : IconChevronLeft;
-  const items = (hasLinks ? links : []).map((link) => (
-    <>
-      <Text
-        className={
-          classes.categoriaHijo +
-          " " +
-          (location.pathname.includes(link.link) ? "active" : "")
-        }
-        key={link.label}
-      >
-        {link.label}
-      </Text>
-    </>
-  ));
+
+  const {
+    data: categorias,
+    error,
+    isLoading,
+  } = useApiQuery("GET|categoria/all", null) as {
+    data: Category[];
+    error: any;
+    isLoading: boolean;
+  };
+  const hasCategorias = Array.isArray(categorias);
+  const crearCategoriaRecursive = (category: Category) => {
+    let returnValue;
+    if (category.subCategoria?.length) {
+      returnValue = (
+        <Accordion
+          display={"flex"}
+          style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
+          variant="default"
+        >
+          <Accordion.Item
+            className={classes.categoriaHijo}
+            value={category.nombre}
+            sx={{ borderBottom: "none" }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Accordion.Control className={classes.categoriaControl}>
+                {category.nombre}
+              </Accordion.Control>
+            </Box>
+            <Accordion.Panel className={classes.panel}>
+              {category.subCategoria.map((c) => {
+                return crearCategoriaRecursive(c);
+              })}
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
+      );
+    } else {
+      returnValue = (
+        <Box
+          display={"flex"}
+          style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
+        >
+          <Text p={"1rem"} onClick={() => {
+                  props.handleSetFilter(category.id);
+                }} className={classes.categoriaHijoSinSub}>
+            {category.nombre}
+          </Text>
+        </Box>
+      );
+    }
+    return returnValue;
+  };
+  const items = (hasCategorias ? categorias : []).map((category) => {
+    let returnValue;
+    if (!category.categoriaPadre) {
+      returnValue = (
+        <Accordion.Item sx={{ borderBottom: "none" }} value={category.nombre}>
+          {category.subCategoria?.length ? (
+            <>
+              <Accordion.Control className={classes.categoriaPadre}>
+                {category.nombre}
+              </Accordion.Control>
+              <Accordion.Panel w={"20rem"} className={classes.panel}>
+                {category.subCategoria &&
+                  category.subCategoria.map((c) => {
+                    return crearCategoriaRecursive(c);
+                  })}
+              </Accordion.Panel>
+            </>
+          ) : (
+            <Box
+              display={"flex"}
+              style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
+            >
+              <Text
+                p={"20px"}
+                onClick={() => {
+                  props.handleSetFilter(category.id);
+                }}
+                className={classes.categoriaPadre}
+              >
+                {category.nombre}
+              </Text>
+            </Box>
+          )}
+        </Accordion.Item>
+      );
+    }
+    return returnValue;
+  });
+
   return (
     <>
-      <UnstyledButton
-        onClick={() => {
-          if (hasLinks) {
-            setOpened((o) => !o);
-            return;
-          }
-        }}
-        className={
-          classes.categoriaPadre +
-          " " +
-          (location.pathname === link ? "active" : "")
-        }
-      >
-        <Group position="apart" spacing={0}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box ml="md">{label}</Box>
-          </Box>
-          {hasLinks && (
-            <ChevronIcon
-              className={classes.chevron}
-              size="1rem"
-              stroke={1.5}
-              style={{
-                transform: opened
-                  ? `rotate(${theme.dir === "rtl" ? -90 : 90}deg)`
-                  : "rotate(-90deg)",
-              }}
-            />
-          )}
-        </Group>
-      </UnstyledButton>
-      {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
+      <Title w={"100%"} align="left" weight={"500"} order={3}>
+        Categorias
+      </Title>
+      <Accordion variant="default" sx={{ borderBottom: "none" }} w={"20rem"}>
+        {items}
+      </Accordion>
     </>
   );
 };

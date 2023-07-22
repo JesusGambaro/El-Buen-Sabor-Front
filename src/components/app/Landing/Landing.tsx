@@ -1,4 +1,12 @@
-import { SimpleGrid, Title as Heading, Flex, Stack, Box, useMantineColorScheme, createStyles } from "@mantine/core";
+import {
+  SimpleGrid,
+  Title as Heading,
+  Flex,
+  Stack,
+  Box,
+  useMantineColorScheme,
+  createStyles,
+} from "@mantine/core";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import "./landing.scss";
@@ -63,9 +71,9 @@ const Landing = () => {
   const dark = colorScheme === "dark";
   const useStyles = createStyles((theme) => ({
     text: {
-        color:dark ? "white" : "black"
+      color: dark ? "white" : "black",
     },
-  }))
+  }));
   const { classes } = useStyles();
   return (
     <Flex
@@ -135,21 +143,39 @@ const Landing = () => {
           </>
         )}
         <Box>
-          <Heading className={classes.text} order={3}>Productos destacados</Heading>
+          <Heading className={classes.text} order={3}>
+            Productos destacados
+          </Heading>
           {isLoadingProds ? (
             <Loader />
           ) : (
-            <SimpleGrid
-              w="100%"
-              mt={4}
-              cols={4}
-              spacing="lg"
-              breakpoints={[
-                { maxWidth: "62rem", cols: 3, spacing: "md" },
-                { maxWidth: "48rem", cols: 2, spacing: "sm" },
-                { maxWidth: "36rem", cols: 1, spacing: "sm" },
-              ]}
-            >
+            // <SimpleGrid
+            //   w="100%"
+            //   mt={4}
+            //   cols={4}
+            //   spacing="lg"
+            //   breakpoints={[
+            //     { maxWidth: "62rem", cols: 3, spacing: "md" },
+            //     { maxWidth: "48rem", cols: 2, spacing: "sm" },
+            //     { maxWidth: "36rem", cols: 1, spacing: "sm" },
+            //   ]}
+            // >
+            //   {productos?.map((product) => (
+            //     <LandingCard
+            //       key={"landing-card-" + product.id}
+            //       product={product}
+            //       isThemeBlack={dark}
+            //     />
+            //   ))}
+            //   {productos?.map((product) => (
+            //     <LandingCard
+            //       key={"landing-card-" + product.id}
+            //       product={product}
+            //       isThemeBlack={dark}
+            //     />
+            //   ))}
+            // </SimpleGrid>
+            <Flex wrap={"wrap"} gap={"2rem"} justify={"flex-start"} align={"start"}>
               {productos?.map((product) => (
                 <LandingCard
                   key={"landing-card-" + product.id}
@@ -157,14 +183,7 @@ const Landing = () => {
                   isThemeBlack={dark}
                 />
               ))}
-              {productos?.map((product) => (
-                <LandingCard
-                  key={"landing-card-" + product.id}
-                  product={product}
-                  isThemeBlack={dark}
-                />
-              ))}
-            </SimpleGrid>
+            </Flex>
           )}
         </Box>
         <Box>

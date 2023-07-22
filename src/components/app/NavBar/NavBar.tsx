@@ -27,8 +27,8 @@ import {
   IconSearch,
   IconChevronDown,
   IconShoppingCart,
-  IconLogout2,
   IconSettings,
+  IconLogout,
 } from "@tabler/icons-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
@@ -465,7 +465,7 @@ const NavBar = () => {
                         })
                       }
                       color="red"
-                      icon={<IconLogout2 size={14} />}
+                      icon={<IconLogout size={14} />}
                     >
                       Salir
                     </Menu.Item>

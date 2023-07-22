@@ -88,6 +88,7 @@ export const LandingCard = ({
         key={product.id}
         mt="3rem"
         mih={"7rem"}
+        pos={"relative"}
       >
         <Card.Section
           style={{
@@ -95,35 +96,13 @@ export const LandingCard = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "start",
+            flexGrow:1,
             zIndex: 2,
             borderRadius: product.descuento ? "0 2rem 2rem 2rem" : "2rem",
-            
           }}
           pos={"relative"}
           bg={!isThemeBlack ? "white" : "#25262b"}
-          
         >
-          <Link
-            to={`/product/${product.id}`}
-            style={{
-              textDecoration: "none",
-              position: "absolute",
-              top: "0",
-              width: "5rem",
-            }}
-          >
-            <Image
-              src={product.imgURL}
-              alt={product.nombre}
-              radius="50%"
-              fit="cover"
-              m="auto"
-              pos="absolute"
-              top="-3rem"
-              left="0"
-              right="0"
-            />
-          </Link>
           <Flex
             style={{
               display: "flex",
@@ -133,9 +112,8 @@ export const LandingCard = ({
               flexDirection: "column",
               gap: "1rem",
             }}
-            
           >
-            <Title size="sm" mt="4">
+            <Title size="sm" mt="4"  style={{width:"10rem",textOverflow:"ellipsis",overflow:"hidden",whiteSpace:"nowrap"}}>
               {product.nombre}
             </Title>
 
@@ -205,6 +183,31 @@ export const LandingCard = ({
             </Flex>
           </Flex>
         </Card.Section>
+        <Link
+          to={`/product/${product.id}`}
+          style={{
+            textDecoration: "none",
+            position: "absolute",
+            background: "transparent",
+            maxWidth: "5rem",
+            height: "4rem",
+            overflow: "hidden",
+            inset: 0,
+            top: "-3.5rem",
+            left: 0,
+            right: 0,
+            margin: "0 auto",
+            zIndex: 0,
+          }}
+        >
+          <Image
+            src={product.imgURL}
+            alt={product.nombre}
+            radius="50%"
+            fit="cover"
+            m="auto"
+          />
+        </Link>
         {product.descuento > 0 && (
           <Flex
             bg={"orange"}
