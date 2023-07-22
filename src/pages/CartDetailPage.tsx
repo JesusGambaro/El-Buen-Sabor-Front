@@ -221,28 +221,28 @@ export const CartDetailPage = () => {
                 p={0}
               >
                 <Stack
-                    flexBasis={"35rem"}
-                    flexShrink={"2"}
-                    background={"blackAlpha.100"}
-                    p={"1rem"}
-                    spacing={5}
+                  flexBasis={"35rem"}
+                  flexShrink={"2"}
+                  background={"blackAlpha.100"}
+                  p={"1rem"}
+                  spacing={5}
+                >
+                  <Heading as="h2" size="lg" mb="1rem">
+                    Detalle del pedido
+                  </Heading>
+                  <CartForm />
+                  <Button
+                    variant={"solid"}
+                    w="10rem"
+                    h="3rem"
+                    {...btnStyle}
+                    onClick={() => {
+                      setActiveTab(0);
+                    }}
                   >
-                    <Heading as="h2" size="lg" mb="1rem">
-                      Detalle del pedido
-                    </Heading>
-                    <CartForm />
-                    <Button
-                      variant={"solid"}
-                      w="10rem"
-                      h="3rem"
-                      {...btnStyle}
-                      onClick={() => {
-                        setActiveTab(0);
-                      }}
-                    >
-                      Volver
-                    </Button>
-                  </Stack>
+                    Volver
+                  </Button>
+                </Stack>
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -251,7 +251,7 @@ export const CartDetailPage = () => {
             id="resumen-compra"
             p={"1rem"}
             spacing={5}
-              height={"30rem"}
+            height={"30rem"}
             w={mobile ? "100%" : ""}
           >
             <Heading as="h2" size="lg" mb="1rem">

@@ -8,7 +8,7 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { useHotkeys, useLocalStorage } from "@mantine/hooks";
-import { Notifications } from '@mantine/notifications';
+import { Notifications } from "@mantine/notifications";
 function App() {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: "mantine-color-scheme",

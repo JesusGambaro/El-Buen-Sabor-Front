@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "@mantine/form";
 import {
   TextInput,
@@ -6,21 +6,20 @@ import {
   Modal,
   Select,
   SegmentedControl,
-  Box,
   LoadingOverlay,
 } from "@mantine/core";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
-import { Category } from "types/types";
-import { ESTADO } from "@utils/constants";
+import type { Category } from "types/types";
+import { ESTADO, TIPO_CATEGORIA } from "@utils/constants";
 import { useDisclosure } from "@mantine/hooks";
 
-type ModalProps = {
+interface ModalProps {
   opened: boolean;
   onClose: () => void;
   item: Category;
-};
+}
 
-const ModalCForm = (props: ModalProps) => {
+const ModalCForm = (props: ModalProps): JSX.Element => {
   const { opened, onClose, item } = props;
 
   const { data: categories } = useApiQuery("GET|categoria/allWOPage") as {
@@ -34,8 +33,9 @@ const ModalCForm = (props: ModalProps) => {
   const form = useForm({
     initialValues: {
       nombre: "",
-      categoriaPadre: -1,
+      categoriaPadre: "",
       estado: ESTADO.DISPONIBLE,
+      tipo: TIPO_CATEGORIA.PRODUCTO,
     },
     validate: {
       nombre: (value) =>
@@ -44,7 +44,7 @@ const ModalCForm = (props: ModalProps) => {
   });
   const [visible, { toggle }] = useDisclosure(false);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     form.reset();
     visible && toggle();
     onClose();
@@ -55,6 +55,7 @@ const ModalCForm = (props: ModalProps) => {
       nombre: item?.nombre,
       categoriaPadre: item?.categoriaPadre?.id,
       estado: item?.estado,
+      tipo: item?.tipo,
     } as any);
   }, [item]);
 
@@ -62,7 +63,7 @@ const ModalCForm = (props: ModalProps) => {
     <Modal
       opened={opened}
       onClose={handleClose}
-      title={item.id > 0 ? "Editar categoría" : "Crear categoría"}
+      title={item.id !== undefined ? "Editar categoría" : "Crear categoría"}
       centered
       transitionProps={{ transition: "rotate-left" }}
       size="md"
@@ -75,14 +76,20 @@ const ModalCForm = (props: ModalProps) => {
             "🚀 ~ file: ModalCForm.tsx:83 ~ onSubmit={form.onSubmit ~ values:",
             values
           );
-          if (item.id > 0) {
+          if (item.id !== undefined) {
             editCategory({
               ...values,
               id: item.id,
+              categoriaPadre: values.categoriaPadre && {
+                id: values.categoriaPadre,
+              },
             });
           } else {
             createCategory({
               ...values,
+              categoriaPadre: values.categoriaPadre && {
+                id: values.categoriaPadre,
+              },
             });
           }
           handleClose();
@@ -100,14 +107,21 @@ const ModalCForm = (props: ModalProps) => {
           placeholder="Seleccione una categoría"
           searchable
           clearable
-          maxDropdownHeight={100}
+          maxDropdownHeight={160}
           dropdownPosition="bottom"
           data={
-            categories?.map((c) => ({
-              value: c.id as any,
-              label: c.nombre,
-            })) || []
+            categories
+              ? categories?.map((c) => ({
+                  value: c.id as any,
+                  label: c.nombre,
+                }))
+              : []
           }
+          transitionProps={{
+            transition: "pop",
+            duration: 80,
+            timingFunction: "ease",
+          }}
           {...form.getInputProps("categoriaPadre")}
           styles={(theme) => ({
             item: {
@@ -131,11 +145,23 @@ const ModalCForm = (props: ModalProps) => {
           w="100%"
           mt="md"
           data={[
+            { value: TIPO_CATEGORIA.INSUMO, label: "Insumo" },
+            { value: TIPO_CATEGORIA.PRODUCTO, label: "Producto" },
+          ]}
+          {...form.getInputProps("tipo")}
+          color={
+            form.values.tipo === TIPO_CATEGORIA.PRODUCTO ? "grape" : "teal"
+          }
+        />
+        <SegmentedControl
+          w="100%"
+          mt="md"
+          data={[
             { value: ESTADO.NO_DISPONIBLE, label: "No disponible" },
             { value: ESTADO.DISPONIBLE, label: "Disponible" },
           ]}
           {...form.getInputProps("estado")}
-          color={form.values.estado === ESTADO.NO_DISPONIBLE ? "red" : "lime"}
+          color={form.values.estado === ESTADO.NO_DISPONIBLE ? "red" : "green"}
         />
         <Button
           type="submit"

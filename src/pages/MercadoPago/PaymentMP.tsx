@@ -1,8 +1,9 @@
 import { initMercadoPago } from "@mercadopago/sdk-react";
 import { Payment } from "@mercadopago/sdk-react";
 export default function PaymentMP({ prefId }: { prefId: string }) {
-
-  initMercadoPago('TEST-f9a81470-5f5f-467c-85fe-e3d799f97788', { locale: 'es-AR' });
+  initMercadoPago("TEST-f9a81470-5f5f-467c-85fe-e3d799f97788", {
+    locale: "es-AR",
+  });
 
   const initialization = {
     amount: 1,
@@ -16,8 +17,13 @@ export default function PaymentMP({ prefId }: { prefId: string }) {
       mercadoPago: "all",
     },
   };
-  const onSubmit = async ({ selectedPaymentMethod, formData }: { selectedPaymentMethod: any, formData: any }
-  ): Promise<void> => {
+  const onSubmit = async ({
+    selectedPaymentMethod,
+    formData,
+  }: {
+    selectedPaymentMethod: any;
+    formData: any;
+  }): Promise<void> => {
     console.log("PaymentMP");
     // callback llamado al hacer clic en el botón enviar datos
     return new Promise<void>((resolve, reject) => {
@@ -32,7 +38,7 @@ export default function PaymentMP({ prefId }: { prefId: string }) {
         .then((response) => {
           // recibir el resultado del pago
           //else, redirect to order detail
-          /* dispatch(resetOrderDetails()); */  //the reset of the orderdetails has to be after the payment is successfull
+          /* dispatch(resetOrderDetails()); */ //the reset of the orderdetails has to be after the payment is successfull
           console.log("PaymentMP resolve");
           resolve();
         })
@@ -63,5 +69,5 @@ export default function PaymentMP({ prefId }: { prefId: string }) {
       onReady={onReady}
       onError={onError}
     />
-  )
+  );
 }

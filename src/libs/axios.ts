@@ -1,28 +1,24 @@
-const mainColor: string = "#dd6b20";
-//const API_URL = 'https://apimocha.com/elbuensabor/';
-const API_URL: string = 'http://localhost:3000/api/v1/';
-const API_SPRING: string = 'http://localhost:9000/v1/api/';
-import axios from "axios";
-//import useMainStore from "@store/mainStore";
-//const { token } = useMainStore.getState();
+import { API_SPRING } from "@utils/constants";
+import axios, { type AxiosResponse } from "axios";
+
 const elbuensabor = axios.create({
-    baseURL: API_SPRING,
-    // headers: {
-    //     Authorization: `Bearer ${token}`
-    // },
-    //,withCredentials: true
-})
+  baseURL: API_SPRING,
+});
 
-// elbuensabor.interceptors.response.use(
-//     (config) => {
-//         console.log("Estoy en el token: ",token);
-//         config.headers = {
-//             ...config.headers,
-//             "Authorization": `Bearer ${token}`,
-//         };
-//         return config;
-//     }
-// );
+/* elbuensabor.interceptors.response.use(
+  (response: AxiosResponse) => {
+    // If the response status is within the success range, return the data
+    if (response.status >= 200 && response.status < 300) {
+      return response.data;
+    }
 
-export { mainColor, API_URL, API_SPRING }
+    // Otherwise, throw an error with the response status text
+    throw new Error(response.statusText);
+  },
+  (error) => {
+    // Handle any request errors or network failures
+    throw error;
+  }
+);
+ */
 export default elbuensabor;

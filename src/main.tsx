@@ -21,25 +21,25 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-      <Auth0Provider
-        domain={auth0Config.domain}
-        clientId={auth0Config.clientId}
-        authorizationParams={{
-          redirect_uri: auth0Config.redirectUri,
-          audience: auth0Config.audience,
-        }}
-        onRedirectCallback={(appState) => {
-          window.history.replaceState(
-            {},
-            document.title,
-            appState?.returnTo || window.location.pathname
-          );
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} position="top-left" />
-          <App />
-        </QueryClientProvider>
-      </Auth0Provider>
+    <Auth0Provider
+      domain={auth0Config.domain}
+      clientId={auth0Config.clientId}
+      authorizationParams={{
+        redirect_uri: auth0Config.redirectUri,
+        audience: auth0Config.audience,
+      }}
+      onRedirectCallback={(appState) => {
+        window.history.replaceState(
+          {},
+          document.title,
+          appState?.returnTo || window.location.pathname
+        );
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} position="top-left" />
+        <App />
+      </QueryClientProvider>
+    </Auth0Provider>
   </React.StrictMode>
 );

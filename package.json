@@ -8,7 +8,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "server-json": "json-server --watch ./Server/mocks.json --routes ./Server/routes.json",
-    "server": "node ./Server/server.js"
+    "server": "node ./Server/server.js",
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix .",
+    "format": "npx prettier --write ."
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.1.0",
@@ -58,10 +61,20 @@
     "@types/node": "^18.16.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@vitejs/plugin-react-swc": "^3.0.0",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-standard-with-typescript": "^36.1.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.32.2",
+    "prettier": "^3.0.0",
     "simple-zustand-devtools": "^1.1.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.9.5",
+    "typescript": "^5.1.6",
     "vite": "^4.2.0"
   }
 }

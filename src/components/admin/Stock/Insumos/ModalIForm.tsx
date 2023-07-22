@@ -12,20 +12,20 @@ import {
   NumberInput,
 } from "@mantine/core";
 import { useApiMutation } from "@hooks/useQueries";
-import { Supply } from "types/types";
+import { type Supply } from "types/types";
 import { ESTADO } from "@utils/constants";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 
-type Props = {
+interface Props {
   opened: boolean;
   close: () => void;
   title: string;
   item: Supply;
   setItem?: (item: Supply) => void;
-};
+}
 
-const ModalIForm = (props: Props) => {
+const ModalIForm = (props: Props): JSX.Element => {
   const { opened, close, title, item, setItem } = props;
 
   const { mutate: createSupply } = useApiMutation("POST|insumo");
@@ -41,7 +41,7 @@ const ModalIForm = (props: Props) => {
       imagen: "",
     } as Supply,
     validate: {
-      nombre: (value) =>
+      /*   nombre: (value) =>
         value.length < 3 ? "El nombre debe tener al menos 3 caracteres" : null,
       stockMinimo: (value) => {
         console.log(value);
@@ -57,10 +57,11 @@ const ModalIForm = (props: Props) => {
       },
       costo: (value) => (value < 0 ? "El costo debe ser mayor a 0" : null),
       // imagen: (value) => (value.length === 0 ? "Debe subir una imagen" : null),
+      */
     },
   });
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     form.reset();
     setItem?.({
       id: -1,
@@ -99,9 +100,11 @@ const ModalIForm = (props: Props) => {
     reader.readAsDataURL(files[0]);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    console.log(form);
+    console.log(form.isValid());
+    console.log("form.values", form);
+
     if (!form.isValid()) return;
 
     const formData = new FormData();
@@ -148,7 +151,7 @@ const ModalIForm = (props: Props) => {
         <NumberInput
           label="Stock mínimo"
           placeholder="Stock mínimo"
-          //if value = 0 not show value
+          // if value = 0 not show value
           {...form.getInputProps("stockMinimo")}
           required
           type="number"
@@ -174,7 +177,9 @@ const ModalIForm = (props: Props) => {
 
         <Dropzone
           onDrop={handleDrop}
-          onReject={(files) => console.log("rejected files", files)}
+          onReject={(files) => {
+            console.log("rejected files", files);
+          }}
           maxSize={3 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
           mt={10}
@@ -185,7 +190,7 @@ const ModalIForm = (props: Props) => {
             spacing="xl"
             style={{ minHeight: rem(100), pointerEvents: "none" }}
           >
-            {image || form.values.imagen ? (
+            {image != null ?? form.values.imagen ? (
               <Image
                 alt="Uploaded"
                 src={form.values.imagen}
@@ -214,7 +219,7 @@ const ModalIForm = (props: Props) => {
             )}
           </Group>
         </Dropzone>
-        {image || form.values.imagen ? (
+        {image != null ?? form.values.imagen ? (
           <Button
             variant="outline"
             color="red"

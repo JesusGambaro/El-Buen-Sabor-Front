@@ -1,74 +1,85 @@
-import { create } from 'zustand'
-import { mountStoreDevtool } from 'simple-zustand-devtools'
+// Store for admin pages using zustand
+import { type Category, type Product, type Supply } from "types/types";
+import { type StoreApi, type UseBoundStore, create } from "zustand";
 
-type BaseFilter = {
-    nombre?: string;
-    id?: number;
-    page: number;
-    totalPages: number;
+// Generic store interface
+interface Store<T> {
+  filters: Record<string, string>;
+  setFilters: (filters: Record<string, string>) => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  totalPages: number;
+  setTotalPages: (size: number) => void;
+  sortBy: {
+    field: string;
+    direction: "asc" | "desc";
+  };
+  setSortBy: (field: string, direction: "asc" | "desc") => void;
+  getFilters: () => Record<string, string | number>;
 }
 
-type AdminStore = {
-    categoriaFilter: BaseFilter;
-    insumoFilter: BaseFilter;
-    productoFilter: BaseFilter;
-    setFilter: (filter: BaseFilter, name: string) => void;
-    setPage: (page: number, name: string) => void;
-    setTotalPages: (totalPages: number, name: string) => void;
-}
-
-
+// Initial state
 const initialState = {
-    categoriaFilter: {
-        nombre: '',
-        id: undefined,
-        page: 0,
-        totalPages: 0
-    },
-    insumoFilter: {
-        nombre: '',
-        category_id: undefined,
-        page: 0,
-        totalPages: 0
-    },
-    productoFilter: {
-        nombre: '',
-        category_id: undefined,
-        supply_id: undefined,
-        page: 0,
-        totalPages: 0
-    }
-}
+  filters: {},
+  currentPage: 0,
+  totalPages: 0,
+  sortBy: {
+    field: "id",
+    direction: "asc" as "asc",
+  },
+};
 
-const useAdminStore = create<AdminStore>((set, get) => ({
+// Generic store creator
+const useAdminStore = <T>(): UseBoundStore<StoreApi<Store<any>>> => {
+  return create<Store<T>>((set, get) => ({
     ...initialState,
-    setFilter: (filter: BaseFilter, name: string) => set(
-        (state) => ({
-            ...state,
-            [name]: {
-                ...state[name as keyof AdminStore],
-                ...filter
-            }
-        })
-    ),
-    setPage: (page: number, name: string) => set(
-        (state) => ({
-            ...state,
-            [name]: {
-                ...state[name as keyof AdminStore],
-                page
-            }
-        })
-    ),
-    setTotalPages: (totalPages: number, name) => set(
-        (state) => ({
-            ...state,
-            [name]: {
-                ...state[name as keyof AdminStore],
-                totalPages
-            }
-        })
-    )
-}))
+    setFilters: (filters: Record<string, string>) => {
+      set({ filters });
+    },
+    setCurrentPage: (page: number) => {
+      set({ currentPage: page });
+    },
+    setTotalPages: (size: number) => {
+      set({ totalPages: size });
+    },
+    setSortBy: (field: string, direction: "asc" | "desc") => {
+      set({ sortBy: { field, direction } });
+    },
+    // Get filters is used for get requests, with pagination, sorting and filters
+    getFilters: () => {
+      const { filters, currentPage, sortBy } = get();
+      return {
+        ...filters,
+        page: currentPage,
+        sort: `${sortBy.field},${sortBy.direction}`,
+      };
+    },
+  }));
+};
 
-export default useAdminStore;
+// Create stores for each entity
+export const suppliesStore = useAdminStore<Supply>();
+export const productsStore = useAdminStore<Product>();
+export const categoriesStore = useAdminStore<Category>();
+
+// Create a map for each entity
+const storeMap: Record<string, UseBoundStore<StoreApi<Store<any>>>> = {
+  insumo: suppliesStore,
+  producto: productsStore,
+  categoria: categoriesStore,
+};
+
+// Set total pages for each entity store
+export const setTotalPages = (entity: string, totalPages: number): void => {
+  const store = storeMap[entity];
+  console.log("store", entity, totalPages);
+
+  const { setTotalPages, setCurrentPage } = store.getState();
+  if (store !== undefined) {
+    setTotalPages(totalPages);
+    // If the response has only one page, set current page to 0 to avoid pagination errors
+    if (totalPages === 1) {
+      setCurrentPage(0);
+    }
+  }
+};

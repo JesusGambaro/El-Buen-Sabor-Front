@@ -1,45 +1,48 @@
 // function to prepare the url and method for the generic fetch function
 const METHODS = Object.freeze({
-    GET: Symbol('GET'),
-    POST: Symbol('POST'),
-    PUT: Symbol('PUT'),
-    DELETE: Symbol('DELETE'),
+  GET: Symbol("GET"),
+  POST: Symbol("POST"),
+  PUT: Symbol("PUT"),
+  DELETE: Symbol("DELETE"),
 });
 
-type GenericFetch = {
-    url: string;
-    method: string;
+interface GenericFetch {
+  url: string;
+  method: string;
 }
 
-export const prepareFetch = (query: string, params: any): GenericFetch => {
-    const method = query.split('|')[0] as keyof typeof METHODS;
-    const url = query.split('|')[1];
+export const prepareFetch = (query: string, params?: any): GenericFetch => {
+  const method = query.split("|")[0] as keyof typeof METHODS;
+  const url = query.split("|")[1];
 
-    if (METHODS[method] === METHODS.GET) {
-        let filter = '';
-        /*      if (query.includes('GET|categoria/filter')) {
-                 console.warn('query->⚠', query);
-                 console.log('params', params.page);
-             }
-      */
-        if (params) {
-            Object.keys(params).forEach((key) => {
-                if (!params[key as keyof typeof params]) return;
-                const separator = filter.indexOf("?") !== -1 ? "&" : "?";
-                filter += `${separator}${key}=${params[key as keyof typeof params]}`;
-            });
-        }
+  console.log("method", method, "url", url, "params", params);
 
-
-        return { url: `${url}${filter}`, method };
-    }
-    else if (METHODS[method] === METHODS.POST) {
-        return { url, method };
-    } else if (METHODS[method] === METHODS.PUT && params) {
-        return { url: `${url}/${params.id}`, method };
-    } else if (METHODS[method] === METHODS.DELETE && params) {
-        return { url: `${url}/${params.id}`, method };
+  if (METHODS[method] === METHODS.GET) {
+    let filter = "";
+    if (params !== undefined && params !== null) {
+      const urlParams = new URLSearchParams();
+      Object.keys(params).forEach((key) => {
+        if (params[key] !== undefined) urlParams.append(key, params[key]);
+      });
+      filter = `?${urlParams.toString()}`;
     }
 
+    return { url: `${url}${filter}`, method };
+  } else if (METHODS[method] === METHODS.POST) {
     return { url, method };
-}
+  } else if (
+    METHODS[method] === METHODS.PUT &&
+    params !== undefined &&
+    params !== null
+  ) {
+    return { url: `${url}/${params.id as string}`, method };
+  } else if (
+    METHODS[method] === METHODS.DELETE &&
+    params !== undefined &&
+    params !== null
+  ) {
+    return { url: `${url}/${params.id as string}`, method };
+  }
+
+  return { url, method };
+};

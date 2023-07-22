@@ -85,7 +85,7 @@ export const PedidoDetailPage = () => {
         </Button>
       </Flex>
       <Stack p={"1rem"} w={"100%"}>
-        <Heading  textAlign={"center"} as="h1" size="xl" mb="2rem">
+        <Heading textAlign={"center"} as="h1" size="xl" mb="2rem">
           El Buen Sabor
         </Heading>
         <Stack spacing={3} w="100%">

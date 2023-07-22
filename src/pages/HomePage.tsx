@@ -12,13 +12,13 @@ const HomePage = () => {
   const { isAuthenticated }: any = useAuth0();
   useEffect(() => {}, [isAuthenticated]);
   const mobile = useMediaQuery(`(max-width: 700px)`);
-  
+
   return (
     <Container maw="100vw" bg="#f9f6f6" p="0" h="100vh">
-      <NavBar/>
+      <NavBar />
       <InvalidAuthDialog />
       <Container
-        style={{overflowY:"auto",zIndex:2}}
+        style={{ overflowY: "auto", zIndex: 2 }}
         p="0"
         h="calc(100vh - 5.5rem)"
         pos="fixed"
@@ -31,7 +31,7 @@ const HomePage = () => {
       >
         <Outlet />
       </Container>
-      <SideBar/>
+      <SideBar />
       <Footer />
     </Container>
   );

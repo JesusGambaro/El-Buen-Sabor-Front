@@ -1,6 +1,9 @@
 import { Line, Bar, Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -8,6 +11,9 @@ import {
   Title,
   BarElement,
 } from "chart.js";
+import { Tabs, Container } from "@mantine/core";
+import { useNavigate, useParams } from "react-router";
+import { ChartPie, ReportMoney, Users } from "tabler-icons-react";
 
 ChartJS.register(
   ArcElement,
@@ -20,15 +26,8 @@ ChartJS.register(
   Title,
   BarElement
 );
-import { Paper, Tabs } from "@mantine/core";
 
-type Props = {};
-import { Container } from "@mantine/core";
-import { useNavigate, useParams } from "react-router";
-import { ChartPie, ReportMoney, Users } from "tabler-icons-react";
-//REGISTER CHARTS
-
-const DashboardPage = (props: Props) => {
+const DashboardPage = (): JSX.Element => {
   const dataDoughnut = {
     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
     datasets: [
@@ -141,7 +140,9 @@ const DashboardPage = (props: Props) => {
       radius="md"
       keepMounted={false}
       value={tabValue}
-      onTabChange={(value) => navigate(`/admin/dashboard/${value}`)}
+      onTabChange={(value) => {
+        navigate(`/admin/dashboard/${value as string}`);
+      }}
     >
       <Tabs.List grow position="center" h={50} mt="md">
         <Tabs.Tab

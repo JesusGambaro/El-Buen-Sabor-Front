@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "useUnknownInCatchVariables": true,
     "allowJs": false,
     "skipLibCheck": true,
@@ -21,14 +17,10 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": [
-    "src"
-  ],
-  //declare @alias 
+  "include": ["src"],
+  //declare @alias
   "paths": {
-    "@/*": [
-      "src/*"
-    ]
+    "@/*": ["src/*"]
   },
   "extends": "./tsconfig.paths.json",
   "references": [

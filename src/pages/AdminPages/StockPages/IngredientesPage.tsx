@@ -1,9 +1,9 @@
 import Loader from "@components/app/Loader/Loader";
 import { useApiQuery } from "@hooks/useQueries";
-import useAdminStore from "@store/adminStore";
-import { useEffect, useState } from "react";
-import { Supply } from "types/types";
-import { useDisclosure, usePagination } from "@mantine/hooks";
+import { suppliesStore } from "@store/adminStore";
+import { useState } from "react";
+import { type Supply } from "types/types";
+import { useDisclosure } from "@mantine/hooks";
 import {
   Badge,
   Button,
@@ -22,15 +22,14 @@ import {
 import ModalForm from "@components/admin/Stock/Insumos/ModalIForm";
 import { Edit, Plus, ListSearch } from "tabler-icons-react";
 
-type QueryProps = {
+interface QueryProps {
   data: Supply[];
   error: any;
   isLoading: boolean;
-};
+}
 
-const Insumos = () => {
+const InsumosPage = (): JSX.Element => {
   const [opened, { open, close }] = useDisclosure(false);
-
   const [editItem, setEditItem] = useState<Supply>({
     id: -1,
     nombre: "",
@@ -40,50 +39,51 @@ const Insumos = () => {
     stockActual: 0,
     stockMinimo: 0,
   } as Supply);
-  const { insumoFilter, setFilter, setPage } = useAdminStore();
-  ///const [query, setQuery] = useState(filter.nombre || "");
-  const {
-    data: supplies,
-    error,
-    isLoading,
-  } = useApiQuery("GET|insumo", insumoFilter) as QueryProps;
+  const { filters, getFilters, currentPage, totalPages, setCurrentPage } =
+    suppliesStore();
+  /// const [query, setQuery] = useState(filter.nombre || "");
+  const { data: supplies, isLoading } = useApiQuery(
+    "GET|insumo/filter",
+    getFilters()
+  ) as QueryProps;
 
-  const rows = supplies ? (
-    supplies.map((supply, i) => (
-      <tr key={"supply" + i + supply.id}>
-        <td>{supply?.id}</td>
-        <td>{supply?.nombre}</td>
-        <td>
-          <Image src={supply?.imagen} width={50} height={50} />
-        </td>
-        <td>{supply?.stockMinimo}</td>
-        <td>{supply?.stockActual}</td>
-        <td>${supply?.costo}</td>
-        <td>
-          <Badge color={supply.estado === "DISPONIBLE" ? "lime" : "red"}>
-            {supply?.estado}
-          </Badge>
-        </td>
-        <td>
-          <ActionIcon
-            aria-label="Edit"
-            onClick={() => {
-              setEditItem(supply);
-              open();
-            }}
-          >
-            <Edit />
-          </ActionIcon>
+  const rows =
+    supplies !== undefined ? (
+      supplies.map((supply, i) => (
+        <tr key={`supply${i + supply.id}`}>
+          <td>{supply?.id}</td>
+          <td>{supply?.nombre}</td>
+          <td>
+            <Image src={supply?.imagen} width={50} height={50} />
+          </td>
+          <td>{supply?.stockMinimo}</td>
+          <td>{supply?.stockActual}</td>
+          <td>${supply?.costo}</td>
+          <td>
+            <Badge color={supply.estado === "DISPONIBLE" ? "lime" : "red"}>
+              {supply?.estado}
+            </Badge>
+          </td>
+          <td>
+            <ActionIcon
+              aria-label="Edit"
+              onClick={() => {
+                setEditItem(supply);
+                open();
+              }}
+            >
+              <Edit />
+            </ActionIcon>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan={10} style={{ textAlign: "center" }}>
+          No hay insumos
         </td>
       </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan={10} style={{ textAlign: "center" }}>
-        No hay insumos
-      </td>
-    </tr>
-  );
+    );
 
   const maxTableHeight = rem(window.innerHeight - 300);
   const currentTheme = useMantineTheme();
@@ -162,9 +162,11 @@ const Insumos = () => {
       <Space h={20} />
       <Pagination
         color="orange"
-        total={insumoFilter.totalPages}
-        onChange={(value) => setPage(value - 1, "insumoFilter")}
-        value={insumoFilter.page + 1 || 1}
+        total={totalPages}
+        onChange={(value) => {
+          setCurrentPage(value - 1);
+        }}
+        value={currentPage + 1}
       />
 
       <ModalForm
@@ -178,4 +180,4 @@ const Insumos = () => {
   );
 };
 
-export default Insumos;
+export default InsumosPage;

@@ -15,11 +15,12 @@ type Product = {
   descuento: number;
 };
 type Category = {
-  id: number;
+  id: number | null;
   nombre: string;
   categoriaPadre?: Category;
   img?: string;
   estado: string;
+  tipo: string;
   subCategoria?: Category[];
 };
 
@@ -96,8 +97,6 @@ type AdminState = {
   productLoading: boolean;
   productHasErrors: boolean;
 };
-
-
 
 type Landing = {
   landingProducts: Product[];

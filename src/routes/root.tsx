@@ -1,4 +1,3 @@
-
 import { ErrorPage } from "@pages/ErrorPage";
 import HomePage from "@pages/HomePage";
 import { createBrowserRouter } from "react-router-dom";
@@ -18,7 +17,7 @@ const BrowserRouter = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Landing/>,
+        element: <Landing />,
       },
       {
         path: "/product/:id",

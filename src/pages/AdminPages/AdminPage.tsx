@@ -4,12 +4,12 @@ import { NavBarAdmin } from "@components/admin/NavBarAdmin/NavBarAdmin";
 import { Grid } from "@mantine/core";
 import { TopHeader } from "@components/admin/Header/Header";
 
-const AdminPage = () => {
+const AdminPage = (): JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (location.pathname == "/admin") {
+    if (location.pathname === "/admin") {
       navigate("/admin/dashboard/rankingComidas");
     }
   }, [location.pathname]);

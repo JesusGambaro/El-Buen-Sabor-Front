@@ -9,12 +9,7 @@ export const ErrorPage: React.FC = () => {
 
   const randomizeImage = (): string => {
     const base = "/logo-error-";
-    const images = [
-      "2.gif",
-      "4.jpg",
-      "5.gif",
-      "7.gif",
-    ];
+    const images = ["2.gif", "4.jpg", "5.gif", "7.gif"];
     return base + images[Math.floor(Math.random() * images.length)];
   };
   return (

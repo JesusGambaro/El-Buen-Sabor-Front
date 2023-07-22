@@ -1,9 +1,9 @@
 import Loader from "@components/app/Loader/Loader";
 import { useApiQuery } from "@hooks/useQueries";
-import useAdminStore from "@store/adminStore";
+import { productsStore } from "@store/adminStore";
 import { useState } from "react";
-import { Category, Product } from "types/types";
-import { useDisclosure, usePagination } from "@mantine/hooks";
+import { type Category, type Product } from "types/types";
+import { useDisclosure } from "@mantine/hooks";
 import {
   Badge,
   Button,
@@ -19,15 +19,14 @@ import ModalPForm from "@components/admin/Stock/Productos/ModalPForm";
 import { Edit, Plus, ListSearch } from "tabler-icons-react";
 import { ESTADO } from "@utils/constants";
 
-type QueryProps = {
+interface QueryProps {
   data: Product[];
   error: any;
   isLoading: boolean;
-};
+}
 
-const Productos = () => {
+const ProductosPage = (): JSX.Element => {
   const [opened, { open, close }] = useDisclosure(false);
-
   const [editItem, setEditItem] = useState<Product | null>({
     nombre: "",
     descripcion: "",
@@ -39,53 +38,54 @@ const Productos = () => {
     imgURL: "",
     id: -1,
   } as Product);
-  const { productoFilter, setFilter, setPage } = useAdminStore();
-  const {
-    data: products,
-    error,
-    isLoading,
-  } = useApiQuery("GET|producto", productoFilter) as QueryProps;
+
+  const { filters, setCurrentPage, totalPages, currentPage } = productsStore();
+  const { data: products, isLoading } = useApiQuery(
+    "GET|producto",
+    filters
+  ) as QueryProps;
 
   if (isLoading) return <Loader />;
 
-  const rows = products ? (
-    products.map((product, i) => (
-      <tr key={"product" + i + product.id}>
-        <td>{product?.id}</td>
-        <td>{product?.nombre}</td>
-        <td>
-          <Image src={product?.imgURL} width={50} height={50} />
-        </td>
-        <td>{product?.tiempoCocina}</td>
-        <td>{product?.descripcion}</td>
-        <td>${product?.productoCategoria.nombre}</td>
-        <td>
-          <Badge color={product.estado === "DISPONIBLE" ? "lime" : "red"}>
-            {product?.estado}
-          </Badge>
-        </td>
-        <td>
-          <ActionIcon
-            aria-label="Edit"
-            onClick={() => {
-              setEditItem(product);
-              open();
-            }}
-          >
-            <Edit />
-          </ActionIcon>
+  const rows =
+    products !== undefined ? (
+      products.map((product, i) => (
+        <tr key={`product${+i + product.id}`}>
+          <td>{product?.id}</td>
+          <td>{product?.nombre}</td>
+          <td>
+            <Image src={product?.imgURL} width={50} height={50} />
+          </td>
+          <td>{product?.tiempoCocina}</td>
+          <td>{product?.descripcion}</td>
+          <td>${product?.productoCategoria.nombre}</td>
+          <td>
+            <Badge color={product.estado === "DISPONIBLE" ? "lime" : "red"}>
+              {product?.estado}
+            </Badge>
+          </td>
+          <td>
+            <ActionIcon
+              aria-label="Edit"
+              onClick={() => {
+                setEditItem(product);
+                open();
+              }}
+            >
+              <Edit />
+            </ActionIcon>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan={10} style={{ textAlign: "center" }}>
+          No hay productos
         </td>
       </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan={10} style={{ textAlign: "center" }}>
-        No hay productos
-      </td>
-    </tr>
-  );
+    );
 
-  const onCloseModal = () => {
+  const onCloseModal = (): void => {
     setEditItem(null);
     close();
   };
@@ -137,9 +137,11 @@ const Productos = () => {
         <caption>
           <Pagination
             color="orange"
-            total={productoFilter.totalPages}
-            onChange={(value) => setPage(value - 1, "insumoFilter")}
-            value={productoFilter.page + 1 || 1}
+            total={totalPages}
+            onChange={(value) => {
+              setCurrentPage(value - 1);
+            }}
+            value={currentPage + 1}
           />
         </caption>
         <thead>
@@ -159,18 +161,19 @@ const Productos = () => {
       <ModalPForm
         opened={opened}
         item={
-          editItem ||
-          ({
-            nombre: "",
-            descripcion: "",
-            estado: ESTADO.DISPONIBLE,
-            insumosIDS: [],
-            receta: "",
-            productoCategoria: { id: -1, nombre: "" } as Category,
-            tiempoCocina: 0,
-            imgURL: "",
-            id: -1,
-          } as Product)
+          editItem != null
+            ? editItem
+            : ({
+                nombre: "",
+                descripcion: "",
+                estado: ESTADO.DISPONIBLE,
+                insumosIDS: [],
+                receta: "",
+                productoCategoria: { id: -1, nombre: "" } as Category,
+                tiempoCocina: 0,
+                imgURL: "",
+                id: -1,
+              } as Product)
         }
         onClose={onCloseModal}
       />
@@ -178,4 +181,4 @@ const Productos = () => {
   );
 };
 
-export default Productos;
+export default ProductosPage;

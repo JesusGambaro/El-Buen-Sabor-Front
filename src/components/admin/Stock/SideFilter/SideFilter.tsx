@@ -1,26 +1,14 @@
-import { CloseIcon } from "@chakra-ui/icons";
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Container,
-  Divider,
-  Text,
-} from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
 import { useApiQuery } from "@hooks/useQueries";
-import useAdminStore from "@store/adminStore";
-import { Category } from "types/types";
-type NestedAccordionProps = {
+// import useAdminStore from "@store/adminStore";
+import { type Category } from "types/types";
+interface NestedAccordionProps {
   categories: Category[];
   isRecursive: boolean;
-};
+}
 
-const SideFilter = () => {
-  const { categoriaFilter, setFilter } = useAdminStore();
+const SideFilter = (): JSX.Element => {
+  /*  const { categoriaFilter, setFilter } = useAdminStore();
 
   const { data: baseCategories, isLoading } = useApiQuery(
     "GET|categoria/allWOPage"
@@ -37,12 +25,12 @@ const SideFilter = () => {
     return (
       <Accordion allowMultiple>
         {categories.map((category) => {
-          const hasChildren = category.subCategoria
-            ? category.subCategoria.length > 0
-            : false;
-          const subcategories = category.subCategoria
-            ? category.subCategoria
-            : [];
+          const hasChildren =
+            category.subCategoria != null
+              ? category.subCategoria.length > 0
+              : false;
+          const subcategories =
+            category.subCategoria != null ? category.subCategoria : [];
           if (!hasChildren) return;
           return (
             <AccordionItem key={category.id} border="none">
@@ -137,5 +125,7 @@ const SideFilter = () => {
     </Container>
   );
 };
-
+ */
+  return <div></div>;
+};
 export default SideFilter;

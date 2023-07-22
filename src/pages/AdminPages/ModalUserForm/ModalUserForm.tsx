@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "@mantine/form";
 import {
   TextInput,
@@ -8,18 +8,18 @@ import {
   SegmentedControl,
   LoadingOverlay,
 } from "@mantine/core";
-import { useApiMutation, useApiQuery } from "@hooks/useQueries";
-import { Direccion, User } from "types/types";
+import { useApiMutation } from "@hooks/useQueries";
+import { type Direccion, type User } from "types/types";
 import { ESTADO } from "@utils/constants";
 import { useDisclosure } from "@mantine/hooks";
 
-type ModalProps = {
+interface ModalProps {
   opened: boolean;
   onClose: () => void;
   item: User;
-};
+}
 
-const ModalUserForm = (props: ModalProps) => {
+const ModalUserForm = (props: ModalProps): JSX.Element => {
   const { opened, onClose, item } = props;
 
   const { mutate: editUser } = useApiMutation("PUT|user");
@@ -32,12 +32,13 @@ const ModalUserForm = (props: ModalProps) => {
       rol: "",
       direccionList: [] as Direccion[],
       id: "",
+      estado: ESTADO.DISPONIBLE,
     },
     validate: {},
   });
   const [visible, { toggle }] = useDisclosure(false);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     form.reset();
     visible && toggle();
     onClose();
@@ -92,10 +93,11 @@ const ModalUserForm = (props: ModalProps) => {
           maxDropdownHeight={100}
           dropdownPosition="bottom"
           data={
-            categories?.map((c) => ({
-              value: c.id as any,
+            /* categories?.map((c) => ({
+              value: c.id,
               label: c.nombre,
-            })) || []
+            })) ||  */
+            []
           }
           {...form.getInputProps("categoriaPadre")}
           styles={(theme) => ({
