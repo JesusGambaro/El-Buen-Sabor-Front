@@ -39,6 +39,8 @@ import { useLocation } from "react-router-dom";
 import useCatalogueStore from "@store/catalogueStore";
 import { List, Logout } from "tabler-icons-react";
 import { useDisclosure } from "@mantine/hooks";
+import { useApiQuery } from "@hooks/useQueries";
+import { Carrito } from "types/types";
 interface NavBarProps {
   openSideBar: () => void;
 }
@@ -87,6 +89,11 @@ const NavBar = () => {
       fetchProtectedData();
     }
   }, [user]);
+  type QueryPropsCarrito = {
+    data: Carrito;
+    error: any;
+    isLoading: boolean;
+  };
   const btnRef: any = React.useRef(null);
   const mobile = useMediaQuery(`(max-width: 700px)`);
   const handleIsAuth = () => {
@@ -123,7 +130,7 @@ const NavBar = () => {
       },
     },
     inputSearch: {
-      width:"100%",
+      width: "100%",
       input: {
         "&:focus-within": {
           border: "solid 2px orange",
@@ -138,7 +145,7 @@ const NavBar = () => {
       color: "white",
       width: isAuthenticated ? "15rem" : "8rem",
       cursor: !isAuthenticated ? "pointer" : "default",
-      minHeight: isAuthenticated ? "4rem" : "2rem",
+      minHeight: isAuthenticated ? "2.5rem" : "2rem",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -413,9 +420,9 @@ const NavBar = () => {
               isAuthenticated && (
                 <Avatar
                   alt="Avatar for badge"
-                  size={50}
+                  size={35}
                   mr={5}
-                  style={{borderRadius:"50%"}}
+                  style={{ borderRadius: "50%" }}
                   src={user?.picture}
                 />
               )
@@ -497,13 +504,8 @@ const NavBar = () => {
               variant="transparent"
               color={dark ? "yellow" : "blue"}
               onClick={handleIsAuth}
-              
             >
-              {dark ? (
-                <i className={"fa-solid fa-cart-shopping"}></i>
-              ) : (
-                <i className={"fa-solid fa-cart-shopping"}></i>
-              )}
+              <i className={"fa-solid fa-cart-shopping"}></i>
             </ActionIcon>
           )}
 

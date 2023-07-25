@@ -12,7 +12,6 @@ import {
 } from "@mantine/core";
 import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
-import { btnStyle } from "@utils/theme";
 import {
   CartItem as cartItem,
   CartProps,
@@ -23,7 +22,7 @@ import {
 } from "types/types";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useMainStore from "@store/mainStore";
-import { Link } from "react-router-dom";
+import { Await, Link } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { IconAlertCircle } from "@tabler/icons-react";
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
@@ -36,7 +35,7 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
     error: any;
     isLoading: boolean;
   };
-  const { cart: carrito, loading, setCarrito } = useMainStore();
+  const { cart: carrito, loading, setCarrito, setLoading } = useMainStore();
   const { data, error, isLoading } = useApiQuery(
     "GET|cart/getCarrito",
     null
@@ -180,7 +179,7 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
       bg={"#f9f6f6"}
     >
       <Flex direction={"column"} gap={3} align="center" h="100%" pr={2}>
-        {isLoading ? (
+        {isLoading || loading ? (
           <Loader />
         ) : carrito && carrito.productosComprados.length > 0 ? (
           <>
@@ -193,7 +192,12 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
                 />
               )
             )}
-            <Card w={"100%"} p={"0.5rem"} style={{gap:"1rem"}} display={"flex"}>
+            <Card
+              w={"100%"}
+              p={"0.5rem"}
+              style={{ gap: "1rem" }}
+              display={"flex"}
+            >
               <Text weight={"bold"}>Total</Text>
               <Text color="black" display={"flex"}>
                 <Text color="orange">
@@ -242,47 +246,30 @@ const EmptyCartBtn = () => {
   const cancelRef = useRef() as React.MutableRefObject<HTMLButtonElement>;
   //const { mutate: emptyCart } = useEmptyCart();
 
-  const { cart: carrito, loading, setCarrito } = useMainStore();
+  const { cart: carrito, loading, setCarrito, setLoading } = useMainStore();
   const { mutate: clearCart, data: clearCartData } =
     useApiMutation("PUT|cart/clearCart");
-  const handleClearCart = () => {
+  const handleClearCart = async () => {
     //emptyCart();
-    clearCart(null);
-    close();
+    setLoading(true);
+    await ClearCart();
+  };
+  const ClearCart = async () => {
+    //updateCart({ ...item, quantity: item.quantity + 1 });
+    try {
+      await clearCart(null);
+    } catch (error) {}
   };
   useEffect(() => {
-    if (clearCartData) {
-      setCarrito(clearCartData);
-    }
+    //setCarrito(clearCartData);
+    setLoading(false);
+    console.log("entre",clearCartData);
   }, [clearCartData]);
   return (
     <>
       <Button w="100%" color="red" mih="3rem" onClick={handleClearCart}>
         Vaciar carrito
       </Button>
-      {/* <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-        motionPreset="slideInRight"
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader>Vaciar Carrito</AlertDialogHeader>
-            <AlertDialogBody>
-              ¿Está seguro que desea vaciar el carrito?
-            </AlertDialogBody>
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Cancelar
-              </Button>
-              <Button colorScheme="red" ml={3} onClick={handleClearCart}>
-                Borrar
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog> */}
     </>
   );
 };

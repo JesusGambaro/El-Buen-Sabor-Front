@@ -38,7 +38,7 @@ const CartItem = ({
     mutate: delProducto,
     data: removedData,
     isLoading: isLoadingDel,
-  } = useApiMutation("DELETE|cart/delProduct");
+  } = useApiMutation("PUT|cart/delProduct");
   const discountValue = (price: number = 0, discount: number) =>
     Math.floor(price - (price * discount) / 100);
   const { setCarrito } = useMainStore();

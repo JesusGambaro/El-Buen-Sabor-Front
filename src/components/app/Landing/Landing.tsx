@@ -6,6 +6,7 @@ import {
   Box,
   useMantineColorScheme,
   createStyles,
+  Skeleton,
 } from "@mantine/core";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
@@ -57,15 +58,11 @@ const Landing = () => {
       setProductos(products);
     }
   }, [products]);
-  const slides = categories
-    ?.filter((category) => {
-      return category.subCategoria?.length == 0;
-    })
-    .map((category) => (
-      <Carousel.Slide key={category.id}>
-        <CategoryCard key={category.id} category={category} />
-      </Carousel.Slide>
-    ));
+  const slides = categories?.map((category) => (
+    <Carousel.Slide key={category.id}>
+      <CategoryCard key={category.id} category={category} />
+    </Carousel.Slide>
+  ));
   const mobile = useMediaQuery(`(max-width: 700px)`);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
@@ -94,97 +91,87 @@ const Landing = () => {
         <Heading className={classes.text} order={3} mb="1rem">
           Categorías
         </Heading>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <>
-            <Carousel
-              slideSize="20%"
-              maw={"100%"}
-              height={60}
-              align="start"
-              slideGap="xl"
-              controlSize={25}
-              dragFree
-              //withIndicators
-              draggable
-              slidesToScroll={1}
-              inViewThreshold={0}
-              loop
-              px={"3rem"}
-              styles={{
-                // indicator: {
-                //   top: "5rem",
-                //   width: rem(12),
-                //   height: rem(4),
-                //   transition: "width 250ms ease",
-                //   background: "orange",
-                //   "&[data-active]": {
-                //     width: rem(40),
-                //   },
-                // },
-                control: {
-                  // "&[data-inactive]": {
-                  //   opacity: 0,
-                  //   cursor: "default",
-                  // },
-                  background: "#fd7e14",
-                  color: "white",
-                  width: "2rem",
-                  height: "2rem",
-                  boxShadow: "none",
-                  border: "none",
-                  marginTop: "-0.55rem",
-                },
-              }}
-            >
-              {slides}
-            </Carousel>
-          </>
-        )}
+        <Carousel
+          slideSize="20%"
+          maw={"100%"}
+          height={60}
+          align="start"
+          slideGap="xl"
+          controlSize={25}
+          dragFree
+          //withIndicators
+          withControls={!isLoading}
+          draggable
+          slidesToScroll={1}
+          inViewThreshold={0}
+          loop
+          px={"3rem"}
+          styles={{
+            // indicator: {
+            //   top: "5rem",
+            //   width: rem(12),
+            //   height: rem(4),
+            //   transition: "width 250ms ease",
+            //   background: "orange",
+            //   "&[data-active]": {
+            //     width: rem(40),
+            //   },
+            // },
+            control: {
+              // "&[data-inactive]": {
+              //   opacity: 0,
+              //   cursor: "default",
+              // },
+              background: "#fd7e14",
+              color: "white",
+              width: "2rem",
+              height: "2rem",
+              boxShadow: "none",
+              border: "none",
+              marginTop: "-0.55rem",
+            },
+            
+          }}
+        >
+          {isLoading ? (
+            <>
+              <Carousel.Slide>
+                <Skeleton height={"3rem"} w={"15rem"} radius={"15px"} />
+              </Carousel.Slide>
+              <Carousel.Slide>
+                <Skeleton height={"3rem"} w={"15rem"} radius={"15px"} />
+              </Carousel.Slide>
+              <Carousel.Slide>
+                <Skeleton height={"3rem"} w={"15rem"} radius={"15px"} />
+              </Carousel.Slide>
+            </>
+          ) : (
+            <>{slides}</>
+          )}
+        </Carousel>
+
         <Box>
           <Heading className={classes.text} order={3}>
             Productos destacados
           </Heading>
-          {isLoadingProds ? (
-            <Loader />
-          ) : (
-            // <SimpleGrid
-            //   w="100%"
-            //   mt={4}
-            //   cols={4}
-            //   spacing="lg"
-            //   breakpoints={[
-            //     { maxWidth: "62rem", cols: 3, spacing: "md" },
-            //     { maxWidth: "48rem", cols: 2, spacing: "sm" },
-            //     { maxWidth: "36rem", cols: 1, spacing: "sm" },
-            //   ]}
-            // >
-            //   {productos?.map((product) => (
-            //     <LandingCard
-            //       key={"landing-card-" + product.id}
-            //       product={product}
-            //       isThemeBlack={dark}
-            //     />
-            //   ))}
-            //   {productos?.map((product) => (
-            //     <LandingCard
-            //       key={"landing-card-" + product.id}
-            //       product={product}
-            //       isThemeBlack={dark}
-            //     />
-            //   ))}
-            // </SimpleGrid>
-            <Flex wrap={"wrap"} gap={"2rem"} justify={"flex-start"} align={"start"}>
-              {productos?.map((product) => (
+          <Flex
+            wrap={"wrap"}
+            gap={"2rem"}
+            justify={"flex-start"}
+            align={"start"}
+          >
+            {isLoadingProds ? (
+              <Loader />
+            ) : (
+              productos?.map((product) => (
                 <LandingCard
                   key={"landing-card-" + product.id}
                   product={product}
                   isThemeBlack={dark}
                 />
-              ))}
-            </Flex>
-          )}
+              ))
+            )}
+          </Flex>
         </Box>
         <Box>
           <Heading order={3} mb="1rem">

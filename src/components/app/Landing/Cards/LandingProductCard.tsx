@@ -31,37 +31,52 @@ export const LandingCard = ({
 }) => {
   const { isAuthenticated } = useAuth0();
   const { filter, setFilter } = useCatalogueStore();
-  const { mutate: editCart, data } = useApiMutation("PUT|cart/addProduct");
-  const { setCarrito } = useMainStore();
+  const { mutate: editCart, data: addedData } = useApiMutation(
+    "PUT|cart/addProduct"
+  );
+  const { setCarrito, setLoading } = useMainStore();
   const addToCartHandler = async () => {
     if (!isAuthenticated) {
       return;
     }
     try {
-      await addToCart()
-        .then(() => {
-          notifications.show({
-            title: "Se añadio al carrito correctamente",
-            message: "",
-            icon: (
-              <ActionIcon color="white" bg={"orange"} radius={"50%"}>
-                <IconCheck color="white"></IconCheck>
-              </ActionIcon>
-            ),
-          });
-        })
-        .catch(() => {
-          notifications.show({
-            title: "Ocurrio un error intente nuevamente",
-            message: "",
-            icon: (
-              <ActionIcon color="white" bg={"red"} radius={"50%"}>
-                <IconX color="white"></IconX>
-              </ActionIcon>
-            ),
-          });
+      setLoading(true);
+      notifications.show({
+        id: "adding-cartItem",
+        loading: true,
+        title: "Añadiendo al carrito",
+        message: "Se esta guardando su producto al carrito",
+        autoClose: false,
+        withCloseButton: false,
+      });
+      await addToCart().catch((err) => {
+        notifications.update({
+          id: "adding-cartItem",
+          title: "Ocurrio un error intente nuevamente",
+          message: err,
+          icon: (
+            <ActionIcon color="white" bg={"red"} radius={"50%"}>
+              <IconX color="white"></IconX>
+            </ActionIcon>
+          ),
+          autoClose: 2000,
         });
-    } catch (error) {}
+      });
+    } catch (error) {
+      console.log(error);
+      
+      notifications.update({
+        id: "adding-cartItem",
+        title: "Ocurrio un error intente nuevamente",
+        message: "",
+        icon: (
+          <ActionIcon color="white" bg={"red"} radius={"50%"}>
+            <IconX color="white"></IconX>
+          </ActionIcon>
+        ),
+        autoClose: 2000,
+      });
+    }
   };
   const discountValue = (price: number = 0, discount: number) =>
     Math.floor(price - (price * discount) / 100);
@@ -73,10 +88,22 @@ export const LandingCard = ({
   };
   useEffect(() => {
     //console.log("cartEdited", data);
-    if (data) {
-      setCarrito(data);
+    if (addedData) {
+      setCarrito(addedData);
+      notifications.update({
+        id: "adding-cartItem",
+        title: "Se añadio al carrito correctamente",
+        message: "",
+        icon: (
+          <ActionIcon color="white" bg={"orange"} radius={"50%"}>
+            <IconCheck color="white"></IconCheck>
+          </ActionIcon>
+        ),
+        autoClose: 2000,
+      });
+      setLoading(false);
     }
-  }, [data]);
+  }, [addedData]);
   return (
     <>
       <Card
@@ -96,7 +123,7 @@ export const LandingCard = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "start",
-            flexGrow:1,
+            flexGrow: 1,
             zIndex: 2,
             borderRadius: product.descuento ? "0 2rem 2rem 2rem" : "2rem",
           }}
@@ -113,7 +140,16 @@ export const LandingCard = ({
               gap: "1rem",
             }}
           >
-            <Title size="sm" mt="4"  style={{width:"10rem",textOverflow:"ellipsis",overflow:"hidden",whiteSpace:"nowrap"}}>
+            <Title
+              size="sm"
+              mt="4"
+              style={{
+                width: "10rem",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+              }}
+            >
               {product.nombre}
             </Title>
 

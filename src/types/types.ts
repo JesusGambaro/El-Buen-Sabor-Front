@@ -15,7 +15,7 @@ type Product = {
   descuento: number;
 };
 type Category = {
-  id: number | null;
+  id: number;
   nombre: string;
   categoriaPadre?: Category;
   img?: string;

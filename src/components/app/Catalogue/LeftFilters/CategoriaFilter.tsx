@@ -16,77 +16,103 @@ import { Tex } from "tabler-icons-react";
 import { Category } from "types/types";
 import { useApiQuery } from "@hooks/useQueries";
 const useStyles = createStyles((theme) => ({
-  categoriaPadre: {
+  root: {
+    backgroundColor: "transparent",
+    display: "flex",
+    gap: "0.5rem",
+    flexDirection: "column",
+  },
+
+  control: {
+    backgroundColor: "white",
+    border: "none",
+    display: "flex",
     width: "100%",
-    display: "flex",
-    cursor: "pointer",
-    height: "4rem",
+    height: "3rem",
+    padding: "1rem",
+    paddingRight: "0",
+    justifyContent: "space-between",
     alignItems: "center",
-    "&:hover": {
-      background: "orange",
-    },
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
     borderRadius: "10px",
-    "&.active": {},
-  },
-
-  categoriaHijo: {
-    width: "90%",
-    margin: 0,
-    padding: 0,
-
-    "&.active": {},
-  },
-
-  categoriaHijoSinSub: {
-    width: "90%",
-    margin: 0,
-    padding: 0,
-    borderRadius: "10px",
-    display: "flex",
-    alignItems: "center",
-    height: "4rem",
-    cursor: "pointer",
+    color:"black",
     "&:hover": {
-      background: "orange",
+      backgroundColor: "orange",
     },
-    "&.active": {},
-  },
-
-  chevron: {
-    transition: "transform 200ms ease",
-  },
-  categoriaControl: {
-    padding: 0,
-    span: {
+    "& > span:nth-child(1)": {
+      order: 2,
+      paddingRight: "0.5rem",
       margin: 0,
     },
-    height: "4rem",
-    borderRadius: "10px",
-    "&:hover": {
-      background: "orange",
+    "& > span:nth-child(2)": {
+      order: 1,
     },
-    "span:last-child": {
-      padding: "1rem",
+    "&[data-active]": {
+      borderRadius: "0 10px 10px 0",
     },
   },
-  panel: {
-    padding: 0,
-    background: "",
+
+  item: {
+    border: `${rem(1)} solid transparent`,
     position: "relative",
+    zIndex: 0,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "end",
+    "&[data-active]": {
+      zIndex: 1,
+      "&::after": {
+        height: "100%",
+      },
+    },
     "&::after": {
       position: "absolute",
       content: '""',
       width: rem(3),
-      height: "100%",
+      height: "0%",
       top: 0,
-      left: 20,
+      left: 0,
+      borderTopLeftRadius: "10px",
+      borderTopRightRadius: "10px",
       background: "orange",
     },
+  },
+
+  categoriaPadre: {
+    width: "100%",
+    display: "flex",
+    cursor: "pointer",
+    height: "3rem",
+    alignItems: "center",
+    background: "white",
+    justifyContent: "space-between",
+    padding: "16px",
+    paddingRight: "0",
+    margin: "1rem 0",
+    "&:hover": {
+      background: "orange",
+    },
+    borderRadius: "10px",
+    "&.active": {},
+  },
+  chevron: {
+    transition: "transform 200ms ease",
+  },
+  panel: {
+    width: "95%",
+    gap: "1rem",
+    display: "flex",
+    flexDirection: "column",
+    background: "",
+    position: "relative",
   },
 }));
 type Props = {
   handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
 };
+
 export const CategoriaFilter = (props: Props) => {
   const { classes, theme } = useStyles();
 
@@ -106,19 +132,22 @@ export const CategoriaFilter = (props: Props) => {
       returnValue = (
         <Accordion
           display={"flex"}
-          style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
           variant="default"
+          key={category.nombre + "-panel"}
+          style={{
+            borderBottom: "none",
+            justifyContent: "flex-end",
+            padding: 0,
+            margin: 0,
+          }}
+          unstyled
+          w={"100%"}
+          className={classes.root}
         >
-          <Accordion.Item
-            className={classes.categoriaHijo}
-            value={category.nombre}
-            sx={{ borderBottom: "none" }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Accordion.Control className={classes.categoriaControl}>
-                {category.nombre}
-              </Accordion.Control>
-            </Box>
+          <Accordion.Item className={classes.panel} value={category.nombre}>
+            <Accordion.Control className={classes.control}>
+              {category.nombre}
+            </Accordion.Control>
             <Accordion.Panel className={classes.panel}>
               {category.subCategoria.map((c) => {
                 return crearCategoriaRecursive(c);
@@ -132,10 +161,15 @@ export const CategoriaFilter = (props: Props) => {
         <Box
           display={"flex"}
           style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
+          key={category.nombre + "-box"}
         >
-          <Text p={"1rem"} onClick={() => {
-                  props.handleSetFilter(category.id);
-                }} className={classes.categoriaHijoSinSub}>
+          <Text
+            p={"1rem"}
+            onClick={() => {
+              props.handleSetFilter(category.id);
+            }}
+            className={classes.categoriaPadre}
+          >
             {category.nombre}
           </Text>
         </Box>
@@ -143,17 +177,24 @@ export const CategoriaFilter = (props: Props) => {
     }
     return returnValue;
   };
-  const items = (hasCategorias ? categorias : []).map((category) => {
+  const items = (hasCategorias ? categorias : []).map((category, i) => {
     let returnValue;
     if (!category.categoriaPadre) {
       returnValue = (
-        <Accordion.Item sx={{ borderBottom: "none" }} value={category.nombre}>
+        <Accordion.Item
+          className={classes.item}
+          key={category.nombre + "-" + i}
+          value={category.nombre}
+        >
           {category.subCategoria?.length ? (
             <>
-              <Accordion.Control className={classes.categoriaPadre}>
+              <Accordion.Control className={classes.control}>
                 {category.nombre}
               </Accordion.Control>
-              <Accordion.Panel w={"20rem"} className={classes.panel}>
+              <Accordion.Panel
+                className={classes.panel}
+                key={category.nombre + "-panel-" + i}
+              >
                 {category.subCategoria &&
                   category.subCategoria.map((c) => {
                     return crearCategoriaRecursive(c);
@@ -164,13 +205,14 @@ export const CategoriaFilter = (props: Props) => {
             <Box
               display={"flex"}
               style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
+              w={"100%"}
             >
               <Text
                 p={"20px"}
+                className={classes.categoriaPadre}
                 onClick={() => {
                   props.handleSetFilter(category.id);
                 }}
-                className={classes.categoriaPadre}
               >
                 {category.nombre}
               </Text>
@@ -187,8 +229,66 @@ export const CategoriaFilter = (props: Props) => {
       <Title w={"100%"} align="left" weight={"500"} order={3}>
         Categorias
       </Title>
-      <Accordion variant="default" sx={{ borderBottom: "none" }} w={"20rem"}>
+      <Accordion
+        variant="default"
+        style={{
+          borderBottom: "none",
+          justifyContent: "flex-end",
+          padding: 0,
+          margin: 0,
+        }}
+        unstyled
+        w={"100%"}
+        className={classes.root}
+      >
         {items}
+        <Accordion.Item className={classes.item} value="test">
+          <Accordion.Control className={classes.control}>
+            Test
+          </Accordion.Control>
+          <Accordion.Panel className={classes.panel} p={"0px"}>
+            <Box
+              display={"flex"}
+              style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
+            >
+              <Text p={"20px"} className={classes.categoriaPadre}>
+                Test Normal
+              </Text>
+            </Box>
+            <Accordion
+              variant="default"
+              style={{
+                borderBottom: "none",
+                justifyContent: "flex-end",
+                padding: 0,
+                margin: 0,
+              }}
+              unstyled
+              w={"100%"}
+              className={classes.root}
+            >
+              <Accordion.Item className={classes.item} value="test">
+                <Accordion.Control className={classes.control}>
+                  Test Acordion
+                </Accordion.Control>
+                <Accordion.Panel className={classes.panel} p={"0px"}>
+                  <Box
+                    display={"flex"}
+                    style={{
+                      justifyContent: "flex-end",
+                      padding: 0,
+                      margin: 0,
+                    }}
+                  >
+                    <Text p={"20px"} className={classes.categoriaPadre}>
+                      Test Normal
+                    </Text>
+                  </Box>
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+          </Accordion.Panel>
+        </Accordion.Item>
       </Accordion>
     </>
   );

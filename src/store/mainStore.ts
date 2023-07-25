@@ -10,6 +10,7 @@ type MainStore = {
   loading: boolean;
   setToken: (token: string) => void;
   setCarrito: (cart: Carrito) => void;
+  setLoading: (loading: boolean) => void;
   setDirecciones: (direcciones: Direccion[]) => void;
 };
 
@@ -29,6 +30,12 @@ const useMainStore = create<MainStore>((set, get) => ({
     set((state) => ({
       ...state,
       cart,
+    }));
+  },
+  setLoading: (loading: boolean) => {
+    set((state) => ({
+      ...state,
+      loading,
     }));
   },
   setDirecciones: (direcciones: Direccion[]) => {

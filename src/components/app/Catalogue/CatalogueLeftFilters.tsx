@@ -12,6 +12,8 @@ import {
   Stack,
   rem,
   createStyles,
+  useMantineColorScheme,
+  ActionIcon,
 } from "@mantine/core";
 import { InputBase, RangeSlider, Title, Input } from "@mantine/core";
 import { Category } from "types/types";
@@ -19,6 +21,8 @@ import { useEffect, useState } from "react";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { CategoriaFilter } from "./LeftFilters/CategoriaFilter";
 import { useDisclosure } from "@mantine/hooks";
+import { number } from "yup";
+import { IconX } from "@tabler/icons-react";
 
 type Props = {
   handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
@@ -43,12 +47,32 @@ const CatalogueLeftFilters = (props: Props) => {
   //console.log(baseCategories);
   //let baseCategories: Category[] = [];
   const [currentCategoriaName, setCurrentCategoriaName] = useState("");
-  const [minMaxPrice, setMinMaxPrice] = useState({
-    min: 0,
-    max: 10000,
+  const [priceValues, serPriceValues] = useState({
+    min: 1,
+    max: 5000,
   });
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
   const [opened, { open, close }] = useDisclosure(false);
   const useStyles = createStyles((theme) => ({
+    dragging: {
+      transform: "translate(-50%, -50%)",
+    },
+
+    text: {
+      color: dark ? "white" : "black",
+    },
+
+    filterContainer: {
+      background: dark ? "black" : "white",
+    },
+    filterTitle: {
+      fontSize: "1rem",
+      fontWeight:500,
+    }
+  }));
+  const { classes } = useStyles();
+  const RangeSliderStyle = createStyles((theme) => ({
     label: {
       top: 0,
       height: rem(28),
@@ -73,139 +97,160 @@ const CatalogueLeftFilters = (props: Props) => {
       transform: "translate(-50%, -50%)",
     },
   }));
-  const { classes } = useStyles();
-
+  const { classes: RangeSliderClasses } = RangeSliderStyle();
   return (
-    // <Container margin={0} borderRadius="md" minW={"15rem"} maxWidth={"20rem"}>
-    //   <Flex marginBottom={"1rem"}>
-    //     {props.currentIdCategoria && (
-    //       <Box
-    //         color={"white"}
-    //         background={"orange"}
-    //         padding={"0.5rem 0.7rem"}
-    //         minW={"10rem"}
-    //         borderRadius={"20px"}
-    //       >
-    //         <Flex
-    //           w={"100%"}
-    //           justifyContent={"space-between"}
-    //           alignItems={"center"}
-    //           gap={"1rem"}
-    //         >
-    //           {
-    //             baseCategories.find((c) => {
-    //               return c.id == props.currentIdCategoria;
-    //             })?.nombre
-    //           }
-    //           <Button
-    //             w={"1rem"}
-    //             borderRadius={"50%"}
-    //             colorScheme="orange"
-    //             onClick={() => {
-    //               props.handleSetFilter(undefined);
-    //             }}
-    //           >
-    //             X
-    //           </Button>
-    //         </Flex>
-    //       </Box>
-    //     )}
-    //   </Flex>
-    //   <Flex gap={"1rem"} className="ofertaFilter">
-    //     <Title order={3}>En Oferta</Title>
-    //     <Checkbox colorScheme="orange" defaultChecked />
-    //   </Flex>
-    //   <br></br>
-    //   <Flex flexDir={"column"} gap={".5rem"}>
-    //     <Title order={3}>Filtro por precio min-max</Title>
-    //     <Flex gap={"1rem"}>
-    //       <Input
-    //         value={minMaxPrice.min}
-    //         onChange={(e) => {
-    //           let _min = parseFloat(e.target.value);
-    //           if (_min >= 0 && minMaxPrice.max - _min >= 1000) {
-    //             setMinMaxPrice({ ...minMaxPrice, min: _min });
-    //           }
-    //         }}
-    //       />
-    //       <Input
-    //         value={minMaxPrice.max}
-    //         onChange={(e) => {
-    //           let _max = parseFloat(e.target.value);
-    //           if (_max >= 0 && _max - minMaxPrice.min >= 1000) {
-    //             setMinMaxPrice({ ...minMaxPrice, max: _max });
-    //           }
-    //         }}
-    //       />
-    //     </Flex>
-    //     <RangeSlider
-    //       color="orange"
-    //       size="lg"
-    //       min={0}
-    //       max={10000}
-    //       defaultValue={[0, 10000]}
-    //       value={[minMaxPrice.min, minMaxPrice.max]}
-    //       label={null}
-    //       minRange={1000}
-    //       onChange={(e: any) => {
-    //         //console.log(e[0], e[1]);
-    //         setMinMaxPrice({ ...minMaxPrice, min: e[0], max: e[1] });
-    //       }}
-    //     />
-    //   </Flex>
-    //   <br></br>
-    //   <Flex flexDir={"column"} gap={".5rem"}>
-    //     <Title order={3}>Categorias</Title>
-    //     <NestedAccordion categories={baseCategories} isRecursive={false} />
-    //   </Flex>
-    // </Container>
-    <>
-      <Flex direction={"column"} p={"1rem"} gap={"1rem"} w={"25rem"}>
-        <Title order={2}>Filtros</Title>
-        <Flex mb={"1rem"}>
-          {props.currentIdCategoria ? (
-            <>
-              <Flex
-                w={"15rem"}
-                sx={{ borderRadius: "20px" }}
-                h={"4rem"}
-                p={"1rem"}
-                justify={"space-between"}
-                align={"center"}
-                bg={"orange"}
+    <Flex direction={"column"} p={"1rem"} gap={"1rem"} w={"15rem"}>
+      <Title order={2} className={classes.text}>
+        Filtros
+      </Title>
+      <Flex mb={"1rem"}>
+        {props.currentIdCategoria ? (
+          <>
+            <Flex
+              w={"15rem"}
+              sx={{ borderRadius: "20px" }}
+              h={"2rem"}
+              p={"1rem"}
+              justify={"space-between"}
+              align={"center"}
+              bg={"orange"}
+            >
+              <Title color="white" align="left" weight={"500"} order={4}>
+                {
+                  baseCategories?.find((c) => {
+                    return c.id == props.currentIdCategoria;
+                  })?.nombre
+                }
+              </Title>
+              {/* <Button
+                w={"1rem"}
+                h={"1rem"}
+                sx={{
+                  background: "white",
+                  color: "orange",
+                  borderRadius: "100%",
+                  ":hover": {
+                    background: "orange",
+                    color: "white",
+                    border: "4px solid white",
+                  },
+                }}
+                onClick={() => {
+                  props.handleSetFilter(undefined);
+                }}
               >
-                <Title color="white" align="left" weight={"500"} order={4}>
-                  {
-                    baseCategories?.find((c) => {
-                      return c.id == props.currentIdCategoria;
-                    })?.nombre
-                  }
-                </Title>
-                <Button
-                  w={"3.5rem"}
-                  h={"3.5rem"}
-                  sx={{
-                    background: "white",
-                    color: "orange",
-                    borderRadius: "100%",
-                    ":hover": {
-                      background: "orange",
-                      color: "white",
-                      border: "4px solid white",
-                    },
-                  }}
-                  onClick={() => {
-                    props.handleSetFilter(undefined);
-                  }}
-                >
-                  X
-                </Button>
-              </Flex>
-            </>
-          ) : (
-            <></>
-          )}
+                X
+              </Button> */}
+              <ActionIcon
+                sx={{
+                  background: "white",
+                  color: "orange",
+                  borderRadius: "100%",
+                  ":hover": {
+                    background: "orange",
+                    color: "white",
+                  },
+                  transition: "0.5s ease-in-out background"
+                }}
+                onClick={() => {
+                  props.handleSetFilter(undefined);
+                }}
+              >
+                <IconX></IconX>
+              </ActionIcon>
+            </Flex>
+          </>
+        ) : (
+          <></>
+        )}
+      </Flex>
+      <Flex
+        gap={"1rem"}
+        w={"100%"}
+        justify={"space-between"}
+        align={"center"}
+        p={"1rem"}
+        style={{ borderRadius: "10px" }}
+        className={classes.filterContainer}
+      >
+        <Title className={classes.filterTitle + " " + classes.text}>
+          En Oferta
+        </Title>
+        <Switch size="md" onLabel="SI" offLabel="NO" />
+      </Flex>
+      <Flex
+        gap={"1rem"}
+        w={"100%"}
+        justify={"center"}
+        align={"start"}
+        p={"1rem"}
+        direction={"column"}
+        style={{ borderRadius: "10px" }}
+        className={classes.filterContainer}
+      >
+        <Title
+          className={classes.filterTitle + " " + classes.text}
+        >
+          Precio
+        </Title>
+        <Flex justify={"space-between"} display={"flex"} w={"100%"}>
+          <Stack w={"4rem"}>
+            <Title
+              className={classes.filterTitle + " " + classes.text}
+              w={"100%"}
+              align="left"
+            >
+              Min
+            </Title>
+            <Input
+              w={"100%"}
+              type="number"
+              value={priceValues.min}
+              onChange={(e) => {
+                serPriceValues({
+                  ...priceValues,
+                  min: Number.parseInt(e.target.value),
+                });
+              }}
+            ></Input>
+          </Stack>
+          <Stack w={"4rem"}>
+            <Title
+              className={classes.filterTitle + " " + classes.text}
+              w={"100%"}
+              align="right"
+            >
+              Max
+            </Title>
+            <Input
+              w={"100%"}
+              type="number"
+              value={priceValues.max}
+              onChange={(e) => {
+                serPriceValues({
+                  ...priceValues,
+                  max: Number.parseInt(e.target.value),
+                });
+              }}
+            ></Input>
+          </Stack>
         </Flex>
+        <RangeSlider
+          w={"100%"}
+          size="xl"
+          color="orange"
+          labelAlwaysOn
+          classNames={RangeSliderClasses}
+          max={5000}
+          min={1}
+          value={[priceValues.min, priceValues.max]}
+          onChange={(e) => {
+            serPriceValues({ min: e[0], max: e[1] });
+          }}
+          minRange={1000}
+        ></RangeSlider>
+      </Flex>
+      {!props.currentIdCategoria && (
         <Flex
           gap={"1rem"}
           w={"100%"}
@@ -213,62 +258,13 @@ const CatalogueLeftFilters = (props: Props) => {
           align={"center"}
           bg={"white"}
           p={"1rem"}
-          style={{ borderRadius: "10px" }}
-        >
-          <Title weight={"500"} order={3}>
-            En Oferta
-          </Title>
-          <Switch size="md" onLabel="SI" offLabel="NO" />
-        </Flex>
-        <Flex
-          gap={"1rem"}
-          w={"100%"}
-          justify={"center"}
-          align={"center"}
-          bg={"white"}
-          p={"1rem"}
           direction={"column"}
           style={{ borderRadius: "10px" }}
         >
-          <Title w={"100%"} align="left" weight={"500"} order={3}>
-            Precio
-          </Title>
-          <Flex justify={"space-between"} display={"flex"} w={"100%"}>
-            <Stack w={"5rem"}>
-              <Title w={"100%"} align="left" weight={"400"} order={4}>
-                Min
-              </Title>
-            </Stack>
-            <Stack w={"5rem"}>
-              <Title w={"100%"} align="right" weight={"400"} order={4}>
-                Max
-              </Title>
-            </Stack>
-          </Flex>
-          <RangeSlider
-            w={"100%"}
-            size="xl"
-            color="orange"
-            labelAlwaysOn
-            classNames={classes}
-          ></RangeSlider>
+          <CategoriaFilter handleSetFilter={props.handleSetFilter} />
         </Flex>
-        {!props.currentIdCategoria && (
-          <Flex
-            gap={"1rem"}
-            w={"100%"}
-            justify={"space-between"}
-            align={"center"}
-            bg={"white"}
-            p={"1rem"}
-            direction={"column"}
-            style={{ borderRadius: "10px" }}
-          >
-            <CategoriaFilter handleSetFilter={props.handleSetFilter} />
-          </Flex>
-        )}
-      </Flex>
-    </>
+      )}
+    </Flex>
   );
 };
 export default CatalogueLeftFilters;

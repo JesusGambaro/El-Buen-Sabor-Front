@@ -6,6 +6,7 @@ import {
   SimpleGrid,
   Stack,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { Product } from "types/types";
 import { LandingCard } from "../Landing/Cards/LandingProductCard";
@@ -40,7 +41,9 @@ const CatalogueProductsContainer = () => {
       setProductos(products);
     }
   }, [products]);
-
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+  
   return isLoading ? (
     <Loader />
   ) : (
@@ -74,7 +77,7 @@ const CatalogueProductsContainer = () => {
     >
       {productos?.length ? (
         productos.map((product: Product) => (
-          <LandingCard key={"landing-card-" + product.id} product={product} />
+          <LandingCard key={"landing-card-" + product.id} product={product} isThemeBlack={dark} />
         ))
       ) : (
         <Flex
