@@ -1,64 +1,104 @@
-import { ChevronLeftIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Grid,
-  Heading,
-  Image,
-  Mark,
-  Modal,
-  SimpleGrid,
-  Spinner,
-  Stack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
 import Loader from "@components/app/Loader/Loader";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { useProduct } from "@hooks/useProducts";
-import { Title } from "@mantine/core";
 import useCatalogueStore from "@store/catalogueStore";
 import { useEffect, useState } from "react";
-import { useParams, Link, redirect } from "react-router-dom";
+import { useParams, Link, redirect, useNavigate } from "react-router-dom";
 import { Product } from "types/types";
 import { useMediaQuery } from "@mantine/hooks";
 import { useAuth0 } from "@auth0/auth0-react";
 import useMainStore from "@store/mainStore";
+import {
+  SimpleGrid,
+  Container,
+  Stack,
+  Box,
+  Flex,
+  Title,
+  useMantineColorScheme,
+  createStyles,
+  Image,
+  Text,
+  Button,
+  ActionIcon,
+} from "@mantine/core";
 
+import { notifications } from "@mantine/notifications";
+import { IconCheck, IconX } from "@tabler/icons-react";
+import { IconArrowBack, IconShoppingCart } from "@tabler/icons-react";
 const ProductDetailPage = () => {
-  const toast = useToast();
   const { isAuthenticated, loginWithRedirect } = useAuth0();
-  const { setCarrito } = useMainStore();
-  const { mutate: editCart, data } = useApiMutation("PUT|cart/addProduct");
+  const { mutate: editCart, data: addedData } = useApiMutation(
+    "PUT|cart/addProduct"
+  );
+  const { setCarrito, setLoading } = useMainStore();
   const addToCartHandler = async () => {
     if (!isAuthenticated) {
-      loginWithRedirect();
       return;
     }
     try {
-      await addToCart();
-      toast({
-        title: "Producto agregado al carrito",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-        position: "top",
-        description: `${currentProduct.nombre} se ha agregado al carrito`,
+      setLoading(true);
+      notifications.show({
+        id: "adding-cartItem",
+        loading: true,
+        title: "Añadiendo al carrito",
+        message: "Se esta guardando su producto al carrito",
+        autoClose: false,
+        withCloseButton: false,
       });
-    } catch (error) {}
+      await addToCart().catch((err) => {
+        notifications.update({
+          id: "adding-cartItem",
+          title: "Ocurrio un error intente nuevamente",
+          message: err,
+          icon: (
+            <ActionIcon color="white" bg={"red"} radius={"50%"}>
+              <IconX color="white"></IconX>
+            </ActionIcon>
+          ),
+          autoClose: 2000,
+        });
+      });
+    } catch (error) {
+      
+      notifications.update({
+        id: "adding-cartItem",
+        title: "Ocurrio un error intente nuevamente",
+        message: "",
+        icon: (
+          <ActionIcon color="white" bg={"red"} radius={"50%"}>
+            <IconX color="white"></IconX>
+          </ActionIcon>
+        ),
+        autoClose: 2000,
+      });
+    }
   };
+  
+
+  //const { mutate: addToCart } = useAddToCart();
   const addToCart = async () => {
     //updateCart({ ...item, quantity: item.quantity + 1 });
     await editCart({ id: currentProduct.id });
   };
   useEffect(() => {
     //console.log("cartEdited", data);
-    if (data) {
-      setCarrito(data);
+    if (addedData) {
+      setCarrito(addedData);
+      notifications.update({
+        id: "adding-cartItem",
+        title: "Se añadio al carrito correctamente",
+        message: "",
+        icon: (
+          <ActionIcon color="white" bg={"orange"} radius={"50%"}>
+            <IconCheck color="white"></IconCheck>
+          </ActionIcon>
+        ),
+        autoClose: 2000,
+      });
+      setLoading(false);
     }
-  }, [data]);
+  }, [addedData]);
   const { id } = useParams<{ id: string }>();
   const { filter, setFilter } = useCatalogueStore();
   const [currentFilter, setCurrentFilter] = useState(filter);
@@ -67,177 +107,149 @@ const ProductDetailPage = () => {
     error: any;
     isLoading: boolean;
   };
-  let isError = false;
   let idproducto = id ? id : -1;
   const {
     data: currentProduct,
-    error,
+    error: isError,
     isLoading,
-  } = useApiQuery("GET|producto/" + idproducto, null) as QueryProps;
-
-  // const {
-  //   data: p,
-  //   error: isError,
-  //   isLoading,
-  // } = useApiQuery("GET|producto/"+id, null) as QueryProps;
-  // useEffect(() => {
-  //   if (p) {
-  //     setCurrentProduct(currentProduct);
-  //   }
-  // }, [p])
+  } = useApiQuery("GET|producto/" + id, null) as QueryProps;
 
   if (isError) {
     throw isError;
   }
-  if (isLoading) {
-    return <Loader />;
-  }
-  //let mobile = useMediaQuery(`(max-width: 700px)`) ? true : false;
-  return (
-    <Container
-      maxW="container.2xl"
-      minH="100vh"
-      display="flex"
-      flexDirection="column"
-      justifyContent="start"
-      alignItems="center"
-      bg="#f9f6f6"
-      p={"0"}
-      gap={"1rem"}
-    >
-      <Flex w="100%">
-        <Button
-          colorScheme="orange"
-          as={Link}
-          to="/catálogo"
-          h={"3rem"}
-          w={"15rem"}
-        >
-          <ChevronLeftIcon />
-          Volver al catálogo
-        </Button>
-      </Flex>
-      <Heading p={"1rem"} w={"100%"} as="h1" size="1rem" textAlign="left">
-        Detalle del producto
-      </Heading>
-      {id && currentProduct ? (
-        <Flex
-          flexDir={"column"}
-          w="100%"
-          align={"center"}
-          justifyContent={"center"}
-          gap={"1rem"}
-          flexWrap={"wrap"}
-        >
-          <Flex
-            gap={"5rem 5rem"}
-            width={"90%"}
-            justifyContent={"center"}
-            align={"center"}
-            flexWrap={"wrap"}
-          >
-            <Heading w={"20rem"} as="h1" size="2rem" textAlign="start">
-              {currentProduct.nombre}
-            </Heading>
-            <Flex w={"20rem"}>
-              <Box
-                boxSize={"15rem"}
-                bg={"orange.500"}
-                borderRadius={"50%"}
-                alignItems={"center"}
-                display="flex"
-                justifyContent="center"
-                order={0}
-                position={"relative"}
-              >
-                <Image
-                  src={currentProduct.imgURL}
-                  alt={currentProduct.nombre}
-                  w={"13rem"}
-                  objectFit={"cover"}
-                  borderRadius="50%"
-                  overflow={"hidden"}
-                />
-              </Box>
-            </Flex>
-          </Flex>
-          {/* <Box
-            width={"90%"}
-            height={".3rem"}
-            color={"transparent"}
-            background="#FB9300"
-          >
-            -
-          </Box> */}
-          <Flex
-            gap={"3rem 5rem"}
-            width={"90%"}
-            align={"center"}
-            justifyContent={"center"}
-            flexWrap={"wrap"}
-          >
-            <Stack
-              h={"30rem"}
-              w={"20rem"}
-              spacing={3}
-              justifyContent={"flex-start"}
-              boxSize={"20rem"}
-            >
-              <Heading as="h2" size="lg">
-                Descripción
-              </Heading>
-              <Text fontSize={"1.3rem"}>{currentProduct.descripcion}</Text>
-              <Heading as="h2" size="lg">
-                Receta
-              </Heading>
-              <Text fontSize={"1.3rem"}>{currentProduct.receta}</Text>
-            </Stack>
-            <Stack
-              h={"30rem"}
-              spacing={3}
-              justifyContent={"flex-start"}
-              boxSize={"20rem"}
-            >
-              <Heading as="h2" size="lg">
-                Precio
-              </Heading>
-              <Text fontSize="1.4rem">
-                <Mark color={"orange"}>$</Mark>
-                {currentProduct.precio}
-              </Text>
-              <Heading as="h2" size="lg">
-                Preparacion
-              </Heading>
-              <Text fontSize={"1.3rem"}>
-                {currentProduct.tiempoCocina / 60}min
-              </Text>
-              <Button
-                colorScheme="orange"
-                w="10rem"
-                onClick={() => {
-                  addToCartHandler();
-                }}
-              >
-                Agregar al carrito
-              </Button>
-            </Stack>
-          </Flex>
 
-          {/* 
-          <Heading as="h2" size="lg">
-            Ingredientes
-          </Heading>
-          <Text>"Lorem ipsum dolor sit amet consectetur"</Text>
-          <Heading as="h2" size="lg">
-            Preparación
-          </Heading>
-          <Text>"Lorem ipsum dolor sit amet consectetur"</Text>
-        </Stack> */}
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
+  const useStyles = createStyles((theme) => ({
+    text: {
+      color: dark ? "white" : "black",
+    },
+  }));
+  const discountValue = (price: number = 0, discount: number) =>
+    Math.floor(price - (price * discount) / 100);
+  const { classes } = useStyles();
+  //let mobile = useMediaQuery(`(max-width: 700px)`) ? true : false;
+  const navigate = useNavigate();
+  return (
+    <Flex
+      maw="container.2xl"
+      w={"100%"}
+      display="flex"
+      direction="column"
+      c="start"
+      align="center"
+      bg={dark ? "#3e3e3e" : "#e6e6e6"}
+      p={"1rem"}
+      mih="100vh"
+      pos={"relative"}
+    > 
+      <Flex top={0} w={"100%"} pos={"absolute"}>
+        <Button onClick={() => {
+          navigate("/catálogo")
+        }} h={"4rem"} p={"0.5rem"} color={"orange"} w={"10rem"} leftIcon={<IconArrowBack></IconArrowBack>}>Volver</Button>
+      </Flex>
+      <Title className={classes.text} order={1} mb="2rem">
+        El Buen Sabor
+      </Title>
+      <Stack spacing={10} w="100%" dir={"column"}>
+        <Title className={classes.text} order={1} mb="2rem">
+          Detalle del producto
+        </Title>
+        <Flex
+          gap={"5rem"}
+          w={"100%"}
+          wrap={"wrap"}
+          justify={"center"}
+          align={"center"}
+        >
+          <Box
+            w={"15rem"}
+            h={"15rem"}
+            style={{ borderRadius: "20px", backgroundColor: "#DF8300" }}
+            p={"0.5rem"}
+          >
+            <Image
+              radius="50%"
+              fit="cover"
+              m="auto"
+              src={currentProduct?.imgURL}
+            />
+          </Box>
+          <Stack mih={"15rem"} align="start" justify="space-between">
+            <Title className={classes.text} order={1} mb="2rem">
+              {currentProduct?.nombre}
+            </Title>
+            <Text>{currentProduct?.descripcion}</Text>
+            <Flex w={"100%"} align="center" gap={"2rem"}>
+              <Text size="md" color="black" display="flex" align="center">
+                <Text color="orange">
+                  <i className="fa-solid fa-dollar-sign"></i>
+                </Text>
+                <Text
+                  className={classes.text}
+                  strikethrough={currentProduct?.descuento > 0}
+                >
+                  {currentProduct?.precio}
+                </Text>
+                {currentProduct?.descuento > 0 && (
+                  <>
+                    <Text
+                      mr={"1rem"}
+                      ml={"1rem"}
+                      color="orange"
+                      component="span"
+                    >
+                      <i className="fa-solid fa-chevron-right"></i>
+                    </Text>
+                    <Text color="orange">
+                      <i className="fa-solid fa-dollar-sign"></i>
+                    </Text>
+                    <Text className={classes.text}>
+                      {discountValue(
+                        currentProduct?.precio,
+                        currentProduct?.descuento
+                      )}
+                    </Text>
+                  </>
+                )}
+              </Text>
+              <Button h={"3rem"} color="orange" onClick={addToCartHandler}>
+                Añadir al carrito
+              </Button>
+            </Flex>
+          </Stack>
         </Flex>
-      ) : (
-        <Title>No se encontro el producto</Title>
-      )}
-    </Container>
+        <Flex
+          gap={"5rem"}
+          w={"100%"}
+          wrap={"wrap"}
+          justify={"center"}
+          align={"center"}
+        >
+          <Stack mih={"10rem"} align="start" justify="space-between">
+            <Title className={classes.text} order={1} mb="2rem">
+              Ingredientes
+            </Title>
+            <Flex w={"100%"} justify={"center"} gap={"1rem"}>
+              {currentProduct?.insumos?.map((insumoProducto:any) => {
+                return (
+                  <>
+                    <Box
+                      style={{ borderRadius: "10px" }}
+                      p={"1rem"}
+                      bg={"orange"}
+                    >
+                      <Text color="white">{insumoProducto.insumo.nombre}</Text>
+                    </Box>
+                  </>
+                );
+              })}
+            </Flex>
+          </Stack>
+        </Flex>
+      </Stack>
+    </Flex>
   );
 };
 export default ProductDetailPage;

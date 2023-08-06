@@ -78,8 +78,7 @@ export const LandingCard = ({
       });
     }
   };
-  const discountValue = (price: number = 0, discount: number) =>
-    Math.floor(price - (price * discount) / 100);
+  
 
   //const { mutate: addToCart } = useAddToCart();
   const addToCart = async () => {
@@ -104,6 +103,8 @@ export const LandingCard = ({
       setLoading(false);
     }
   }, [addedData]);
+  const discountValue = (price: number = 0, discount: number) =>
+    Math.floor(price - (price * discount) / 100);
   return (
     <>
       <Card

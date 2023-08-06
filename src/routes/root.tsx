@@ -9,6 +9,9 @@ import { ProductoFormPage } from "@pages/AdminPages/StockPages/ProductosPages/Pr
 import DashboardPage from "@pages/AdminPages/DashBoardPages/DashboardPage";
 import Landing from "@components/app/Landing/Landing";
 import Catalogue from "@components/app/Catalogue/Catalogue";
+import ProductDetailPage from "@pages/ProductDetailPage";
+import { CartDetailPage } from "@pages/CartDetailPage";
+ProductDetailPage
 const BrowserRouter = createBrowserRouter([
   {
     path: "/",
@@ -21,7 +24,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/product/:id",
-        element: <></>,
+        element: <ProductDetailPage/>,
         errorElement: <ErrorPage />,
       },
       {
@@ -36,7 +39,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/carrito",
-        element: <></>,
+        element: <CartDetailPage/>,
         errorElement: <ErrorPage />,
       },
       {

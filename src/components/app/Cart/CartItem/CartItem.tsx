@@ -8,9 +8,7 @@ import {
   ActionIcon,
   createStyles,
   Title,
-  Mark,
   Menu,
-  rem,
   Loader,
 } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
@@ -39,14 +37,6 @@ const CartItem = ({
     data: removedData,
     isLoading: isLoadingDel,
   } = useApiMutation("PUT|cart/delProduct");
-  const discountValue = (price: number = 0, discount: number) =>
-    Math.floor(price - (price * discount) / 100);
-  const { setCarrito } = useMainStore();
-  const cancelRef = useRef() as any;
-  //const { onOpen: onOpenDeleteItem } = useDisclosure();
-  //const { mutate: removeFromCart } = useRemoveFromCart();
-  //const { mutate: updateCart } = useUpdateCart();
-
   const handleDeleteItem = () => {
     delProducto({ id: cartItem.productoId });
   };
@@ -55,6 +45,14 @@ const CartItem = ({
     //updateCart({ ...item, quantity: item.quantity + 1 });
     addProduct({ id: cartItem.productoId });
   };
+  const discountValue = (price: number = 0, discount: number) =>
+    Math.floor(price - (price * discount) / 100);
+  const { setCarrito } = useMainStore();
+  const cancelRef = useRef() as any;
+  //const { onOpen: onOpenDeleteItem } = useDisclosure();
+  //const { mutate: removeFromCart } = useRemoveFromCart();
+  //const { mutate: updateCart } = useUpdateCart();
+
   useEffect(() => {
     if (addedData) {
       setCarrito(addedData);
@@ -62,7 +60,6 @@ const CartItem = ({
       setCarrito(removedData);
       console.log(removedData);
     }
-    
   }, [addedData, removedData]);
 
   const useStyles = createStyles((theme) => ({
@@ -101,8 +98,10 @@ const CartItem = ({
           <Title color="black" size="sm" mt="4">
             {cartItem.producto}
           </Title>
-          <Text color="black" display={"flex"}>
-            <Text color="orange">
+          <Text color="black" style={{gap:"1rem"}} display={"flex"}>
+            <Text w={"2rem"}>c/u:</Text>
+            <Text color="black" display={"flex"}>
+              <Text color="orange">
               <i className="fa-solid fa-dollar-sign"></i>
             </Text>
             <Text strikethrough={cartItem.descuento > 0}>
@@ -122,14 +121,19 @@ const CartItem = ({
                 </Text>
               </>
             )}
+            </Text>
+            
           </Text>
 
           <Flex direction="row" justify={"space-between"}>
-            <Text color="black" display={"flex"}>
-              <Text color="orange">
-                <i className="fa-solid fa-dollar-sign"></i>
+            <Text color="black" style={{gap:"1rem"}} display={"flex"}>
+              <Text w={"2rem"}>Total:</Text>
+              <Text color="black" display={"flex"}>
+                <Text color="orange">
+                  <i className="fa-solid fa-dollar-sign"></i>
+                </Text>
+                {cartItem.precioTotal}
               </Text>
-              {cartItem.precioTotal}
             </Text>
             <Flex
               direction="row"

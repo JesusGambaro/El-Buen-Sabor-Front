@@ -25,16 +25,10 @@ const Catalogue = () => {
       nombre_like,
     });
   };
-  console.log("filter ", filter);
   
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-  //--Temploral
-  // let filter = { id_categoria: 0 };
-  // let handleSetFilter = () => {
-  //   return;
-  // };
-  //--
+  
   const useStyles = createStyles((theme) => ({
     text: {
       color: dark ? "white" : "black",

@@ -1,5 +1,13 @@
+import { type } from "os";
 import { ReactNode } from "react";
-
+type Insumo = {
+  nombre: string;
+  stockMinimo: number;
+  stockActual: number;
+  estado: string;
+  costo: number;
+  id: number;
+};
 type Product = {
   nombre: string;
   imgURL?: string;
@@ -13,6 +21,7 @@ type Product = {
   precio: number;
   valoracion: number;
   descuento: number;
+  insumos: Insumo[];
 };
 type Category = {
   id: number;
@@ -29,6 +38,7 @@ type CartItem = {
   productoId: number;
   cantidad: number;
   precioUnitario: number;
+  precioTotalSinDescuento: number;
   descuento: number;
   precioTotal: number;
   imgURL: string;
@@ -185,6 +195,7 @@ type ErrorBoundaryProps = {
 export type {
   ErrorBoundaryProps,
   Product,
+  Insumo,
   CartItem,
   Order,
   Direccion,

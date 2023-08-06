@@ -9,6 +9,7 @@ import {
   Mark,
   Box,
   Card,
+  createStyles,
 } from "@mantine/core";
 import CartItem from "./CartItem/CartItem";
 import Loader from "@app/Loader/Loader";
@@ -49,120 +50,13 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
       setCarrito(data);
     }
   }, [data]);
-
+  const useStyles = createStyles((theme) => ({
+    text: {
+      color: theme.colorScheme !== "dark" ? theme.colors.dark[6] : theme.white,
+    },
+  }));
+  const { classes } = useStyles();
   return (
-    // <Drawer
-    //   isOpen={isOpen}
-    //   onClose={onClose}
-    //   finalFocusRef={btnRef}
-    //   placement="right"
-    //   size="md"
-    // >
-    //   <DrawerOverlay />
-    //   <DrawerContent>
-    //     <DrawerCloseButton
-    //       color="orange.300"
-    //       _hover={{
-    //         color: "orange.500",
-    //       }}
-    //       size="lg"
-    //     />
-    //     <DrawerHeader as="h2" fontSize="2xl" fontWeight="bold">
-    //       Tu carro de compras
-    //     </DrawerHeader>
-    //     <DrawerBody>
-    //       <Flex
-    //         flexDir="column"
-    //         alignItems="center"
-    //         overflowY="auto"
-    //         h="100%"
-    //         bg="white"
-    //         pr={2}
-    //       >
-    //         {isLoading ? (
-    //           <Loader />
-    //         ) : carrito && carrito.productosComprados.length > 0 ? (
-    //           <>
-    //             {carrito.productosComprados?.map(
-    //               (cartItem: cartItem, i: number) => (
-    //                 <CartItem
-    //                   key={"cart-item-" + i}
-    //                   cartItem={cartItem}
-    //                   index={i}
-    //                 />
-    //               )
-    //             )}
-    //             <EmptyCartBtn />
-    //           </>
-    //         ) : (
-    //           <Alert
-    //             status="warning"
-    //             variant="subtle"
-    //             flexDirection="column"
-    //             alignItems="center"
-    //             justifyContent="center"
-    //             textAlign="center"
-    //             height="100%"
-    //             bg={"white"}
-    //           >
-    //             <AlertIcon boxSize="40px" mr={0} />
-    //             <AlertTitle mt={4} mb={1} fontSize="lg">
-    //               No hay productos en el carrito
-    //             </AlertTitle>
-    //           </Alert>
-    //         )}
-    //       </Flex>
-    //     </DrawerBody>
-    //     <DrawerFooter>
-    //       {isLoading ? null : (
-    //         <Flex
-    //           w="100%"
-    //           h="7rem"
-    //           bg="white"
-    //           mb={2}
-    //           borderRadius="md"
-    //           display="flex"
-    //           flexDir="column"
-    //           alignItems="end"
-    //           justifyContent="center"
-    //           px={3}
-    //           visibility={
-    //             carrito && carrito.productosComprados.length > 0
-    //               ? "visible"
-    //               : "hidden"
-    //           }
-    //         >
-    //           <Text
-    //             fontSize="sm"
-    //             fontWeight="bold"
-    //             as="span"
-    //             h="3rem"
-    //             display="flex"
-    //             alignItems="center"
-    //             justifyContent="space-between"
-    //             gap={2}
-    //           >
-    //             <Tag size="md" variant="solid" bg="orange">
-    //               <TagLabel>Total</TagLabel>
-    //             </Tag>
-    //             ${carrito?.totalCompra.toFixed(2)}
-    //           </Text>
-    //           <Button
-    //             variant={"solid"}
-    //             w="100%"
-    //             h="4rem"
-    //             {...btnStyle}
-    //             onClick={onClose}
-    //             as={Link}
-    //             to="/carrito"
-    //           >
-    //             Continuar
-    //           </Button>
-    //         </Flex>
-    //       )}
-    //     </DrawerFooter>
-    //   </DrawerContent>
-    // </Drawer>
     <Drawer
       opened={isOpen}
       onClose={onClose}
@@ -181,7 +75,9 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
       <Flex direction={"column"} gap={3} align="center" h="100%" pr={2}>
         {isLoading || loading ? (
           <Loader />
-        ) : carrito && carrito.productosComprados.length > 0 ? (
+        ) : carrito &&
+          carrito.productosComprados &&
+          carrito.productosComprados.length > 0 ? (
           <>
             {carrito.productosComprados?.map(
               (cartItem: cartItem, i: number) => (
@@ -203,7 +99,9 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
                 <Text color="orange">
                   <i className="fa-solid fa-dollar-sign"></i>
                 </Text>
-                <Text>{carrito?.totalCompra.toFixed(2)}</Text>
+                <Text className={classes.text}>
+                  {carrito?.totalCompra.toFixed(2)}
+                </Text>
               </Text>
             </Card>
 
@@ -263,7 +161,7 @@ const EmptyCartBtn = () => {
   useEffect(() => {
     //setCarrito(clearCartData);
     setLoading(false);
-    console.log("entre",clearCartData);
+    console.log("entre", clearCartData);
   }, [clearCartData]);
   return (
     <>
