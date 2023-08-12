@@ -130,11 +130,13 @@ const Landing = () => {
               border: "none",
               marginTop: "-0.55rem",
             },
-            
           }}
         >
           {isLoading ? (
             <>
+              <Carousel.Slide>
+                <Skeleton height={"3rem"} w={"15rem"} radius={"15px"} />
+              </Carousel.Slide>
               <Carousel.Slide>
                 <Skeleton height={"3rem"} w={"15rem"} radius={"15px"} />
               </Carousel.Slide>
@@ -160,8 +162,15 @@ const Landing = () => {
             justify={"flex-start"}
             align={"start"}
           >
-            {isLoadingProds ? (
-              <Loader />
+            {isLoading ? (
+              <>
+                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
+                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
+                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
+                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
+                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
+                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
+              </>
             ) : (
               productos?.map((product) => (
                 <LandingCard

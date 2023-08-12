@@ -11,6 +11,7 @@ import Landing from "@components/app/Landing/Landing";
 import Catalogue from "@components/app/Catalogue/Catalogue";
 import ProductDetailPage from "@pages/ProductDetailPage";
 import { CartDetailPage } from "@pages/CartDetailPage";
+import { Pedidos } from "@components/app/Pedidos/Pedidos";
 ProductDetailPage
 const BrowserRouter = createBrowserRouter([
   {
@@ -44,12 +45,12 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/pedidos",
-        element: <></>,
+        element: <Pedidos></Pedidos>,
         errorElement: <ErrorPage />,
       },
       {
         path: "/pedidos/:id",
-        element: <></>,
+        element: <Pedidos></Pedidos>,
         errorElement: <ErrorPage />,
       },
     ],

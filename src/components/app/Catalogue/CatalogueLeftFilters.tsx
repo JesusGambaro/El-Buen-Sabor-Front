@@ -14,6 +14,7 @@ import {
   createStyles,
   useMantineColorScheme,
   ActionIcon,
+  Transition,
 } from "@mantine/core";
 import { InputBase, RangeSlider, Title, Input } from "@mantine/core";
 import { Category } from "types/types";
@@ -27,6 +28,7 @@ import { IconX } from "@tabler/icons-react";
 type Props = {
   handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
   currentIdCategoria?: number;
+  opened: boolean;
 };
 type NestedAccordionProps = {
   categories: Category[];
@@ -53,7 +55,7 @@ const CatalogueLeftFilters = (props: Props) => {
   });
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-  const [opened, { open, close }] = useDisclosure(false);
+
   const useStyles = createStyles((theme) => ({
     dragging: {
       transform: "translate(-50%, -50%)",
@@ -68,8 +70,8 @@ const CatalogueLeftFilters = (props: Props) => {
     },
     filterTitle: {
       fontSize: "1rem",
-      fontWeight:500,
-    }
+      fontWeight: 500,
+    },
   }));
   const { classes } = useStyles();
   const RangeSliderStyle = createStyles((theme) => ({
@@ -99,30 +101,35 @@ const CatalogueLeftFilters = (props: Props) => {
   }));
   const { classes: RangeSliderClasses } = RangeSliderStyle();
   return (
-    <Flex direction={"column"} p={"1rem"} gap={"1rem"} w={"15rem"}>
-      <Title order={2} className={classes.text}>
-        Filtros
-      </Title>
-      <Flex mb={"1rem"}>
-        {props.currentIdCategoria ? (
-          <>
-            <Flex
-              w={"15rem"}
-              sx={{ borderRadius: "20px" }}
-              h={"2rem"}
-              p={"1rem"}
-              justify={"space-between"}
-              align={"center"}
-              bg={"orange"}
-            >
-              <Title color="white" align="left" weight={"500"} order={4}>
-                {
-                  baseCategories?.find((c) => {
-                    return c.id == props.currentIdCategoria;
-                  })?.nombre
-                }
-              </Title>
-              {/* <Button
+    <Transition
+      mounted={props.opened}
+      transition="slide-right"
+      duration={200}
+      timingFunction="ease"
+    >
+      {(styles) => (
+        <div style={styles}>
+          <Flex style={{borderRadius:"10px"}} direction={"column"}  p={"1rem"} gap={"1rem"} w={"15rem"}>
+            <Flex mb={"1rem"}>
+              {props.currentIdCategoria ? (
+                <>
+                  <Flex
+                    w={"15rem"}
+                    sx={{ borderRadius: "20px" }}
+                    h={"2rem"}
+                    p={"1rem"}
+                    justify={"space-between"}
+                    align={"center"}
+                    bg={"orange"}
+                  >
+                    <Title color="white" align="left" weight={"500"} order={4}>
+                      {
+                        baseCategories?.find((c) => {
+                          return c.id == props.currentIdCategoria;
+                        })?.nombre
+                      }
+                    </Title>
+                    {/* <Button
                 w={"1rem"}
                 h={"1rem"}
                 sx={{
@@ -141,130 +148,131 @@ const CatalogueLeftFilters = (props: Props) => {
               >
                 X
               </Button> */}
-              <ActionIcon
-                sx={{
-                  background: "white",
-                  color: "orange",
-                  borderRadius: "100%",
-                  ":hover": {
-                    background: "orange",
-                    color: "white",
-                  },
-                  transition: "0.5s ease-in-out background"
-                }}
-                onClick={() => {
-                  props.handleSetFilter(undefined);
-                }}
-              >
-                <IconX></IconX>
-              </ActionIcon>
+                    <ActionIcon
+                      sx={{
+                        background: "white",
+                        color: "orange",
+                        borderRadius: "100%",
+                        ":hover": {
+                          background: "orange",
+                          color: "white",
+                        },
+                        transition: "0.5s ease-in-out background",
+                      }}
+                      onClick={() => {
+                        props.handleSetFilter(undefined);
+                      }}
+                    >
+                      <IconX></IconX>
+                    </ActionIcon>
+                  </Flex>
+                </>
+              ) : (
+                <></>
+              )}
             </Flex>
-          </>
-        ) : (
-          <></>
-        )}
-      </Flex>
-      <Flex
-        gap={"1rem"}
-        w={"100%"}
-        justify={"space-between"}
-        align={"center"}
-        p={"1rem"}
-        style={{ borderRadius: "10px" }}
-        className={classes.filterContainer}
-      >
-        <Title className={classes.filterTitle + " " + classes.text}>
-          En Oferta
-        </Title>
-        <Switch size="md" onLabel="SI" offLabel="NO" />
-      </Flex>
-      <Flex
-        gap={"1rem"}
-        w={"100%"}
-        justify={"center"}
-        align={"start"}
-        p={"1rem"}
-        direction={"column"}
-        style={{ borderRadius: "10px" }}
-        className={classes.filterContainer}
-      >
-        <Title
-          className={classes.filterTitle + " " + classes.text}
-        >
-          Precio
-        </Title>
-        <Flex justify={"space-between"} display={"flex"} w={"100%"}>
-          <Stack w={"4rem"}>
-            <Title
-              className={classes.filterTitle + " " + classes.text}
+            <Flex
+              gap={"1rem"}
               w={"100%"}
-              align="left"
+              justify={"space-between"}
+              align={"center"}
+              p={"1rem"}
+              style={{ borderRadius: "10px" }}
+              className={classes.filterContainer}
             >
-              Min
-            </Title>
-            <Input
+              <Title className={classes.filterTitle + " " + classes.text}>
+                En Oferta
+              </Title>
+              <Switch size="md" onLabel="SI" offLabel="NO" />
+            </Flex>
+            <Flex
+              gap={"1rem"}
               w={"100%"}
-              type="number"
-              value={priceValues.min}
-              onChange={(e) => {
-                serPriceValues({
-                  ...priceValues,
-                  min: Number.parseInt(e.target.value),
-                });
-              }}
-            ></Input>
-          </Stack>
-          <Stack w={"4rem"}>
-            <Title
-              className={classes.filterTitle + " " + classes.text}
-              w={"100%"}
-              align="right"
+              justify={"center"}
+              align={"start"}
+              p={"1rem"}
+              direction={"column"}
+              style={{ borderRadius: "10px" }}
+              className={classes.filterContainer}
             >
-              Max
-            </Title>
-            <Input
-              w={"100%"}
-              type="number"
-              value={priceValues.max}
-              onChange={(e) => {
-                serPriceValues({
-                  ...priceValues,
-                  max: Number.parseInt(e.target.value),
-                });
-              }}
-            ></Input>
-          </Stack>
-        </Flex>
-        <RangeSlider
-          w={"100%"}
-          size="xl"
-          color="orange"
-          labelAlwaysOn
-          classNames={RangeSliderClasses}
-          max={5000}
-          min={1}
-          value={[priceValues.min, priceValues.max]}
-          onChange={(e) => {
-            serPriceValues({ min: e[0], max: e[1] });
-          }}
-          minRange={1000}
-        ></RangeSlider>
-      </Flex>
-      {!props.currentIdCategoria && (
-        <Flex
-          gap={"1rem"}
-          w={"100%"}
-          justify={"space-between"}
-          align={"center"}
-          bg={"white"}
-          p={"1rem"}
-          direction={"column"}
-          style={{ borderRadius: "10px" }}
-        >
-          <CategoriaFilter handleSetFilter={props.handleSetFilter} />
-        </Flex>
+              <Title className={classes.filterTitle + " " + classes.text}>
+                Precio
+              </Title>
+              <Flex justify={"space-between"} display={"flex"} w={"100%"}>
+                <Stack w={"4rem"}>
+                  <Title
+                    className={classes.filterTitle + " " + classes.text}
+                    w={"100%"}
+                    align="left"
+                  >
+                    Min
+                  </Title>
+                  <Input
+                    w={"100%"}
+                    type="number"
+                    value={priceValues.min}
+                    onChange={(e) => {
+                      serPriceValues({
+                        ...priceValues,
+                        min: Number.parseInt(e.target.value),
+                      });
+                    }}
+                  ></Input>
+                </Stack>
+                <Stack w={"4rem"}>
+                  <Title
+                    className={classes.filterTitle + " " + classes.text}
+                    w={"100%"}
+                    align="right"
+                  >
+                    Max
+                  </Title>
+                  <Input
+                    w={"100%"}
+                    type="number"
+                    value={priceValues.max}
+                    onChange={(e) => {
+                      serPriceValues({
+                        ...priceValues,
+                        max: Number.parseInt(e.target.value),
+                      });
+                    }}
+                  ></Input>
+                </Stack>
+              </Flex>
+              <RangeSlider
+                w={"100%"}
+                size="xl"
+                color="orange"
+                labelAlwaysOn
+                classNames={RangeSliderClasses}
+                max={5000}
+                min={1}
+                value={[priceValues.min, priceValues.max]}
+                onChange={(e) => {
+                  serPriceValues({ min: e[0], max: e[1] });
+                }}
+                minRange={1000}
+              ></RangeSlider>
+            </Flex>
+            {!props.currentIdCategoria && (
+              <Flex
+                gap={"1rem"}
+                w={"100%"}
+                justify={"space-between"}
+                align={"center"}
+                bg={"white"}
+                p={"1rem"}
+                direction={"column"}
+                style={{ borderRadius: "10px" }}
+              >
+                <CategoriaFilter handleSetFilter={props.handleSetFilter} />
+              </Flex>
+            )}
+          </Flex>
+        </div>
       )}
-    </Flex>
+    </Transition>
   );
 };
 export default CatalogueLeftFilters;

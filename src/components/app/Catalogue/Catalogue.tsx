@@ -15,6 +15,7 @@ import CatalogueLeftFilters from "./CatalogueLeftFilters";
 
 import CatalogueProductsContainer from "./CatalogueProductsContainer";
 import useCatalogueStore from "@store/catalogueStore";
+import { useDisclosure } from "@mantine/hooks";
 const Catalogue = () => {
   //const { data: categories } = useCategories();
   const { filter, setFilter } = useCatalogueStore();
@@ -25,16 +26,17 @@ const Catalogue = () => {
       nombre_like,
     });
   };
-  
+
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-  
+
   const useStyles = createStyles((theme) => ({
     text: {
       color: dark ? "white" : "black",
     },
   }));
   const { classes } = useStyles();
+  const [opened, { open, close }] = useDisclosure(true);
   return (
     <Flex
       maw="container.2xl"
@@ -47,20 +49,33 @@ const Catalogue = () => {
       p={"1rem"}
       mih="100vh"
     >
-      <Title className={classes.text} order={1} mb="2rem">
-        El Buen Sabor
-      </Title>
       <Stack spacing={3} w="100%" dir={"column"}>
         <Title className={classes.text} order={1} mb="2rem">
           Catálogo
         </Title>
-
-        <Flex gap={"0rem 2rem"} w={"100%"}  direction={"row"} justify={"flex-start"}>
+        <Title
+          w={"min-content"}
+          underline
+          style={{ cursor: "pointer" }}
+          order={2}
+          className={classes.text}
+          onClick={!opened ? open : close}
+        >
+          Filtros
+        </Title>
+        <Flex
+          gap={"0rem 2rem"}
+          w={"100%"}
+          direction={"row"}
+          justify={"flex-start"}
+          
+        >
           <CatalogueLeftFilters
             currentIdCategoria={filter.id_categoria}
             handleSetFilter={handleSetFilter}
+            opened={opened}
           />
-          <CatalogueProductsContainer/>
+          <CatalogueProductsContainer />
         </Flex>
       </Stack>
     </Flex>

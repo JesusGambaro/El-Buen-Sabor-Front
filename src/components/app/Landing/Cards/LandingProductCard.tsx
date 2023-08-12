@@ -11,6 +11,7 @@ import {
   ActionIcon,
   Rating,
   Box,
+  Paper,
 } from "@mantine/core";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
@@ -64,7 +65,7 @@ export const LandingCard = ({
       });
     } catch (error) {
       console.log(error);
-      
+
       notifications.update({
         id: "adding-cartItem",
         title: "Ocurrio un error intente nuevamente",
@@ -78,7 +79,6 @@ export const LandingCard = ({
       });
     }
   };
-  
 
   //const { mutate: addToCart } = useAddToCart();
   const addToCart = async () => {
@@ -108,7 +108,7 @@ export const LandingCard = ({
   return (
     <>
       <Card
-        w="15rem"
+        w="10rem"
         style={{
           overflow: "visible",
         }}
@@ -120,32 +120,53 @@ export const LandingCard = ({
       >
         <Card.Section
           style={{
-            overflow: "visible",
             display: "flex",
             justifyContent: "center",
             alignItems: "start",
             flexGrow: 1,
             zIndex: 2,
-            borderRadius: product.descuento ? "0 2rem 2rem 2rem" : "2rem",
+            flexDirection: "column",
+            borderRadius: product.descuento ? "0 1.5rem 1.5rem 1.5rem" : "1rem",
           }}
           pos={"relative"}
           bg={!isThemeBlack ? "white" : "#25262b"}
         >
+          <Link
+            to={`/product/${product.id}`}
+            style={{
+              textDecoration: "none",
+              maxWidth: "6rem",
+              height: "5rem",
+              margin: ".5rem auto",
+              zIndex: 2,
+              backgroundColor: "transparent",
+            }}
+          >
+            <Image
+              src={product.imgURL}
+              alt={product.nombre}
+              radius="50%"
+              fit="cover"
+              m="auto"
+            />
+          </Link>
           <Flex
+            w="10rem"
             style={{
               display: "flex",
-              padding: ".5rem",
+              padding: "1rem",
               height: "100%",
               justifyContent: "space-between",
               flexDirection: "column",
-              gap: "1rem",
+              gap: ".5rem",
             }}
           >
             <Title
-              size="sm"
+              size=".7rem"
               mt="4"
+              p={"0 2rem 0  0"}
+              w="10rem"
               style={{
-                width: "10rem",
                 textOverflow: "ellipsis",
                 overflow: "hidden",
                 whiteSpace: "nowrap",
@@ -154,7 +175,7 @@ export const LandingCard = ({
               {product.nombre}
             </Title>
 
-            <Text size="md" color="black" display="flex" align="center">
+            <Text size=".8rem" color="black" display="flex" align="center">
               <Text color="orange">
                 <i className="fa-solid fa-dollar-sign"></i>
               </Text>
@@ -192,6 +213,7 @@ export const LandingCard = ({
                   value={product.valoracion}
                   fractions={2}
                   readOnly
+                  size="1rem"
                 />
               </Tooltip>
 
@@ -219,32 +241,9 @@ export const LandingCard = ({
               </Tooltip>
             </Flex>
           </Flex>
+          
         </Card.Section>
-        <Link
-          to={`/product/${product.id}`}
-          style={{
-            textDecoration: "none",
-            position: "absolute",
-            background: "transparent",
-            maxWidth: "5rem",
-            height: "4rem",
-            overflow: "hidden",
-            inset: 0,
-            top: "-3.5rem",
-            left: 0,
-            right: 0,
-            margin: "0 auto",
-            zIndex: 0,
-          }}
-        >
-          <Image
-            src={product.imgURL}
-            alt={product.nombre}
-            radius="50%"
-            fit="cover"
-            m="auto"
-          />
-        </Link>
+
         {product.descuento > 0 && (
           <Flex
             bg={"orange"}
@@ -261,7 +260,7 @@ export const LandingCard = ({
               fontWeight: "bold",
               fontSize: "12px",
               color: "white",
-              zIndex: 1,
+              zIndex: 0,
             }}
           >
             {product.descuento}% OFF

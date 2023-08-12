@@ -43,42 +43,35 @@ const CatalogueProductsContainer = () => {
   }, [products]);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-  
+
   return isLoading ? (
     <Loader />
   ) : (
-    // <SimpleGrid
-    //   w="100%"
-    //   mt={4}
-    //   cols={4}
-    //   spacing={20}
-    //   bg={"red"}
-    //   breakpoints={[
-    //     { maxWidth: "62rem", cols: 3, spacing: "md" },
-    //     { maxWidth: "48rem", cols: 2, spacing: "sm" },
-    //     { maxWidth: "36rem", cols: 1, spacing: "sm" },
-    //   ]}
-    // >
-    //   {productos?.map((product: Product) => (
-    //     <LandingCard key={"landing-card-" + product.id} product={product} />
-    //   ))}
-    // </SimpleGrid>
-    // <Stack w={"100%"} display={"flex"} dir="row">
-    //   {productos?.map((product: Product) => (
-    //     <LandingCard key={"landing-card-" + product.id} product={product} />
-    //   ))}
-    // </Stack>
     <Flex
       wrap={"wrap"}
       gap={"2rem"}
       h={"50vh"}
-      justify={"flex-start"}
+      justify={"start"}
       align={"top"}
+      style={{ transition: "1s ease all" }}
     >
       {productos?.length ? (
-        productos.map((product: Product) => (
-          <LandingCard key={"landing-card-" + product.id} product={product} isThemeBlack={dark} />
-        ))
+        <>
+          {productos.map((product: Product) => (
+            <>
+              <LandingCard
+                key={"landing-card-" + product.id}
+                product={product}
+                isThemeBlack={dark}
+              />
+              <LandingCard
+                key={"landing-card-" + product.id}
+                product={product}
+                isThemeBlack={dark}
+              />
+            </>
+          ))}
+        </>
       ) : (
         <Flex
           w={"100%"}
@@ -91,7 +84,13 @@ const CatalogueProductsContainer = () => {
           gap={"1rem"}
           direction={"column"}
         >
-          <Flex h={"4rem"} w={"100%"} gap={"1rem"} justify={"flex-start"} align={"center"}>
+          <Flex
+            h={"4rem"}
+            w={"100%"}
+            gap={"1rem"}
+            justify={"flex-start"}
+            align={"center"}
+          >
             <AlertCircle color="white"></AlertCircle>
             <Title color="white" order={3} weight={500}>
               Lo sentimos

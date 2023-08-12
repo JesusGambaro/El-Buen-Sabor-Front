@@ -60,7 +60,6 @@ const ProductDetailPage = () => {
         });
       });
     } catch (error) {
-      
       notifications.update({
         id: "adding-cartItem",
         title: "Ocurrio un error intente nuevamente",
@@ -74,7 +73,6 @@ const ProductDetailPage = () => {
       });
     }
   };
-  
 
   //const { mutate: addToCart } = useAddToCart();
   const addToCart = async () => {
@@ -143,24 +141,31 @@ const ProductDetailPage = () => {
       p={"1rem"}
       mih="100vh"
       pos={"relative"}
-    > 
+    >
       <Flex top={0} w={"100%"} pos={"absolute"}>
-        <Button onClick={() => {
-          navigate("/catálogo")
-        }} h={"4rem"} p={"0.5rem"} color={"orange"} w={"10rem"} leftIcon={<IconArrowBack></IconArrowBack>}>Volver</Button>
+        <Button
+          onClick={() => {
+            navigate("/catálogo");
+          }}
+          h={"4rem"}
+          p={"0.5rem"}
+          color={"orange"}
+          w={"10rem"}
+          leftIcon={<IconArrowBack></IconArrowBack>}
+        >
+          Volver
+        </Button>
       </Flex>
       <Title className={classes.text} order={1} mb="2rem">
-        El Buen Sabor
+        Detalle del producto
       </Title>
-      <Stack spacing={10} w="100%" dir={"column"}>
-        <Title className={classes.text} order={1} mb="2rem">
-          Detalle del producto
-        </Title>
+      <Flex gap={"3rem"} justify={"flex-start"} w="100%" wrap={"wrap"} direction={"row"}>
         <Flex
-          gap={"5rem"}
-          w={"100%"}
+          mih={"20rem"}
+          gap={"3rem"}
+          maw={"40rem"}
           wrap={"wrap"}
-          justify={"center"}
+          justify={"flex-start"}
           align={"center"}
         >
           <Box
@@ -177,7 +182,7 @@ const ProductDetailPage = () => {
             />
           </Box>
           <Stack mih={"15rem"} align="start" justify="space-between">
-            <Title className={classes.text} order={1} mb="2rem">
+            <Title className={classes.text} order={2} mb="2rem">
               {currentProduct?.nombre}
             </Title>
             <Text>{currentProduct?.descripcion}</Text>
@@ -222,17 +227,18 @@ const ProductDetailPage = () => {
         </Flex>
         <Flex
           gap={"5rem"}
-          w={"100%"}
+          maw={"40rem"}
+          mih={"20rem"}
           wrap={"wrap"}
-          justify={"center"}
           align={"center"}
+          justify={"flex-start"}
         >
-          <Stack mih={"10rem"} align="start" justify="space-between">
-            <Title className={classes.text} order={1} mb="2rem">
+          <Stack mih={"15rem"} align="start" justify="flex-start">
+            <Title className={classes.text} order={2} mb="2rem">
               Ingredientes
             </Title>
             <Flex w={"100%"} justify={"center"} gap={"1rem"}>
-              {currentProduct?.insumos?.map((insumoProducto:any) => {
+              {currentProduct?.insumos?.map((insumoProducto: any) => {
                 return (
                   <>
                     <Box
@@ -248,7 +254,7 @@ const ProductDetailPage = () => {
             </Flex>
           </Stack>
         </Flex>
-      </Stack>
+      </Flex>
     </Flex>
   );
 };

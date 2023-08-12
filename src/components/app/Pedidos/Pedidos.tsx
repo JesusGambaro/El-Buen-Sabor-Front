@@ -1,30 +1,21 @@
 import React from "react";
 import {
-  Heading,
   Container,
   Checkbox,
   Button,
   Input,
-  InputGroup,
   Text,
   Flex,
-  Spacer,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  FormLabelProps,
   Stack,
   Select,
   Card,
   SimpleGrid,
   Box,
-} from "@chakra-ui/react";
+  useMantineColorScheme,
+  createStyles,
+  Title,
+} from "@mantine/core";
 import { Link } from "react-router-dom";
 
 export const Pedidos = () => {
@@ -48,48 +39,53 @@ export const Pedidos = () => {
     },
     boxShadow: "1px 2px 5px rgba(0, 0, 0, 0.5);",
   };
-  const tableHeadStyle = {
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+  const useStyles = createStyles((theme) => ({
+    text: {
+      color: dark ? "white" : "black",
+    },
+    tableHeadStyle : {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    width: "20%",
+    flexBasis: "20%",
     height: "2.5rem",
     border: "none",
     fontWeight: "bold",
-  };
+  }
+  }));
+  const { classes } = useStyles();
   return (
-    <Container
-      maxW="container.2xl"
-      minH="100vh"
+    <Flex
+      maw="container.2xl"
+      miw={"100vh"}
       display="flex"
-      flexDirection="column"
-      justifyContent="start"
-      alignItems="center"
-      bg="#f9f6f6"
+      direction="column"
+      c="start"
+      align="center"
+      bg={dark ? "#3e3e3e" : "#e6e6e6"}
+      p={"1rem"}
+      mih="100vh"
     >
-      <Heading as="h1" size="xl" mb="2rem">
-        El Buen Sabor
-      </Heading>
       <Stack spacing={3} w="100%">
-        <Heading as="h2" size="lg" mb="1rem">
-          Pedidos
-        </Heading>
-        <Heading as="h4" size="md" mb="1rem">
+        <Title className={classes.text} order={3} mb="1rem">
+          Categorías
+        </Title>
+        <Title className={classes.text} order={3} mb="1rem">
           Filtros
-        </Heading>
+        </Title>
         <Flex gap={"1rem"} justify={"flex-start"} align={"flex-end"}>
-          <Select {...selectStyle} placeholder="Buscar por estado..">
-            <option>Entregado</option>
-            <option>Cancelado</option>
-            <option>Enviando</option>
+          <Select data={["Entregado","Cancelado","Enviando"]} {...selectStyle} placeholder="Buscar por estado..">
+            
           </Select>
           <Input
             {...selectStyle}
             w={"20rem"}
             placeholder="Buscar por nombre producto.."
           ></Input>
-          <Flex flexDir={"column"}>
-            <Text fontWeight={"bold"}>Fecha Inicial</Text>
+          <Flex direction={"column"}>
+            <Text weight={"bold"}>Fecha Inicial</Text>
             <Input
               {...selectStyle}
               w={"10rem"}
@@ -97,8 +93,8 @@ export const Pedidos = () => {
               placeholder="Buscar por nombre producto.."
             ></Input>
           </Flex>
-          <Flex flexDir={"column"}>
-            <Text fontWeight={"bold"}>Fecha Final</Text>
+          <Flex direction={"column"}>
+            <Text weight={"bold"}>Fecha Final</Text>
             <Input
               {...selectStyle}
               w={"10rem"}
@@ -107,70 +103,59 @@ export const Pedidos = () => {
             ></Input>
           </Flex>
         </Flex>
-        <Flex w={"100%"} alignItems={"center"}>
-          <Text {...tableHeadStyle}>Id del pedido</Text>
-          <Text {...tableHeadStyle}>Fecha entrega</Text>
-          <Text {...tableHeadStyle}>Precio total</Text>
-          <Text {...tableHeadStyle}>Estado</Text>
-          <Text {...tableHeadStyle}>Acciones</Text>
+        <Flex w={"100%"} bg={"re"} align={"center"}>
+          <Text className={classes.tableHeadStyle}>Id del pedido</Text>
+          <Text className={classes.tableHeadStyle}>Fecha entrega</Text>
+          <Text className={classes.tableHeadStyle}>Precio total</Text>
+          <Text className={classes.tableHeadStyle}>Estado</Text>
+          <Text className={classes.tableHeadStyle}>Acciones</Text>
         </Flex>
         <Flex>
           <Card w={"100%"}>
-            <Flex alignItems={"center"} w={"100%"}>
-              <Text {...tableHeadStyle}>99</Text>
-              <Text {...tableHeadStyle}>24/04/2004</Text>
-              <Text {...tableHeadStyle}>$999.9</Text>
-              <Flex {...tableHeadStyle}>
+            <Flex align={"center"} w={"100%"}>
+              <Text className={classes.tableHeadStyle}>99</Text>
+              <Text className={classes.tableHeadStyle}>24/04/2004</Text>
+              <Text className={classes.tableHeadStyle}>$999.9</Text>
+              <Flex className={classes.tableHeadStyle}>
                 <Box
-                  height={"2.3rem"}
-                  width={"10rem"}
-                  color={"white"}
-                  fontWeight={"bold"}
-                  borderRadius={"10px"}
+                  h={"2.3rem"}
+                  w={"10rem"}
+                  style={{color:"white",borderRadius:"10px",fontWeight:"bold",justifyContent:"center",alignItems:"center"}}
                   display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  background={"orange"}
+                  bg={"orange"}
                 >
                   En Delivery
                 </Box>
               </Flex>
 
               <Flex
-                {...tableHeadStyle}
-                height={"5rem"}
-                flexDir="column"
+                className={classes.tableHeadStyle}
+                h={"5rem"}
+                direction="column"
                 justify={"center"}
-                alignItems={"center"}
+                align={"center"}
                 gap={".5rem"}
               >
                 <Button
-                  width={"12rem"}
-                  height={"2rem"}
-                  color={"white"}
-                  fontWeight={"bold"}
-                  borderRadius={"10px"}
+                  w={"12rem"}
+                  h={"2rem"}
+                  color={"orange"}
+                  style={{fontWeight:"bold",borderRadius:"10px",justifyContent:"center", alignItems:"center"}}
+                 
                   display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  background="#fd7e14"
-                  _hover={{ background: "#b0570d" }}
-                  as={Link}
+                  
+                 
+                  component={Link}
                   to="/pedidos/1"
                 >
                   Ver Detalle
                 </Button>
                 <Button
-                  width={"12rem"}
-                  height={"2rem"}
-                  color={"white"}
-                  fontWeight={"bold"}
-                  borderRadius={"10px"}
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  background="#fd7e14"
-                  _hover={{ background: "#b0570d" }}
+                  w={"12rem"}
+                  h={"2rem"}
+                  color={"orange"}
+                   style={{fontWeight:"bold",borderRadius:"10px",justifyContent:"center", alignItems:"center"}}
+                 
                 >
                   Ver Factura
                 </Button>
@@ -179,6 +164,6 @@ export const Pedidos = () => {
           </Card>
         </Flex>
       </Stack>
-    </Container>
+    </Flex>
   );
 };

@@ -239,9 +239,6 @@ export const CartDetailPage = () => {
       pos={"relative"}
       gap={"1rem"}
     >
-      <Title className={classes.text} order={1}>
-        El Buen Sabor
-      </Title>
       <Title className={classes.text} order={2}>
         Carrito de compras
       </Title>
