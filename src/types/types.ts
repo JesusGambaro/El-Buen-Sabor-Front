@@ -4,9 +4,22 @@ type Insumo = {
   nombre: string;
   stockMinimo: number;
   stockActual: number;
+  
+
   estado: string;
   costo: number;
   id: number;
+};
+type InsumoCarrito = {
+  nombre: string;
+  cantidad: number;
+  precioUnitario: number;
+  costo: number;
+  precioTotal: number;
+  id: number;
+  urlIMG?: string;
+  urlImg?: string;
+
 };
 type Product = {
   nombre: string;
@@ -30,21 +43,22 @@ type Category = {
   img?: string;
   estado: string;
   tipo: string;
-  subCategoria?: Category[];
+  subCategoria: Category[];
 };
 
 type CartItem = {
-  producto: string;
+  nombre: string;
   productoId: number;
   cantidad: number;
   precioUnitario: number;
   precioTotalSinDescuento: number;
   descuento: number;
   precioTotal: number;
-  imgURL: string;
+  urlIMG: string;
 };
 type Carrito = {
   productosComprados: CartItem[];
+  productosAgregados: InsumoCarrito[];
   totalCompra: number;
 };
 interface Direccion {
@@ -196,6 +210,7 @@ export type {
   ErrorBoundaryProps,
   Product,
   Insumo,
+  InsumoCarrito,
   CartItem,
   Order,
   Direccion,

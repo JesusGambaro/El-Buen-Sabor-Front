@@ -21,6 +21,8 @@ import {
   Carrito,
   Direccion,
   CartItem,
+  Insumo,
+  InsumoCarrito,
 } from "types/types";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -52,6 +54,7 @@ import {
   Textarea,
   Box,
   Transition,
+  Mark,
 } from "@mantine/core";
 import {
   IconBuildingStore,
@@ -67,11 +70,19 @@ import {
   IconTruckDelivery,
   IconX,
 } from "@tabler/icons-react";
+import axios from "axios";
 interface responsePrefId {
   preferenceId: string;
 }
+
 export const CartDetailPage = () => {
-  const { cart: carrito, loading, setCarrito, setLoading } = useMainStore();
+  const {
+    cart: carrito,
+    loading,
+    setCarrito,
+    setLoading,
+    token,
+  } = useMainStore();
   type QueryPropsProductos = {
     data: Product[];
     error: any;
@@ -115,48 +126,26 @@ export const CartDetailPage = () => {
   }, [productos]);
   const [showPaymentButton, setShowPaymentButton] = useState(false);
   const [prefId, setPrefId] = useState("");
-  const mercadoPagoPayment = async (cart: Carrito) => {
-    let cantArticulos = cart.productosComprados.reduce(
-      (sum, producto) => sum + producto.cantidad,
-      0
-    );
-    try {
-      initMercadoPago("TEST-f9a81470-5f5f-467c-85fe-e3d799f97788", {
-        locale: "es-AR",
-      });
-      const orderItem = {
-        code: cart.totalCompra + "-" + cantArticulos,
-        title: `${cantArticulos} artículos`,
-        description: new Date(),
-        price: cart.totalCompra,
-      };
-      // const pref_id: responsePrefId = await createPreferenceMP(orderItem);
-      setPrefId("http://localhost:5173/carrito");
-      setShowPaymentButton(true);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
   const [activeTab, setActiveTab] = useState<string | null>("productos");
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
   const useStyles = createStyles((theme) => ({
     tipoEntregaCheck: {
       border: "2px solid orange",
-      width: "2rem",
-      height: "2rem",
+      width: ".5rem",
+      height: ".5rem",
       transition: "0.2s ease all",
       "&:hover": {
         scale: "1.3",
         background: "orange",
         color: "white",
-        marginTop: "-0.1rem",
       },
     },
     tipoEntregaCheckActive: {
       border: "2px solid orange",
-      width: "2rem",
-      height: "2rem",
+      width: ".5rem",
+      height: ".5rem",
       background: "orange",
       color: "white",
       scale: "1.3",
@@ -186,21 +175,28 @@ export const CartDetailPage = () => {
       opacity: 1,
       transition: ".2s ease all",
     },
+    detailContainer: {
+      fontSize: ".8rem",
+    },
   }));
   const { classes } = useStyles();
+  //"EN_PROCESO"
   type Pedido = {
-    tipoEntrega: string;
     tipoPago: string;
     costoEnvio: number;
     descuentoPagoEfectivo: number;
     totalCostoPedido: number;
+    estado: string;
+    esDelivery: boolean;
+    direccion?: Direccion;
   };
   const [pedido, setPedido] = useState<Pedido>({
-    tipoEntrega: "Delivery",
+    esDelivery: true,
     tipoPago: "Tarjeta",
     costoEnvio: 100,
     descuentoPagoEfectivo: 0,
     totalCostoPedido: carrito ? carrito.totalCompra : 0,
+    estado: "EN_PROCESO",
   });
 
   // Función para calcular la sumatoria de la propiedad "cantidad" en el arreglo de "productosComprados"
@@ -223,8 +219,35 @@ export const CartDetailPage = () => {
       return 0;
     }
   }
+
   // Llamamos a la función para obtener la sumatoria de la propiedad "cantidad"
   const sumatoriaCantidad = calcularSumaCantidad();
+  const { data: insumosAgregados } = useApiQuery(
+    "GET|insumo/getAgregados",
+    null
+  ) as {
+    data: InsumoCarrito[];
+    error: any;
+    isLoading: boolean;
+  };
+  const {
+    mutate: buyCart,
+    data: buyCartData,
+    isLoading: isLoadingBuyCart,
+  } = useApiMutation("POST|checkout");
+  const handleComprar = () => {
+    initMercadoPago(
+      "TEST-50126389-bcb6-4e53-a669-c8620ea69726"
+    );
+    buyCart(pedido);
+  };
+  useEffect(() => {
+    if (buyCartData) {
+      console.log("Buy Cart", buyCartData);
+      setPrefId(buyCartData.preferenceId);
+      setShowPaymentButton(true);
+    }
+  }, [buyCartData]);
   return (
     <Flex
       maw="container.2xl"
@@ -273,12 +296,35 @@ export const CartDetailPage = () => {
                 }}
               >
                 <Title className={classes.textInverted}>Productos</Title>
-                <Flex gap={"1rem"} direction={"column"}>
-                  {carrito?.productosComprados?.map((p) => {
-                    return (
-                      <CartDetailItemCard producto={p}></CartDetailItemCard>
-                    );
-                  })}
+                <Flex
+                  mah={"30rem"}
+                  pr={".5rem"}
+                  style={{ overflowY: "scroll" }}
+                  direction={"column"}
+                >
+                  <Flex gap={"1rem"} direction={"column"}>
+                    {carrito?.productosComprados?.map((p, i) => {
+                      return (
+                        <CartDetailItemCard
+                          key={i}
+                          producto={p}
+                        ></CartDetailItemCard>
+                      );
+                    })}
+                  </Flex>
+                  <Title order={4} className={classes.textInverted}>
+                    Productos Agregados
+                  </Title>
+                  <Flex gap={"1rem"} direction={"column"}>
+                    {carrito?.productosAgregados?.map((insumo, i) => {
+                      return (
+                        <CartComplementItem
+                          key={i}
+                          insumo={insumo}
+                        ></CartComplementItem>
+                      );
+                    })}
+                  </Flex>
                 </Flex>
               </Container>
             </Tabs.Panel>
@@ -299,7 +345,11 @@ export const CartDetailPage = () => {
                   Informacion Adicional
                 </Title>
                 <Flex gap={"1rem"} direction={"column"}>
-                  <CartForm></CartForm>
+                  <CartForm
+                    setDireccion={(direccion?: Direccion) => {
+                      setPedido({ ...pedido, direccion });
+                    }}
+                  ></CartForm>
                 </Flex>
                 <Button
                   h={"3rem"}
@@ -320,18 +370,21 @@ export const CartDetailPage = () => {
 
           <Container m={0}>
             <Flex
-              miw={"25rem"}
+              miw={"5rem"}
               bg={"white"}
               p={"1rem"}
               m={0}
               style={{
                 flexDirection: "column",
                 borderRadius: "15px",
-                gap: "1.5rem",
+                gap: "1rem",
                 flexGrow: 0,
               }}
+              className={classes.detailContainer}
             >
-              <Title className={classes.textInverted}>Resumen del pedido</Title>
+              <Title order={3} className={classes.textInverted}>
+                Resumen del pedido
+              </Title>
               <Flex gap={"1.5rem"} direction={"column"}>
                 <Flex justify={"space-between"}>
                   <Text className={classes.textInverted}>
@@ -353,12 +406,12 @@ export const CartDetailPage = () => {
                 </Flex>
                 <Flex justify={"space-between"} align={"center"}>
                   <Text className={classes.textInverted}>Tipo de entrega</Text>
-                  <Flex gap={"2rem"}>
+                  <Flex gap={"1rem"}>
                     <Stack className={classes.checkContainer} align="center">
                       <Text
                         className={classes.textInverted}
-                        size={13}
                         weight={"bold"}
+                        size={10}
                       >
                         Delivery
                       </Text>
@@ -367,13 +420,13 @@ export const CartDetailPage = () => {
                           setTipoEntrega(0);
                           setPedido({
                             ...pedido,
-                            tipoEntrega: "Delivery",
+                            esDelivery: true,
                             costoEnvio: 100,
                           });
                         }}
                         color="orange"
                         className={
-                          tipoEntrega == 0
+                          pedido.esDelivery
                             ? classes.tipoEntregaCheckActive
                             : classes.tipoEntregaCheck
                         }
@@ -383,8 +436,8 @@ export const CartDetailPage = () => {
                     </Stack>
                     <Stack className={classes.checkContainer} align="center">
                       <Text
+                        size={10}
                         className={classes.textInverted}
-                        size={13}
                         weight={"bold"}
                       >
                         Local
@@ -394,13 +447,13 @@ export const CartDetailPage = () => {
                           setTipoEntrega(1);
                           setPedido({
                             ...pedido,
-                            tipoEntrega: "Local",
+                            esDelivery: false,
                             costoEnvio: 0,
                           });
                         }}
                         color="orange"
                         className={
-                          tipoEntrega == 1
+                          !pedido.esDelivery
                             ? classes.tipoEntregaCheckActive
                             : classes.tipoEntregaCheck
                         }
@@ -412,11 +465,11 @@ export const CartDetailPage = () => {
                 </Flex>
                 <Flex justify={"space-between"} align={"center"}>
                   <Text className={classes.textInverted}>Tipo de pago</Text>
-                  <Flex gap={"2rem"}>
+                  <Flex gap={"1rem"}>
                     <Stack className={classes.checkContainer} align="center">
                       <Text
+                        size={10}
                         className={classes.textInverted}
-                        size={13}
                         weight={"bold"}
                       >
                         Tarjeta
@@ -442,8 +495,8 @@ export const CartDetailPage = () => {
                     </Stack>
                     <Stack className={classes.checkContainer} align="center">
                       <Text
+                        size={10}
                         className={classes.textInverted}
-                        size={13}
                         weight={"bold"}
                       >
                         Efectivo
@@ -529,9 +582,7 @@ export const CartDetailPage = () => {
                         alignItems: "end",
                       }}
                     >
-                      <Text color="orange">
-                        %
-                      </Text>
+                      <Text color="orange">%</Text>
                       <Text className={classes.textInverted}>
                         {pedido?.descuentoPagoEfectivo}
                       </Text>
@@ -556,17 +607,54 @@ export const CartDetailPage = () => {
                   <Text>{carrito?.totalCompra}</Text>
                 </Text>
               </Flex>
-              <Button
-                h={"3rem"}
-                p={".5rem"}
-                onClick={() => {
-                  setActiveTab("detalle-pedido");
-                }}
-              >
-                <Text size={20} weight={"bold"}>
-                  {activeTab == "productos" ? "Continuar" : "Comprar"}{" "}
-                </Text>
-              </Button>
+              {carrito?.productosComprados.length ? (
+                isLoadingBuyCart ? (
+                  <Flex w={""}>
+                    <Loader></Loader>
+                  </Flex>
+                ) : showPaymentButton && prefId != "" ? (
+                  <Flex id="wallet_container">
+                    <Wallet
+                      initialization={{ preferenceId: prefId }}
+                    />
+
+                  </Flex>
+                ) : (
+                  <Button
+                    h={"3rem"}
+                    p={".5rem"}
+                    onClick={() => {
+                      if (activeTab == "productos") {
+                        setActiveTab("detalle-pedido");
+                      } else {
+                        handleComprar();
+                      }
+                    }}
+                  >
+                    <Text size={20} weight={"bold"}>
+                      {activeTab == "productos" ? "Continuar" : "Comprar"}
+                    </Text>
+                  </Button>
+                )
+              ) : (
+                <></>
+              )}
+            </Flex>
+          </Container>
+
+          <Container
+            w={"100%"}
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
+            <Title order={3} className={classes.text}>
+              Quiza te puede interesar
+            </Title>
+            <Flex>
+              {insumosAgregados?.map((insumo) => {
+                return (
+                  <CartComplementItem insumo={insumo}></CartComplementItem>
+                );
+              })}
             </Flex>
           </Container>
         </Flex>
@@ -574,6 +662,180 @@ export const CartDetailPage = () => {
     </Flex>
   );
 };
+
+const CartComplementItem = ({ insumo }: { insumo: InsumoCarrito }) => {
+  const {
+    mutate: addProduct,
+    data: addedData,
+    isLoading: isLoadingAdd,
+  } = useApiMutation("PUT|cart/addProduct");
+  const {
+    mutate: delProducto,
+    data: removedData,
+    isLoading: isLoadingDel,
+  } = useApiMutation("PUT|cart/delProduct");
+  const handleDeleteItem = () => {
+    //delProducto({ id: producto.productoId });
+  };
+  const handleAddItem = () => {
+    //addProduct({ id: producto.productoId });
+  };
+  const { setCarrito, setLoading } = useMainStore();
+  useEffect(() => {
+    if (addedData) {
+      //setCarrito(addedData);
+    } else if (removedData) {
+      //setCarrito(removedData);
+    }
+  }, [addedData, removedData]);
+
+  const useStyles = createStyles((theme) => ({
+    buttonCantidad: {
+      backgroundColor: "transparent",
+      [`&:hover`]: {
+        backgroundColor: "orange",
+        color: "red",
+        iconSearch: {
+          color: "red",
+        },
+      },
+    },
+    card: {
+      marginTop: "1rem",
+      backgroundColor: "white",
+      boxShadow: "0 0 10px -5px black",
+      overflow: "visible",
+    },
+  }));
+  const { classes } = useStyles();
+
+  return (
+    <Card
+      w={"6rem"}
+      withBorder
+      style={{
+        display: "flex",
+        borderRadius: "15px",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "1rem",
+        overflow: "visible",
+        flexDirection: "column",
+      }}
+    >
+      <Image
+        src={insumo.urlIMG ? insumo.urlIMG : insumo.urlImg}
+        width={70}
+        alt="imagen insumo"
+      />
+      <Stack w={"10rem"} spacing={3} justify="center" align="center">
+        <Text
+          w={"5rem"}
+          display={"flex"}
+          style={{ justifyContent: "center", alignItems: "end" }}
+        >
+          <Text color="orange">
+            <i className="fa-solid fa-dollar-sign"></i>
+          </Text>
+          <Text>{insumo.precioTotal ? insumo.precioTotal : insumo.costo}</Text>
+        </Text>
+        {!insumo.costo ? (
+          <Flex
+            direction="row"
+            bg={"orange"}
+            justify={"center"}
+            align={"center"}
+            gap={5}
+            w={"5rem"}
+            style={{ borderRadius: "5px", padding: "0.1rem" }}
+          >
+            {isLoadingAdd || isLoadingDel ? (
+              <Loader color="white" variant="dots" />
+            ) : (
+              <>
+                {insumo?.cantidad == 1 ? (
+                  <Menu
+                    transitionProps={{
+                      transition: "rotate-right",
+                      duration: 150,
+                    }}
+                    withArrow
+                    width={300}
+                    position="bottom-end"
+                    shadow="md"
+                  >
+                    <Menu.Target>
+                      <ActionIcon className={classes.buttonCantidad} size={20}>
+                        <IconMinus color="white"></IconMinus>
+                      </ActionIcon>
+                    </Menu.Target>
+
+                    <Menu.Dropdown w={"100%"}>
+                      <Menu.Label>
+                        <Text align="center">
+                          ¿Esta seguro de eliminar el item del carrito?
+                        </Text>{" "}
+                      </Menu.Label>
+                      <Menu.Item
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        display={"flex"}
+                        dir="row"
+                      >
+                        <Flex
+                          w={"100%"}
+                          justify={"space-between"}
+                          align={"center"}
+                        >
+                          <Button
+                            onClick={() => {
+                              handleDeleteItem();
+                            }}
+                          >
+                            Confirmar
+                          </Button>
+                          <Button color="red">Cancelar</Button>
+                        </Flex>
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                ) : (
+                  <ActionIcon
+                    onClick={() => {
+                      handleDeleteItem();
+                    }}
+                    className={classes.buttonCantidad}
+                    size={20}
+                  >
+                    <IconMinus color="white"></IconMinus>
+                  </ActionIcon>
+                )}
+
+                <Text color="white">{insumo.cantidad}</Text>
+                <ActionIcon
+                  onClick={() => {
+                    handleAddItem();
+                  }}
+                  className={classes.buttonCantidad}
+                  size={20}
+                >
+                  <IconPlus color="white"></IconPlus>
+                </ActionIcon>
+              </>
+            )}
+          </Flex>
+        ) : (
+          <Button w={"5rem"} color="orange">
+            <Text size={11}>Agregar</Text>{" "}
+          </Button>
+        )}
+      </Stack>
+    </Card>
+  );
+};
+
 const CartDetailItemCard = ({ producto }: { producto: CartItem }) => {
   const {
     mutate: addProduct,
@@ -595,10 +857,8 @@ const CartDetailItemCard = ({ producto }: { producto: CartItem }) => {
   const { setCarrito, setLoading } = useMainStore();
   useEffect(() => {
     if (addedData) {
-      setLoading(true);
       setCarrito(addedData);
     } else if (removedData) {
-      setLoading(true);
       setCarrito(removedData);
     }
   }, [addedData, removedData]);
@@ -621,12 +881,11 @@ const CartDetailItemCard = ({ producto }: { producto: CartItem }) => {
       overflow: "visible",
     },
   }));
-  const discountValue = (price: number = 0, discount: number) =>
-    Math.floor(price - (price * discount) / 100);
   const { classes } = useStyles();
   return (
     <Card
       w={"100%"}
+      h={"5.5rem"}
       withBorder
       style={{
         display: "flex",
@@ -637,9 +896,9 @@ const CartDetailItemCard = ({ producto }: { producto: CartItem }) => {
         overflow: "visible",
       }}
     >
-      <Image src={producto.imgURL} width={60} alt="Norway" />
+      <Image src={producto.urlIMG} width={60} alt="imagen producto" />
       <Stack w={"20rem"} justify="center" align="start">
-        <Text>{producto.producto}</Text>
+        <Text>{producto.nombre}</Text>
         <Menu
           transitionProps={{
             transition: "rotate-right",
@@ -680,12 +939,12 @@ const CartDetailItemCard = ({ producto }: { producto: CartItem }) => {
           </Menu.Dropdown>
         </Menu>
       </Stack>
-      <Stack w={"10rem"} spacing={5} justify="center" align="center">
+      <Stack w={"10rem"} spacing={3} justify="center" align="center">
         {producto.descuento > 0 && (
           <Text
             display={"flex"}
             w={"5rem"}
-            size={13}
+            size={10}
             style={{
               gap: "0.5rem",
               justifyContent: "center",
@@ -700,7 +959,7 @@ const CartDetailItemCard = ({ producto }: { producto: CartItem }) => {
               <Text color="orange">
                 <i className="fa-solid fa-dollar-sign"></i>
               </Text>
-              <Text>{producto.precioTotalSinDescuento}</Text>
+              <Text strikethrough>{producto.precioTotalSinDescuento}</Text>
             </Text>
           </Text>
         )}
@@ -805,26 +1064,17 @@ const CartDetailItemCard = ({ producto }: { producto: CartItem }) => {
     </Card>
   );
 };
-const CartForm = () => {
+const CartForm = ({
+  setDireccion,
+  faltaDireccion,
+}: {
+  setDireccion: (dir?: Direccion) => void;
+  faltaDireccion?: boolean;
+}) => {
   const { user, isAuthenticated } = useAuth0();
   if (!isAuthenticated) {
     window.location.href = "/";
   }
-  //console.log(user);
-  interface MyFormValues {
-    nombre: string;
-    apellido: string;
-    email: string;
-    tipoEntrega: string;
-  }
-  const initialValues: MyFormValues = user
-    ? {
-        nombre: user.name ? user.name : "",
-        apellido: user.name ? user.name : "",
-        email: user.email ? user.email : "",
-        tipoEntrega: "",
-      }
-    : { nombre: "", email: "", tipoEntrega: "", apellido: "" };
 
   interface QueryProps {
     data: Direccion[];
@@ -850,8 +1100,6 @@ const CartForm = () => {
   }, [dataDirecciones]);
   useEffect(() => {
     if (addedDataDirection) {
-      console.log("termino");
-
       setDirecciones(addedDataDirection);
     }
   }, [addedDataDirection]);
@@ -872,103 +1120,57 @@ const CartForm = () => {
   const [opened, { open, close }] = useDisclosure(false);
   return (
     <>
-      <Formik
-        validationSchema={Yup.object({
-          nombre: Yup.string().required("Campo requerido"),
-          email: Yup.string()
-            .email("Ingrese un email valido")
-            .required("Campo requerido"),
-        })}
-        initialValues={initialValues}
-        enableReinitialize={true}
-        onSubmit={async (values) => {
-          console.log(values);
-        }}
-      >
-        {(Formik) => (
-          <>
-            <Form autoComplete="off">
-              <Flex gap={5} direction={"column"}>
-                <Flex
-                  w={"100%"}
-                  justify={"space-between"}
-                  wrap={"wrap"}
-                  gap={5}
-                >
-                  <Input.Wrapper
-                    id="input-nombre"
-                    withAsterisk
-                    label={
-                      <span
-                        style={{ fontWeight: "bold", fontSize: "18px" }}
-                        className={textClasses.textInverted}
-                      >
-                        Nombre Completo
-                      </span>
-                    }
-                    error={Formik.errors.nombre}
-                    w={"15rem"}
-                  >
-                    <Input
-                      onChange={(e) => {
-                        Formik.setFieldValue("nombre", e.target.value);
-                      }}
-                      name="nombre"
-                      placeholder="Tu nombre..."
-                    />
-                  </Input.Wrapper>
-                  <Input.Wrapper
-                    id="input-nombre"
-                    withAsterisk
-                    label={
-                      <span
-                        style={{ fontWeight: "bold", fontSize: "18px" }}
-                        className={textClasses.textInverted}
-                      >
-                        Email
-                      </span>
-                    }
-                    error={Formik.errors.email}
-                    w={"15rem"}
-                  >
-                    <Input
-                      onChange={(e) => {
-                        Formik.setFieldValue("email", e.target.value);
-                      }}
-                      name="email"
-                      placeholder="Tu email..."
-                    />
-                  </Input.Wrapper>
-                </Flex>
-                <Title
-                  mt={"0.5rem"}
-                  mb={"0.5rem"}
-                  order={4}
-                  className={textClasses.textInverted}
-                >
-                  Direccion
-                </Title>
-                <Flex w={"100%"} gap={30} justify={"space-between"}>
-                  <Select
-                    placeholder="Elige una direccion"
-                    searchable
-                    nothingFound="No tenes direcciones"
-                    creatable
-                    getCreateLabel={(query) => `+ Create ${query}`}
-                    onCreate={(query) => {
-                      open();
-                      return null;
-                    }}
-                    data={dataSelect?.length ? dataSelect : []}
-                    style={{ flexGrow: "1" }}
-                  />
-                  <Button onClick={open}>Crear Direccion</Button>
-                </Flex>
-              </Flex>
-            </Form>
-          </>
+      <Flex gap={5} direction={"column"}>
+        <Title
+          mt={"0.5rem"}
+          mb={"0.5rem"}
+          order={4}
+          className={textClasses.textInverted}
+        >
+          Direccion{" "}
+          <Mark
+            bg={"transparent"}
+            style={{ fontWeight: "bold", color: "orange" }}
+          >
+            *
+          </Mark>
+        </Title>
+        {faltaDireccion ? (
+          <Title style={{ fontWeight: "bold", color: "orange" }} order={6}>
+            Este campo es obligatorio
+          </Title>
+        ) : (
+          <></>
         )}
-      </Formik>
+        <Flex w={"100%"} gap={30} justify={"space-between"}>
+          <Select
+            placeholder="Elige una direccion"
+            searchable
+            creatable
+            getCreateLabel={(query) => `+ Create ${query}`}
+            onCreate={(query) => {
+              open();
+              return null;
+            }}
+            data={dataSelect?.length ? dataSelect : []}
+            style={{ flexGrow: "1" }}
+            clearable
+            onChange={(id) => {
+              if (id != null) {
+                let dir = direcciones?.find((d) => {
+                  return d.id == Number.parseInt(id);
+                });
+                console.log(dir);
+                setDireccion(dir);
+              } else {
+                console.log(id);
+                setDireccion();
+              }
+            }}
+          />
+          <Button onClick={open}>Crear Direccion</Button>
+        </Flex>
+      </Flex>
       <Modal
         opened={opened}
         onClose={!directionLoading ? close : () => {}}

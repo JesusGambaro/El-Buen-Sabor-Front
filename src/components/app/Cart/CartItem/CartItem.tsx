@@ -87,7 +87,7 @@ const CartItem = ({
         <Box bg={"#eeebeb"} style={{ borderRadius: "10px" }}>
           <Image
             width="70px"
-            src={cartItem.imgURL}
+            src={cartItem.urlIMG}
             alt="El Buen Sabor"
             radius="md"
             fit="cover"
@@ -96,7 +96,7 @@ const CartItem = ({
         </Box>
         <Flex w={"100%"} direction="column">
           <Title color="black" size="sm" mt="4">
-            {cartItem.producto}
+            {cartItem.nombre}
           </Title>
           <Text color="black" style={{gap:"1rem"}} display={"flex"}>
             <Text w={"2rem"}>c/u:</Text>

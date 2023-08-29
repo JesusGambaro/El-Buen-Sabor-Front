@@ -58,18 +58,11 @@ const CatalogueProductsContainer = () => {
       {productos?.length ? (
         <>
           {productos.map((product: Product) => (
-            <>
-              <LandingCard
-                key={"landing-card-" + product.id}
-                product={product}
-                isThemeBlack={dark}
-              />
-              <LandingCard
-                key={"landing-card-" + product.id}
-                product={product}
-                isThemeBlack={dark}
-              />
-            </>
+            <LandingCard
+              key={"landing-card-" + product.id}
+              product={product}
+              isThemeBlack={dark}
+            />
           ))}
         </>
       ) : (

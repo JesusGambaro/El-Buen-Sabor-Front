@@ -15,7 +15,7 @@ export const prepareFetch = (query: string, params?: any): GenericFetch => {
   const method = query.split("|")[0] as keyof typeof METHODS;
   const url = query.split("|")[1];
 
-  console.log("method", method, "url", url, "params", params);
+  //console.log("method", method, "url", url, "params", params);
 
   if (METHODS[method] === METHODS.GET) {
     let filter = "";

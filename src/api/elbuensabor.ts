@@ -24,7 +24,7 @@ export const getFetch = async <T extends QueryFunctionContext>(
 
   // Get the token from the global state
   const { token } = useMainStore.getState();
-
+  
   // Prepare the request options
   const options: AxiosRequestConfig = {
     headers: {
@@ -80,7 +80,7 @@ export const postPutFetch = async <T extends MutationFunction<any, any>>(
   // Get the token from the global state
   const { token } = useMainStore.getState();
 
-  console.log(token);
+  //console.log(token);
   
   // Prepare the request options
   const options: AxiosRequestConfig = {

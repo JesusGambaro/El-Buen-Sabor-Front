@@ -145,7 +145,7 @@ const ProductDetailPage = () => {
       <Flex top={0} w={"100%"} pos={"absolute"}>
         <Button
           onClick={() => {
-            navigate("/catálogo");
+            navigate(-1);
           }}
           h={"4rem"}
           p={"0.5rem"}

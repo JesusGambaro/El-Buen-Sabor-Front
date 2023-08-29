@@ -24,7 +24,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   control: {
-    backgroundColor: "white",
+    backgroundColor: theme.colorScheme == "dark" ? "white" : "#e6e6e6",
     border: "none",
     display: "flex",
     width: "100%",
@@ -37,7 +37,7 @@ const useStyles = createStyles((theme) => ({
     overflow: "hidden",
     whiteSpace: "nowrap",
     borderRadius: "10px",
-    color:"black",
+    color: "black",
     "&:hover": {
       backgroundColor: "orange",
     },
@@ -53,7 +53,15 @@ const useStyles = createStyles((theme) => ({
       borderRadius: "0 10px 10px 0",
     },
   },
-
+  controlText: {
+    backgroundColor: "transparent",
+    transition: "0.1s ease-in-out all",
+    "&:hover": {
+      textDecoration: "underline",
+      cursor: "pointer",
+      scale: "1.05",
+    },
+  },
   item: {
     border: `${rem(1)} solid transparent`,
     position: "relative",
@@ -90,7 +98,8 @@ const useStyles = createStyles((theme) => ({
     justifyContent: "space-between",
     padding: "16px",
     paddingRight: "0",
-    margin: "1rem 0",
+    color: "black",
+    backgroundColor: theme.colorScheme == "dark" ? "white" : "#e6e6e6",
     "&:hover": {
       background: "orange",
     },
@@ -102,11 +111,16 @@ const useStyles = createStyles((theme) => ({
   },
   panel: {
     width: "95%",
-    gap: "1rem",
-    display: "flex",
-    flexDirection: "column",
     background: "",
     position: "relative",
+    paddingTop: ".5rem",
+    "> div": {
+      "> div": {
+        display: "flex",
+        flexDirection: "column",
+        gap:"1rem",
+      },
+    },
   },
 }));
 type Props = {
@@ -126,104 +140,102 @@ export const CategoriaFilter = (props: Props) => {
     isLoading: boolean;
   };
   const hasCategorias = Array.isArray(categorias);
-  const crearCategoriaRecursive = (category: Category) => {
-    let returnValue;
-    if (category.subCategoria?.length) {
-      returnValue = (
-        <Accordion
-          display={"flex"}
-          variant="default"
-          key={category.nombre + "-panel"}
-          style={{
-            borderBottom: "none",
-            justifyContent: "flex-end",
-            padding: 0,
-            margin: 0,
-          }}
-          unstyled
-          w={"100%"}
-          className={classes.root}
-        >
-          <Accordion.Item className={classes.panel} value={category.nombre}>
-            <Accordion.Control className={classes.control}>
+
+  const simpleCategory = (categoryName: string, categoryId: number) => {
+    return (
+      <Box
+        display={"flex"}
+        style={{
+          justifyContent: "flex-end",
+          padding: 0,
+          margin: 0,
+        }}
+        onClick={() => {
+          props.handleSetFilter(categoryId);
+        }}
+      >
+        <Text p={"20px"} className={classes.categoriaPadre}>
+          {categoryName}
+        </Text>
+      </Box>
+    );
+  };
+
+  const AcordionCategory = (category: Category) => {
+    return (
+      <Accordion
+        variant="default"
+        style={{
+          borderBottom: "none",
+          justifyContent: "flex-end",
+          padding: 0,
+          margin: 0,
+        }}
+        unstyled
+        w={"100%"}
+        className={classes.root}
+      >
+        <Accordion.Item className={classes.item} value={category.nombre}>
+          <Accordion.Control className={classes.control}>
+            <Text
+              onClick={() => {
+                props.handleSetFilter(category.id);
+              }}
+              className={classes.controlText}
+            >
               {category.nombre}
-            </Accordion.Control>
-            <Accordion.Panel className={classes.panel}>
-              {category.subCategoria.map((c) => {
-                return crearCategoriaRecursive(c);
-              })}
-            </Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
-      );
-    } else {
-      returnValue = (
-        <Box
-          display={"flex"}
-          style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
-          key={category.nombre + "-box"}
-        >
-          <Text
-            p={"1rem"}
-            onClick={() => {
-              props.handleSetFilter(category.id);
-            }}
-            className={classes.categoriaPadre}
-          >
-            {category.nombre}
-          </Text>
-        </Box>
-      );
-    }
-    return returnValue;
+            </Text>
+          </Accordion.Control>
+          <Accordion.Panel unstyled className={classes.panel}>
+            {category.subCategoria?.map((c) => {
+              if (c.subCategoria?.length) {
+                return AcordionCategory(c);
+              } else {
+                return simpleCategory(c.nombre, c.id);
+              }
+            })}
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    );
   };
   const items = (hasCategorias ? categorias : []).map((category, i) => {
     let returnValue;
-    if (!category.categoriaPadre) {
-      returnValue = (
-        <Accordion.Item
-          className={classes.item}
-          key={category.nombre + "-" + i}
-          value={category.nombre}
-        >
-          {category.subCategoria?.length ? (
-            <>
-              <Accordion.Control className={classes.control}>
-                {category.nombre}
-              </Accordion.Control>
-              <Accordion.Panel
-                className={classes.panel}
-                key={category.nombre + "-panel-" + i}
-              >
-                {category.subCategoria &&
-                  category.subCategoria.map((c) => {
-                    return crearCategoriaRecursive(c);
-                  })}
-              </Accordion.Panel>
-            </>
-          ) : (
-            <Box
-              display={"flex"}
-              style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
-              w={"100%"}
-            >
-              <Text
-                p={"20px"}
-                className={classes.categoriaPadre}
-                onClick={() => {
-                  props.handleSetFilter(category.id);
-                }}
-              >
-                {category.nombre}
-              </Text>
-            </Box>
-          )}
-        </Accordion.Item>
-      );
+    if (category.subCategoria?.length) {
+      returnValue = AcordionCategory(category);
+      //       <Accordion.Panel
+      //         className={classes.panel}
+      //         key={category.nombre + "-panel-" + i}
+      //       >
+      //         {category.subCategoria &&
+      //           category.subCategoria.map((c) => {
+      //             return crearCategoriaRecursive(c);
+      //           })}
+      //       </Accordion.Panel>
+      //     </>
+      //   ) : (
+      //     <Box
+      //       display={"flex"}
+      //       style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
+      //       w={"100%"}
+      //     >
+      //       <Text
+      //         p={"20px"}
+      //         className={classes.categoriaPadre}
+      //         onClick={() => {
+      //           props.handleSetFilter(category.id);
+      //         }}
+      //       >
+      //         {category.nombre}
+      //       </Text>
+      //     </Box>
+      //   )}
+      // </Accordion.Item>
+    } else {
+      returnValue = simpleCategory(category.nombre, category.id);
     }
     return returnValue;
   });
-
   return (
     <>
       <Title w={"100%"} align="left" weight={"500"} order={3}>
@@ -242,19 +254,12 @@ export const CategoriaFilter = (props: Props) => {
         className={classes.root}
       >
         {items}
-        <Accordion.Item className={classes.item} value="test">
+        {/* <Accordion.Item className={classes.item} value="tests">
           <Accordion.Control className={classes.control}>
-            Test
+            Carne
           </Accordion.Control>
           <Accordion.Panel className={classes.panel} p={"0px"}>
-            <Box
-              display={"flex"}
-              style={{ justifyContent: "flex-end", padding: 0, margin: 0 }}
-            >
-              <Text p={"20px"} className={classes.categoriaPadre}>
-                Test Normal
-              </Text>
-            </Box>
+            {simpleCategory("Hamburguesas", -1)}
             <Accordion
               variant="default"
               style={{
@@ -269,26 +274,15 @@ export const CategoriaFilter = (props: Props) => {
             >
               <Accordion.Item className={classes.item} value="test">
                 <Accordion.Control className={classes.control}>
-                  Test Acordion
+                  Lomo
                 </Accordion.Control>
                 <Accordion.Panel className={classes.panel} p={"0px"}>
-                  <Box
-                    display={"flex"}
-                    style={{
-                      justifyContent: "flex-end",
-                      padding: 0,
-                      margin: 0,
-                    }}
-                  >
-                    <Text p={"20px"} className={classes.categoriaPadre}>
-                      Test Normal
-                    </Text>
-                  </Box>
+                  {simpleCategory("Pan Casero", -1)}
                 </Accordion.Panel>
               </Accordion.Item>
             </Accordion>
           </Accordion.Panel>
-        </Accordion.Item>
+        </Accordion.Item> */}
       </Accordion>
     </>
   );

@@ -46,6 +46,15 @@ const CatalogueLeftFilters = (props: Props) => {
     error,
     isLoading,
   } = useApiQuery("GET|categoria/all", null) as QueryProps;
+  
+  const { data: categoria } = useApiQuery(
+    "GET|categoria/" + props.currentIdCategoria,
+    null
+  ) as {
+    data: Category;
+    error: any;
+    isLoading: boolean;
+  };
   //console.log(baseCategories);
   //let baseCategories: Category[] = [];
   const [currentCategoriaName, setCurrentCategoriaName] = useState("");
@@ -109,9 +118,15 @@ const CatalogueLeftFilters = (props: Props) => {
     >
       {(styles) => (
         <div style={styles}>
-          <Flex style={{borderRadius:"10px"}} direction={"column"}  p={"1rem"} gap={"1rem"} w={"15rem"}>
+          <Flex
+            style={{ borderRadius: "10px" }}
+            direction={"column"}
+            p={"1rem"}
+            gap={"1rem"}
+            w={"15rem"}
+          >
             <Flex mb={"1rem"}>
-              {props.currentIdCategoria ? (
+              {props.currentIdCategoria && categoria ? (
                 <>
                   <Flex
                     w={"15rem"}
@@ -121,33 +136,10 @@ const CatalogueLeftFilters = (props: Props) => {
                     justify={"space-between"}
                     align={"center"}
                     bg={"orange"}
-                  >
+                  > 
                     <Title color="white" align="left" weight={"500"} order={4}>
-                      {
-                        baseCategories?.find((c) => {
-                          return c.id == props.currentIdCategoria;
-                        })?.nombre
-                      }
+                      {categoria?.nombre}
                     </Title>
-                    {/* <Button
-                w={"1rem"}
-                h={"1rem"}
-                sx={{
-                  background: "white",
-                  color: "orange",
-                  borderRadius: "100%",
-                  ":hover": {
-                    background: "orange",
-                    color: "white",
-                    border: "4px solid white",
-                  },
-                }}
-                onClick={() => {
-                  props.handleSetFilter(undefined);
-                }}
-              >
-                X
-              </Button> */}
                     <ActionIcon
                       sx={{
                         background: "white",
@@ -261,7 +253,7 @@ const CatalogueLeftFilters = (props: Props) => {
                 w={"100%"}
                 justify={"space-between"}
                 align={"center"}
-                bg={"white"}
+                bg={dark ? "black" : "white"}
                 p={"1rem"}
                 direction={"column"}
                 style={{ borderRadius: "10px" }}
