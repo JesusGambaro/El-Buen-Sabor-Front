@@ -1,0 +1,345 @@
+{
+  "productos_manufacturado": [
+    {
+      "id_producto": 0,
+      "nombre": "Grand Tasty Turbo Bacon Doble",
+      "imagen": "",
+      "descripcion": "",
+      "receta": "",
+      "discount": 10,
+      "tiempo_cocina": 10000,
+      "alta": true,
+      "id_categoria": 0
+    },
+    {
+      "id_producto": 1,
+      "nombre": "Hamburguesa con queso",
+      "imagen": "",
+      "descripcion": "",
+      "receta": "",
+      "discount": 5,
+      "tiempo_cocina": 5000,
+      "alta": true,
+      "id_categoria": 0
+    },
+    {
+      "id_producto": 2,
+      "nombre": "Ensalada César con pollo",
+      "imagen": "",
+      "descripcion": "",
+      "receta": "",
+      "discount": 5,
+      "tiempo_cocina": 5000,
+      "alta": true,
+      "id_categoria": 1
+    },
+    {
+      "id_producto": 3,
+      "nombre": "Pizza Margherita",
+      "imagen": "",
+      "descripcion": "",
+      "receta": "",
+      "discount": 15,
+      "tiempo_cocina": 12000,
+      "alta": true,
+      "id_categoria": 2
+    },
+    {
+      "id_producto": 4,
+      "nombre": "Pollo al horno con papas",
+      "imagen": "",
+      "descripcion": "",
+      "receta": "",
+      "discount": 20,
+      "tiempo_cocina": 8000,
+      "alta": true,
+      "id_categoria": 3
+    },
+    {
+      "id_producto": 5,
+      "nombre": "Sándwich de jamón y queso",
+      "imagen": "",
+      "descripcion": "",
+      "receta": "",
+      "discount": 10,
+      "tiempo_cocina": 3000,
+      "alta": true,
+      "id_categoria": 0
+    }
+  ],
+  "insumo": [
+    {
+      "id_insumo": 0,
+      "nombre": "Papas",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 175,
+      "stock_actual": 202,
+      "alta": true,
+      "costo": 250,
+      "id_categoria": 0,
+      "id_unidad_medida": 0
+    },
+    {
+      "id_insumo": 1,
+      "nombre": "Carne de vaca",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 205,
+      "stock_actual": 218,
+      "alta": true,
+      "costo": 350,
+      "id_categoria": 0,
+      "id_unidad_medida": 0
+    },
+    {
+      "id_insumo": 2,
+      "nombre": "Queso cheddar",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 42,
+      "stock_actual": 221,
+      "alta": true,
+      "costo": 238,
+      "id_categoria": 0,
+      "id_unidad_medida": 1
+    },
+    {
+      "id_insumo": 3,
+      "nombre": "Lechuga",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 28,
+      "stock_actual": 89,
+      "alta": true,
+      "costo": 467,
+      "id_categoria": 1,
+      "id_unidad_medida": 0
+    },
+    {
+      "id_insumo": 4,
+      "nombre": "Tomate",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 46,
+      "stock_actual": 170,
+      "alta": true,
+      "costo": 492,
+      "id_categoria": 1,
+      "id_unidad_medida": 0
+    },
+    {
+      "id_insumo": 5,
+      "nombre": "Pollo",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 86,
+      "stock_actual": 224,
+      "alta": true,
+      "costo": 390,
+      "id_categoria": 0,
+      "id_unidad_medida": 0
+    },
+    {
+      "id_insumo": 6,
+      "nombre": "Pack hamburguesa x6",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 54,
+      "stock_actual": 221,
+      "alta": true,
+      "costo": 355,
+      "id_categoria": 0,
+      "id_unidad_medida": 4
+    },
+    {
+      "id_insumo": 7,
+      "nombre": "Mayonesa",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 73,
+      "stock_actual": 238,
+      "alta": true,
+      "costo": 225,
+      "id_categoria": 2,
+      "id_unidad_medida": 1
+    },
+    {
+      "id_insumo": 8,
+      "nombre": "Mostaza",
+      "imagen": "url",
+      "descripcion": "",
+      "stock_minimo": 50,
+      "stock_actual": 200,
+      "alta": true,
+      "costo": 400,
+      "id_categoria": 2,
+      "id_unidad_medida": 1
+    }
+  ],
+  "categoria": [
+    {
+      "id_categoria": 0,
+      "alta": true,
+      "nombre": "Hamburguesas",
+      "categoria_padre": -1
+    },
+    {
+      "id_categoria": 1,
+      "alta": true,
+      "nombre": "Ensaladas",
+      "categoria_padre": -1
+    },
+    {
+      "id_categoria": 2,
+      "alta": true,
+      "nombre": "Bebidas",
+      "categoria_padre": -1
+    },
+    {
+      "id_categoria": 3,
+      "alta": true,
+      "nombre": "Postres",
+      "categoria_padre": -1
+    },
+    {
+      "id_categoria": 4,
+      "alta": true,
+      "nombre": "Comida China",
+      "categoria_padre": 0
+    },
+    {
+      "id_categoria": 5,
+      "alta": true,
+      "nombre": "Comida Mexicana",
+      "categoria_padre": 0
+    }
+  ],
+  "producto_insumo": [
+    {
+      "id_producto_insumo": 0,
+      "id_producto": 0,
+      "id_insumo": 0,
+      "id_unidad_medida": 0,
+      "cantidad": 0
+    }
+  ],
+  "unidad_medida": [
+    {
+      "id_unidad_medida": 0,
+      "valor": "kg"
+    },
+    {
+      "id_unidad_medida": 1,
+      "valor": "g"
+    },
+    {
+      "id_unidad_medida": 2,
+      "valor": "litros"
+    },
+    {
+      "id_unidad_medida": 3,
+      "valor": "mililitros"
+    },
+    {
+      "id_unidad_medida": 4,
+      "valor": "unidades"
+    }
+  ],
+  "pedidos_productos": [
+    {
+      "id_pedido_producto": 0,
+      "id_pedido": 0,
+      "id_producto": 0
+    }
+  ],
+  "pedido": [
+    {
+      "id_pedido": 0,
+      "id_usuario": 0,
+      "total": 0,
+      "id_direccion": "",
+      "id_estado": 0,
+      "id_mercado_pago_datos": 0
+    }
+  ],
+  "mercado_pago_datos": [
+    {
+      "indetificador_datos": 0,
+      "fecha_creacion": "00/00/0000",
+      "fecha_aprobacion": "00/00/0000",
+      "forma_Pago": "",
+      "metodo_Pago": "",
+      "nroTarjeta": "",
+      "estado": ""
+    }
+  ],
+  "usuarios": [
+    {
+      "id_usuario": 1,
+      "nombre": "Ana",
+      "apellido": "García",
+      "id_rol": 1
+    },
+    {
+      "id_usuario": 2,
+      "nombre": "Pedro",
+      "apellido": "López",
+      "id_rol": 2
+    },
+    {
+      "id_usuario": 3,
+      "nombre": "María",
+      "apellido": "Martínez",
+      "id_rol": 3
+    }
+  ],
+  "rol": [
+    {
+      "id_rol": 0,
+      "nombre": "cajero"
+    },
+    {
+      "id_rol": 1,
+      "nombre": "cocinero"
+    },
+    {
+      "id_rol": 2,
+      "nombre": "delivery"
+    },
+    {
+      "id_rol": 3,
+      "nombre": "cliente"
+    },
+    {
+      "id_rol": 4,
+      "nombre": "admin"
+    }
+  ],
+
+  "usuario_direccion": [
+    {
+      "id_usuario_direccion": 0,
+      "id_usuario": 0,
+      "id_direccion": 0
+    }
+  ],
+  "direccion": [
+    {
+      "id_direccion": 0,
+      "calle": "",
+      "departamento": "",
+      "numeracion": "",
+      "aclaracion": "",
+      "n_piso": 0
+    }
+  ],
+  "configuracion": [
+    {
+      "id": 0,
+      "cantidad_cocineros": 0,
+      "email_empresa": "",
+      "token_MP": ""
+    }
+  ]
+}

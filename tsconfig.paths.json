@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@components/*": ["./components/*"],
+      "@admin/*": ["./components/admin/*"],
+      "@app/*": ["./components/app/*"],
+      "@utils/*": ["./utils/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@redux/*": ["./redux/*"],
+      "@api/*": ["./api/*"],
+      "@helpers/*": ["./helpers/*"],
+      "@store/*": ["./store/*"],
+      "@pages/*": ["./pages/*"]
+    }
+  }
+}
