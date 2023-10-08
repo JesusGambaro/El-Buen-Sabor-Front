@@ -1,40 +1,41 @@
 import { create } from "zustand";
 import { mountStoreDevtool } from "simple-zustand-devtools";
-import { Product } from "types/types";
+import { type Product } from "types/types";
 
-type FilterCategory = {
+interface FilterCategory {
   nombre_like?: string;
   id_categoria?: number;
-};
+}
 
-type CatalogueStore = {
+interface CatalogueStore {
   filter: FilterCategory;
   setFilter: (filter: FilterCategory) => void;
   setProductos: (productos: Product[]) => void;
   productos: Product[];
-};
+}
 
 const initialState = {
-  filter: {
-  } as FilterCategory,
+  filter: {} as FilterCategory,
   productos: [] as Product[],
 };
 
 const useCatalogueStore = create<CatalogueStore>((set, get) => ({
   ...initialState,
-  setFilter: (filter: FilterCategory) =>
+  setFilter: (filter: FilterCategory) => {
     set((state) => ({
       ...state,
       filter: {
         ...state.filter,
         ...filter,
       },
-    })),
-  setProductos: (productos: Product[]) =>
+    }));
+  },
+  setProductos: (productos: Product[]) => {
     set((state) => ({
       ...state,
-      productos: productos,
-    })),
+      productos,
+    }));
+  },
 }));
 
 mountStoreDevtool("Store", useCatalogueStore);

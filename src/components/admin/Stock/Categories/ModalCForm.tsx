@@ -9,29 +9,46 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
-import type { Category } from "types/types";
+import type { Categoria } from "types/types";
 import { ESTADO, TIPO_CATEGORIA } from "@utils/constants";
-import { useDisclosure } from "@mantine/hooks";
+import { ESTADO_DATA, TIPO_DATA } from "../dataConstants";
 
+/**
+ * Props for the ModalCForm component.
+ */
 interface ModalProps {
-  opened: boolean;
-  onClose: () => void;
-  item: Category;
+  opened: boolean; // Indicates if the modal is open.
+  onClose: () => void; // Function to close the modal.
+  item: Categoria; // Category item data.
 }
 
-const ModalCForm = (props: ModalProps): JSX.Element => {
-  const { opened, onClose, item } = props;
-
+/**
+ * Modal form component for creating or editing a category.
+ */
+const ModalCForm = ({ opened, onClose, item }: ModalProps): JSX.Element => {
+  // Fetch all categories without pagination.
   const { data: categories } = useApiQuery("GET|categoria/allWOPage") as {
-    data: Category[];
+    data: Categoria[];
     error: any;
     isLoading: boolean;
   };
-  const { mutate: createCategory } = useApiMutation("POST|categoria");
-  const { mutate: editCategory } = useApiMutation("PUT|categoria");
 
+  // API mutation hooks for creating and editing categories.
+  const {
+    mutate: createCategory,
+    isLoading: isCreating,
+    isSuccess: isCreateSuccess,
+  } = useApiMutation("POST|categoria");
+  const {
+    mutate: editCategory,
+    isLoading: isEditing,
+    isSuccess: isEditSuccess,
+  } = useApiMutation("PUT|categoria");
+
+  // Form setup with validation.
   const form = useForm({
     initialValues: {
+      id: undefined,
       nombre: "",
       categoriaPadre: "",
       estado: ESTADO.DISPONIBLE,
@@ -40,18 +57,23 @@ const ModalCForm = (props: ModalProps): JSX.Element => {
     validate: {
       nombre: (value) =>
         value.length < 3 ? "El nombre debe tener al menos 3 caracteres" : null,
+      categoriaPadre: (value, values) =>
+        values.id !== undefined && value === values.id
+          ? "No puede ser la misma categoría"
+          : null,
     },
   });
-  const [visible, { toggle }] = useDisclosure(false);
 
+  // Close modal and reset form.
   const handleClose = (): void => {
     form.reset();
-    visible && toggle();
     onClose();
   };
 
+  // Set form values when the item prop changes.
   useEffect(() => {
     form.setValues({
+      id: item?.id,
       nombre: item?.nombre,
       categoriaPadre: item?.categoriaPadre?.id,
       estado: item?.estado,
@@ -59,47 +81,53 @@ const ModalCForm = (props: ModalProps): JSX.Element => {
     } as any);
   }, [item]);
 
+  // Close modal when a category is successfully created or edited.
+  useEffect(() => {
+    if (isCreateSuccess || isEditSuccess) {
+      handleClose();
+    }
+  }, [isCreateSuccess, isEditSuccess]);
+
+  // Handle form submission.
+  const onFormSubmit = (): void => {
+    form.validate();
+    if (!form.isValid()) {
+      return;
+    }
+
+    const requestData = {
+      ...form.values,
+      categoriaPadre: Boolean(form.values.categoriaPadre) && {
+        id: form.values.categoriaPadre,
+      },
+    };
+
+    try {
+      const mutation = item.id !== undefined ? editCategory : createCategory;
+      mutation(requestData);
+    } catch (error) {
+      console.log("An unexpected error happened:", error);
+      throw error;
+    }
+  };
+
   return (
     <Modal
       opened={opened}
       onClose={handleClose}
-      title={item.id !== undefined ? "Editar categoría" : "Crear categoría"}
+      title={`${item.id !== undefined ? "Editar" : "Crear"} categoría`}
       centered
       transitionProps={{ transition: "rotate-left" }}
       size="md"
       padding="lg"
     >
-      <LoadingOverlay visible={visible} overlayBlur={2} />
-      <form
-        onSubmit={form.onSubmit((values) => {
-          console.log(
-            "🚀 ~ file: ModalCForm.tsx:83 ~ onSubmit={form.onSubmit ~ values:",
-            values
-          );
-          if (item.id !== undefined) {
-            editCategory({
-              ...values,
-              id: item.id,
-              categoriaPadre: values.categoriaPadre && {
-                id: values.categoriaPadre,
-              },
-            });
-          } else {
-            createCategory({
-              ...values,
-              categoriaPadre: values.categoriaPadre && {
-                id: values.categoriaPadre,
-              },
-            });
-          }
-          handleClose();
-        })}
-      >
+      <LoadingOverlay visible={isCreating || isEditing} overlayBlur={2} />
+      <form onSubmit={form.onSubmit(onFormSubmit)}>
         <TextInput
           label="Nombre"
           placeholder="Nombre"
           {...form.getInputProps("nombre")}
-          required
+          withAsterisk
           data-autofocus
         />
         <Select
@@ -110,7 +138,7 @@ const ModalCForm = (props: ModalProps): JSX.Element => {
           maxDropdownHeight={160}
           dropdownPosition="bottom"
           data={
-            categories
+            Array.isArray(categories)
               ? categories?.map((c) => ({
                   value: c.id as any,
                   label: c.nombre,
@@ -125,7 +153,6 @@ const ModalCForm = (props: ModalProps): JSX.Element => {
           {...form.getInputProps("categoriaPadre")}
           styles={(theme) => ({
             item: {
-              // applies styles to selected item
               "&[data-selected]": {
                 "&, &:hover": {
                   backgroundColor:
@@ -144,10 +171,7 @@ const ModalCForm = (props: ModalProps): JSX.Element => {
         <SegmentedControl
           w="100%"
           mt="md"
-          data={[
-            { value: TIPO_CATEGORIA.INSUMO, label: "Insumo" },
-            { value: TIPO_CATEGORIA.PRODUCTO, label: "Producto" },
-          ]}
+          data={TIPO_DATA}
           {...form.getInputProps("tipo")}
           color={
             form.values.tipo === TIPO_CATEGORIA.PRODUCTO ? "grape" : "teal"
@@ -156,22 +180,11 @@ const ModalCForm = (props: ModalProps): JSX.Element => {
         <SegmentedControl
           w="100%"
           mt="md"
-          data={[
-            { value: ESTADO.NO_DISPONIBLE, label: "No disponible" },
-            { value: ESTADO.DISPONIBLE, label: "Disponible" },
-          ]}
+          data={ESTADO_DATA}
           {...form.getInputProps("estado")}
-          color={form.values.estado === ESTADO.NO_DISPONIBLE ? "red" : "green"}
+          color={form.values.estado === ESTADO.DISPONIBLE ? "green" : "red"}
         />
-        <Button
-          type="submit"
-          mt="md"
-          color="orange"
-          w="100%"
-          onClick={() => {
-            if (form.isValid()) toggle();
-          }}
-        >
+        <Button type="submit" mt="md" color="orange" w="100%">
           Guardar
         </Button>
       </form>

@@ -2,7 +2,7 @@ import Loader from "@components/app/Loader/Loader";
 import { useApiQuery } from "@hooks/useQueries";
 import { productsStore } from "@store/adminStore";
 import { useState } from "react";
-import { type Category, type Product } from "types/types";
+import { type Categoria, Producto } from "types/types";
 import { useDisclosure } from "@mantine/hooks";
 import {
   Badge,
@@ -20,24 +20,24 @@ import { Edit, Plus, ListSearch } from "tabler-icons-react";
 import { ESTADO } from "@utils/constants";
 
 interface QueryProps {
-  data: Product[];
+  data: Producto[];
   error: any;
   isLoading: boolean;
 }
 
 const ProductosPage = (): JSX.Element => {
   const [opened, { open, close }] = useDisclosure(false);
-  const [editItem, setEditItem] = useState<Product | null>({
+  const [editItem, setEditItem] = useState<Producto | null>({
     nombre: "",
     descripcion: "",
     estado: ESTADO.DISPONIBLE,
     insumosIDS: [],
     receta: "",
-    productoCategoria: { id: -1, nombre: "" } as Category,
+    productoCategoria: { id: -1, nombre: "" } as Categoria,
     tiempoCocina: 0,
     imgURL: "",
     id: -1,
-  } as Product);
+  } as Producto);
 
   const { filters, setCurrentPage, totalPages, currentPage } = productsStore();
   const { data: products, isLoading } = useApiQuery(
@@ -169,11 +169,11 @@ const ProductosPage = (): JSX.Element => {
                 estado: ESTADO.DISPONIBLE,
                 insumosIDS: [],
                 receta: "",
-                productoCategoria: { id: -1, nombre: "" } as Category,
+                productoCategoria: { id: -1, nombre: "" } as Categoria,
                 tiempoCocina: 0,
                 imgURL: "",
                 id: -1,
-              } as Product)
+              } as Producto)
         }
         onClose={onCloseModal}
       />

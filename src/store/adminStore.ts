@@ -1,5 +1,11 @@
 // Store for admin pages using zustand
-import { type Category, type Product, type Supply } from "types/types";
+import {
+  type MeasureUnit,
+  type Categoria,
+  type Producto,
+  type Insumo,
+  type Usuario,
+} from "types/types";
 import { type StoreApi, type UseBoundStore, create } from "zustand";
 
 // Generic store interface
@@ -58,15 +64,19 @@ const useAdminStore = <T>(): UseBoundStore<StoreApi<Store<any>>> => {
 };
 
 // Create stores for each entity
-export const suppliesStore = useAdminStore<Supply>();
-export const productsStore = useAdminStore<Product>();
-export const categoriesStore = useAdminStore<Category>();
+export const suppliesStore = useAdminStore<Insumo>();
+export const productsStore = useAdminStore<Producto>();
+export const categoriesStore = useAdminStore<Categoria>();
+export const measuresUnitsStore = useAdminStore<MeasureUnit>();
+export const usersStore = useAdminStore<Usuario>();
 
 // Create a map for each entity
 const storeMap: Record<string, UseBoundStore<StoreApi<Store<any>>>> = {
   insumo: suppliesStore,
   producto: productsStore,
   categoria: categoriesStore,
+  um: measuresUnitsStore,
+  users: usersStore,
 };
 
 // Set total pages for each entity store

@@ -3,7 +3,7 @@ import HomePage from "@pages/HomePage";
 import { createBrowserRouter } from "react-router-dom";
 import StockPage from "@pages/AdminPages/StockPages/StockPage";
 import AdminPage from "@pages/AdminPages/AdminPage";
-import IngredientesPage from "@pages/AdminPages/StockPages/IngredientesPage";
+import InsumosPage from "@pages/AdminPages/StockPages/InsumosPage";
 import { UsersPage } from "@pages/AdminPages/UsersPage";
 import { ProductoFormPage } from "@pages/AdminPages/StockPages/ProductosPages/ProductoFormPage";
 import DashboardPage from "@pages/AdminPages/DashBoardPages/DashboardPage";
@@ -12,7 +12,8 @@ import Catalogue from "@components/app/Catalogue/Catalogue";
 import ProductDetailPage from "@pages/ProductDetailPage";
 import { CartDetailPage } from "@pages/CartDetailPage";
 import { Pedidos } from "@components/app/Pedidos/Pedidos";
-ProductDetailPage
+import UserConfigPage from "@pages/AdminPages/UserConfigPage";
+
 const BrowserRouter = createBrowserRouter([
   {
     path: "/",
@@ -25,7 +26,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/product/:id",
-        element: <ProductDetailPage/>,
+        element: <ProductDetailPage />,
         errorElement: <ErrorPage />,
       },
       {
@@ -40,7 +41,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/carrito",
-        element: <CartDetailPage/>,
+        element: <CartDetailPage />,
         errorElement: <ErrorPage />,
       },
       {
@@ -84,7 +85,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/admin/pedidos",
-        element: <IngredientesPage />,
+        element: <InsumosPage />,
         errorElement: <ErrorPage />,
       },
       {
@@ -94,7 +95,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/admin/configuracion",
-        element: <></>,
+        element: <UserConfigPage />,
         errorElement: <ErrorPage />,
       },
     ],

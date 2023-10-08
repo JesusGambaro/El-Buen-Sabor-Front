@@ -1,39 +1,22 @@
-import { LogoutOptions } from "@auth0/auth0-react";
+import { type LogoutOptions } from "@auth0/auth0-react";
 import {
-  UnstyledButton,
-  UnstyledButtonProps,
-  Group,
   Avatar,
-  Text,
-  createStyles,
+  Group,
   Menu,
-  Box,
+  Text,
+  UnstyledButton,
+  type UnstyledButtonProps,
 } from "@mantine/core";
 import {
   IconBell,
+  IconChevronRight,
+  IconLogin,
   IconLogout,
   IconSearch,
-  IconChevronRight,
   IconSettings,
-  IconLogin,
 } from "@tabler/icons-react";
+import { useMantineTheme } from "@utils/theme";
 import { useLocation } from "react-router";
-
-const useStyles = createStyles((theme) => ({
-  user: {
-    display: "block",
-    width: "100%",
-    padding: theme.spacing.md,
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[8]
-          : theme.colors.gray[0],
-    },
-  },
-}));
 
 interface UserButtonProps extends UnstyledButtonProps {
   image?: string;
@@ -43,21 +26,26 @@ interface UserButtonProps extends UnstyledButtonProps {
   logout: (params: LogoutOptions) => void;
 }
 
-export function UserButton({
+export const UserButton = ({
   image,
   name,
   email,
   login,
   logout,
   ...others
-}: UserButtonProps) {
-  const { classes } = useStyles();
+}: UserButtonProps): JSX.Element => {
+  const { classes } = useMantineTheme();
 
   const location = useLocation();
 
-  if (!image || !name || !email) {
+  if ([image, name, email].some((v) => v === undefined || v === null)) {
     return (
-      <UnstyledButton className={classes.user} onClick={() => login()}>
+      <UnstyledButton
+        className={classes.user}
+        onClick={() => {
+          login();
+        }}
+      >
         <Group position="center">
           <IconLogin size={20} />
           <Text size="md" weight={500}>
@@ -120,4 +108,4 @@ export function UserButton({
       </Menu.Dropdown>
     </Menu>
   );
-}
+};

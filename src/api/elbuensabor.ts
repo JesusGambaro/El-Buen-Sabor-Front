@@ -24,7 +24,7 @@ export const getFetch = async <T extends QueryFunctionContext>(
 
   // Get the token from the global state
   const { token } = useMainStore.getState();
-  
+
   // Prepare the request options
   const options: AxiosRequestConfig = {
     headers: {
@@ -41,21 +41,21 @@ export const getFetch = async <T extends QueryFunctionContext>(
   // Call the api with the options
   return await api(options).then((response) => {
     if ([200, 201, 204].includes(response.status)) {
-      // If the response has pagination, set the total pages in the global state and return the content
-     
+      // If the response is an array, return the content
+      if (Array.isArray(response.data)) {
+        console.log("response", "totalPages" in response.data);
+        return response.data;
+      }
 
+      // If the response has pagination, set the total pages in the global state and return the content
       if ("totalPages" in response.data) {
         // The url has the entity name, so we split it to get the entity name
-     
-
         setTotalPages(
           options.url?.split("/")[0] as string,
           response.data.totalPages
         );
         return response.data.content;
       }
-      // If the response doesn't have pagination, return the content
-      return response.data;
     }
     // If the response is incorrect, throw an error
     else {
@@ -80,19 +80,19 @@ export const postPutFetch = async <T extends MutationFunction<any, any>>(
   // Get the token from the global state
   const { token } = useMainStore.getState();
 
-  //console.log(token);
-  
+  console.log(token);
+
   // Prepare the request options
   const options: AxiosRequestConfig = {
     data: formData ?? data,
     method,
     headers: {
-      Accept: "application/json",
       Authorization: `Bearer ${token}`,
     },
     url,
   };
 
+  console.log("options", options);
 
   // Call the api with the options
   return await api(options).then((response) => {
@@ -135,7 +135,6 @@ export const genericFetch = async (
   // Si es una mutación se prepara la url, el método y el body
   else if (requestBody !== undefined && "params" in requestBody) {
     const { query, params: data } = requestBody as any;
-  
 
     // El método y la url se obtienen de la función prepareFetch
     const { url, method } = prepareFetch(query, data);

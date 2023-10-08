@@ -1,9 +1,9 @@
 import Loader from "@components/app/Loader/Loader";
 import { useApiQuery } from "@hooks/useQueries";
 // import useAdminStore from "@store/adminStore";
-import { type Category } from "types/types";
+import { type Categoria } from "types/types";
 interface NestedAccordionProps {
-  categories: Category[];
+  categories: Categoria[];
   isRecursive: boolean;
 }
 
@@ -13,7 +13,7 @@ const SideFilter = (): JSX.Element => {
   const { data: baseCategories, isLoading } = useApiQuery(
     "GET|categoria/allWOPage"
   ) as {
-    data: Category[];
+    data: Categoria[];
     error: any;
     isLoading: boolean;
   };
