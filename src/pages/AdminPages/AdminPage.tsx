@@ -20,11 +20,11 @@ const AdminPage = (): JSX.Element => {
         <NavBarAdmin />
       </Grid.Col>
       <Grid.Col span="auto" mah="100vh">
-        <Grid maw="100" m={0}>
+        <Grid maw="100" m={0} h="100%">
           <Grid.Col h={60}>
             <TopHeader />
           </Grid.Col>
-          <Grid.Col mah="calc(100vh - 60px)">
+          <Grid.Col h="100%">
             <Outlet />
           </Grid.Col>
         </Grid>

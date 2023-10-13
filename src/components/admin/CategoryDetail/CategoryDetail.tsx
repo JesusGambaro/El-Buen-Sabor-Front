@@ -1,15 +1,15 @@
 import { useApiQuery } from "@hooks/useQueries";
 import { Container, Textarea } from "@mantine/core";
-import { Category } from "types/types";
+import { type Categoria } from "types/types";
 import { useParams } from "react-router-dom";
 
-type QueryProps = {
-  data: Category;
+interface QueryProps {
+  data: Categoria;
   error: any;
   isLoading: boolean;
-};
+}
 
-const CategoryDetail = () => {
+const CategoryDetail = (): JSX.Element => {
   const { id } = useParams();
 
   const {

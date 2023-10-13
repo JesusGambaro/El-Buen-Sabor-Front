@@ -5,13 +5,12 @@ import {
   Modal,
   Select,
   SegmentedControl,
-  LoadingOverlay,
   Stepper,
   Space,
   Code,
   Group,
   TransferList,
-  TransferListData,
+  type TransferListData,
   Text,
   Image,
   rem,
@@ -21,32 +20,30 @@ import {
   SimpleGrid,
 } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
-//import { useDisclosure } from "@mantine/hooks";
-import { DatePicker } from "@mantine/dates";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
-import { Category, Product, Supply } from "types/types";
+import { type Categoria, type Producto, type Insumo } from "types/types";
 import { ESTADO } from "@utils/constants";
 import TextEditor from "@components/admin/TextEditor/TextEditor";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconClock, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 
-type ModalProps = {
+interface ModalProps {
   opened: boolean;
   onClose: () => void;
-  item: Product;
-};
+  item: Producto;
+}
 
-const ModalPForm = (props: ModalProps) => {
+const ModalPForm = (props: ModalProps): JSX.Element => {
   const { opened, onClose, item } = props;
 
   const { data: categories } = useApiQuery("GET|categoria/allWOPage") as {
-    data: Category[];
+    data: Categoria[];
     error: any;
     isLoading: boolean;
   };
 
   const { data: ingredients } = useApiQuery("GET|insumo/allWOPage") as {
-    data: Supply[];
+    data: Insumo[];
     error: any;
     isLoading: boolean;
   };
@@ -74,11 +71,11 @@ const ModalPForm = (props: ModalProps) => {
           : null,
     },
   });
-  //const [visible, { toggle }] = useDisclosure(false);
+  // const [visible, { toggle }] = useDisclosure(false);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     form.reset();
-    //visible && toggle();
+    // visible && toggle();
     onClose();
   };
 
@@ -96,12 +93,12 @@ const ModalPForm = (props: ModalProps) => {
   }, [item]);
   const [currentStep, setCurrentStep] = useState(0);
 
-  const nextStep = () => {
+  const nextStep = (): void => {
     if (!form.isValid()) return;
     setCurrentStep((current) => (current < 3 ? current + 1 : current));
   };
 
-  const prevStep = () => {
+  const prevStep = (): void => {
     if (!form.isValid()) return;
     setCurrentStep((current) => (current > 0 ? current - 1 : current));
   };
@@ -121,11 +118,12 @@ const ModalPForm = (props: ModalProps) => {
     reader.readAsDataURL(files[0]);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!form.isValid()) return;
 
-    form.values.insumosIDS = data ? data[0].map((i) => parseInt(i.value)) : [];
+    form.values.insumosIDS =
+      data != null ? data[0].map((i) => parseInt(i.value)) : [];
     console.log(form);
 
     const formData = new FormData();
@@ -260,7 +258,9 @@ const ModalPForm = (props: ModalProps) => {
           >
             <Dropzone
               onDrop={handleDrop}
-              onReject={(files) => console.log("rejected files", files)}
+              onReject={(files) => {
+                console.log("rejected files", files);
+              }}
               maxSize={3 * 1024 ** 2}
               accept={IMAGE_MIME_TYPE}
               mt={10}
@@ -271,7 +271,7 @@ const ModalPForm = (props: ModalProps) => {
                 spacing="xl"
                 style={{ minHeight: rem(100), pointerEvents: "none" }}
               >
-                {image || form.values.imgURL ? (
+                {image != null || form.values.imgURL ? (
                   <Image
                     alt="Uploaded"
                     src={form.values.imgURL}
@@ -300,7 +300,7 @@ const ModalPForm = (props: ModalProps) => {
                 )}
               </Group>
             </Dropzone>
-            {image || form.values.imgURL ? (
+            {image != null || form.values.imgURL ? (
               <Button
                 variant="outline"
                 color="red"
@@ -337,15 +337,15 @@ const ModalPForm = (props: ModalProps) => {
             </Text>
             <TextEditor />
             <Text my="md" size="xl" weight={700}>
-              Ingredientes
+              Insumos
             </Text>
             <TransferList
-              value={data || [[], []]}
+              value={data != null || [[], []]}
               onChange={setData}
-              nothingFound="No existe tal ingrediente"
-              placeholder="Sin ingredientes"
+              nothingFound="No existe tal insumo"
+              placeholder="Sin insumos"
               listHeight={200}
-              titles={["Lista de preparación", "Ingredientes"]}
+              titles={["Lista de preparación", "Insumos"]}
               breakpoint="sm"
             />
           </Stepper.Step>

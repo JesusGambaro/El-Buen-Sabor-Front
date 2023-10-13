@@ -1,17 +1,11 @@
 import { RichTextEditor } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import {
-  Highlight,
-  Subscript,
-  Superscript,
-  Underline,
-} from "tabler-icons-react";
 
 const content =
   '<h2 style="text-align: center;">Bienvenido al editor de recetas de `El Buen Sabor`</h2>';
 
-function TextEditor() {
+const TextEditor = (): JSX.Element => {
   const editor = useEditor({
     extensions: [StarterKit],
     content,
@@ -62,6 +56,6 @@ function TextEditor() {
       <RichTextEditor.Content />
     </RichTextEditor>
   );
-}
+};
 
 export default TextEditor;

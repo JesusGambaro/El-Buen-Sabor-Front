@@ -1,24 +1,34 @@
 import { RouterProvider } from "react-router-dom";
 import Router from "./routes/root";
 import {
-  ColorScheme,
+  type ColorScheme,
   ColorSchemeProvider,
   Container,
   MantineProvider,
 } from "@mantine/core";
-import { useState } from "react";
 import { useHotkeys, useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
-function App() {
+import { type JSX } from "react";
+
+function App(): JSX.Element {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: "mantine-color-scheme",
     defaultValue: "dark",
     getInitialValueInEffect: true,
   });
-  const toggleColorScheme = (value?: ColorScheme) =>
+  const toggleColorScheme = (value?: ColorScheme): void => {
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+  };
 
-  useHotkeys([["mod+J", () => toggleColorScheme()]]);
+  useHotkeys([
+    [
+      "mod+J",
+      () => {
+        toggleColorScheme();
+      },
+    ],
+  ]);
+
   return (
     <ColorSchemeProvider
       colorScheme={colorScheme}

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { type Query, useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../queryClient";
 import { getFetch, postPutFetch } from "@api/elbuensabor";
 
@@ -27,85 +27,64 @@ export const useApiQuery = <T>(
     data: data as T,
     error,
     isLoading,
-    refetch,
+    refetch: refetch as () => void,
   };
-  /* Version nueva, pero no hace refetch
-  return useQuery<T>({
-    queryKey: [query],
-    // queryFn: () => genericFetch({ query, filters } as any),
-    enabled,
-  }) as QueryData<T>; */
 };
 
-export const useApiMutation = <T>(query: string) => {
+export const useApiMutation = <T>(query: string, options?: any) => {
   const parentQuery = `GET|${query.split("|")[1]}/`;
 
   return useMutation(
     async (data: any) => await postPutFetch({ query, data } as any),
     {
+      /* Versión original   
       onMutate: async () => {
-        await queryClient.cancelQueries([query]);
-        const previousValue = queryClient.getQueryData([query]);
-
-        return { previousValue };
-      },
-      onError: (err, variables, context) => {
+          await queryClient.cancelQueries([query]);
+          const previousValue = queryClient.getQueryData([query]);
+  
+          return { previousValue };
+        }, */
+      /*       onError: (err, variables, context) => {
         queryClient.setQueryData([query], context?.previousValue);
-      },
-      onSuccess: (data) => {
-        const similarQueries = queryClient.getQueryCache().findAll();
-        similarQueries.forEach((query: any) => {
+      }, 
+      */ /* Versión sugerida,
+      onSuccess: async (data, variables, context) => {
+        const allActiveQueries = queryClient.getQueryCache().findAll();
+
+        // store the queries that contain the parent query, just save the queryKey
+        const similarQueries = allActiveQueries.map((query: Query) => {
           if (query.queryKey[0].includes(parentQuery)) {
-            queryClient.invalidateQueries(query.queryKey);
+            return {
+              queryKey: query.queryKey[0],
+            };
           }
+          return null;
         });
-        // console.log("onSuccess: ", data);
+
+        await queryClient.refetchQueries(similarQueries[0]);
+        return { data };
+      },
+*/
+      onSuccess: async (data, variables, context) => {
+        const allActiveQueries = queryClient.getQueryCache().findAll();
+        // Extract similar queries that contain the parentQuery in their queryKey
+        const similarQueries = allActiveQueries
+          .filter((query: Query) => query.queryKey[0].includes(parentQuery))
+          .map((query: Query) => {
+            return {
+              queryKey: query.queryKey[0],
+              type: "active",
+            };
+          });
+        // Invalidate and refetch for all similar queries
+        /*         await Promise.all(
+          similarQueries.map(async (query) => {
+            await queryClient.refetchQueries(query);
+          })
+        );
+ */ await queryClient.refetchQueries(similarQueries[0]);
         return { data };
       },
     }
   );
 };
-
-/* 
-export const useCart = () => {
-    return useQuery<CartItem[]>(["cart"], getCart, {
-        enabled: true
-    });
-}
-//get the id of the product and the quantity from p
-export const useAddToCart = () => {
-    const { refetch } = useCart();
-    return useMutation(addToCart, {
-        onSuccess: () => {
-            refetch();
-        }
-    });
-}
-
-export const useRemoveFromCart = () => {
-    const { refetch } = useCart();
-    return useMutation(removeFromCart, {
-        onSuccess: () => {
-            refetch();
-        }
-    });
-}
-
-export const useUpdateCart = () => {
-    const { refetch } = useCart();
-    return useMutation(updateCart, {
-        onSuccess: () => {
-            refetch();
-        }
-    });
-}
-
-export const useEmptyCart = () => {
-    const { refetch } = useCart();
-    const cartItemsIds = useCart().data?.map((item) => item.product.id_producto) as number[];
-    return useMutation(() => emptyCart(cartItemsIds), {
-        onSuccess: () => {
-            refetch();
-        }
-    });
-} */

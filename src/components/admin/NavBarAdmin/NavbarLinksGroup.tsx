@@ -1,16 +1,16 @@
-import { useState } from "react";
 import {
-  Group,
   Box,
   Collapse,
-  ThemeIcon,
+  Group,
   Text,
+  ThemeIcon,
   UnstyledButton,
   createStyles,
   rem,
 } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   control: {
@@ -81,20 +81,20 @@ interface LinksGroupProps {
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
+  links?: Array<{ label: string; link: string }>;
   link?: string;
 }
 
-export function LinksGroup({
+export const LinksGroup = ({
   icon: Icon,
   label,
   initiallyOpened,
   links,
   link,
-}: LinksGroupProps) {
+}: LinksGroupProps): JSX.Element => {
   const { classes, theme } = useStyles();
   const hasLinks = Array.isArray(links);
-  const [opened, setOpened] = useState(initiallyOpened || false);
+  const [opened, setOpened] = useState(initiallyOpened ?? false);
   const navigate = useNavigate();
   const location = useLocation();
   const ChevronIcon = theme.dir === "ltr" ? IconChevronRight : IconChevronLeft;
@@ -106,11 +106,14 @@ export function LinksGroup({
         (location.pathname.includes(link.link) ? "active" : "")
       }
       key={link.label}
-      onClick={() => navigate(link.link)}
+      onClick={() => {
+        navigate(link.link);
+      }}
     >
       {link.label}
     </Text>
   ));
+  const rotateDegrees = theme.dir === "rtl" ? -90 : 90;
 
   return (
     <>
@@ -120,7 +123,7 @@ export function LinksGroup({
             setOpened((o) => !o);
             return;
           }
-          navigate(link!);
+          navigate(link ?? "");
         }}
         className={
           classes.control + " " + (location.pathname === link ? "active" : "")
@@ -139,9 +142,7 @@ export function LinksGroup({
               size="1rem"
               stroke={1.5}
               style={{
-                transform: opened
-                  ? `rotate(${theme.dir === "rtl" ? -90 : 90}deg)`
-                  : "none",
+                transform: opened ? `rotate(${rotateDegrees}deg)` : "none",
               }}
             />
           )}
@@ -150,4 +151,4 @@ export function LinksGroup({
       {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
     </>
   );
-}
+};

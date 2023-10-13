@@ -1,15 +1,60 @@
-import { type } from "os";
-import { ReactNode } from "react";
-type Insumo = {
+import { type ReactNode } from "react";
+
+type Estado = "DISPONIBLE" | "NO_DISPONIBLE" | "SIN_STOCK";
+
+interface ReusableTableProps<T> {
+  data: T[];
+  columns: Array<{
+    key: keyof T;
+    label: string;
+    render?: (item: T) => React.ReactNode;
+  }>;
+  onFilter?: (filters: any) => void;
+  onSearch?: (searchTerm: string) => void;
+  onPageChange?: (page: number) => void;
+  // ... any other props you think might be necessary
+}
+
+interface Producto {
   nombre: string;
-  stockMinimo: number;
-  stockActual: number;
-  urlIMG: string;
-  estado: string;
-  costo: number;
+  imgURL?: string;
+  descripcion: string;
+  tiempoCocina: number;
+  receta: string;
+  estado: Estado;
+  productoCategoria: Categoria;
+  insumosIDS: number[];
   id: number;
-};
-type InsumoCarrito = {
+  precio: number;
+  valoracion: number;
+  descuento: number;
+  insumos: Insumo[];
+}
+
+interface Categoria {
+  id?: number | null;
+  nombre: string;
+  categoriaPadre?: Categoria;
+  img?: string;
+  estado: Estado;
+  tipo: string;
+  subCategoria?: Categoria[];
+}
+
+interface Insumo {
+  id?: number | null;
+  nombre: string;
+  imagen: string;
+  stock_minimo: number;
+  stock_actual: number;
+  costo: number;
+  categoria?: Categoria;
+  estado: Estado;
+  unidad_medida?: MeasureUnit;
+  es_complemento: boolean;
+}
+
+interface InsumoCarrito {
   nombre: string;
   cantidad: number;
   precioUnitario: number;
@@ -18,214 +63,195 @@ type InsumoCarrito = {
   id: number;
   urlIMG?: string;
   urlImg?: string;
+}
 
-};
-type Product = {
-  nombre: string;
-  imgURL?: string;
-  descripcion: string;
-  tiempoCocina: number;
-  receta: string;
-  estado: string;
-  productoCategoria: Category;
-  insumosIDS: number[];
-  id: number;
-  precio: number;
-  precioUnitario: number;
-  valoracion: number;
-  descuento: number;
-  insumos: Insumo[];
-};
-type Category = {
-  id: number;
-  nombre: string;
-  categoriaPadre?: Category;
-  img?: string;
-  estado: string;
-  tipo: string;
-  subCategoria: Category[];
-};
+interface ProductSupply {
+  id?: number | null;
+  insumo: Insumo;
+  cantidad: number;
+}
 
-type CartItem = {
+interface MeasureUnit {
+  id?: number | null;
   nombre: string;
+  estado: string;
+}
+interface CartItem {
+  producto: string;
   productoId: number;
   cantidad: number;
   precioUnitario: number;
-  precioUnitarioSinDescuento: number;
   precioTotalSinDescuento: number;
   descuento: number;
   precioTotal: number;
-  urlIMG?: string;
-};
-type Carrito = {
+  imgURL: string;
+}
+
+interface Carrito {
   productosComprados: CartItem[];
-  productosAgregados: InsumoCarrito[];
   totalCompra: number;
-};
-type CarritoVanilla = {
-  productosComprados: Product[];
-  productosAdicionales: Insumo[];
-};
+}
+
 interface Direccion {
   calleNombre: string;
-  departamento: string;
+  departamento?: string;
   numeracion: number;
-  aclaracion: string;
-  nroPiso: number;
+  aclaracion?: string;
+  nroPiso?: number;
   id?: number;
 }
-type Order = {
+
+interface Order {
   id: number;
   items: CartItem[];
   total: number;
   date: string;
-};
+}
 
-type User = {
-  id: string;
+interface Usuario {
+  id?: string;
+  name?: string;
   username: string;
   email: string;
-  bloqueado: boolean;
+  blocked: boolean;
   direccionList?: Direccion[];
-  rol?: string;
-};
+  rol?: Rol;
+  picture?: string;
+  email_verified?: boolean | null;
+  phone_number?: string;
+}
 
-type Auth = {
-  user: User;
+interface Rol {
+  id?: string;
+  name: string;
+  description: string;
+}
+
+interface Auth {
+  user: Usuario;
   loading: boolean;
   hasErrors: boolean;
   token: string;
   isAuth: boolean;
   attempt: boolean;
-};
+}
 
-type State = {
-  products: Product[];
-  user: User;
+interface State {
+  products: Producto[];
+  user: Usuario;
   auth: Auth;
   landing: Landing;
-};
+}
 
-type Supply = {
-  id: number;
-  nombre: string;
-  imagen: string;
-  stockMinimo: number;
-  stockActual: number;
-  estado: string;
-  costo: number;
-};
-
-type AdminState = {
-  products: Product[];
-  supplies: Supply[];
-  categories: Category[];
+interface AdminState {
+  products: Producto[];
+  supplies: Insumo[];
+  categories: Categoria[];
   loading: boolean;
   hasErrors: boolean;
-  product: Product | null;
+  product: Producto | null;
   productLoading: boolean;
   productHasErrors: boolean;
-};
+}
 
-type Landing = {
-  landingProducts: Product[];
-  categories: Category[];
+interface Landing {
+  landingProducts: Producto[];
+  categories: Categoria[];
   loading: boolean;
   hasErrors: boolean;
-};
+}
 
-type Action = {
+interface Action {
   type: string;
   payload: any;
-};
+}
 
 type Dispatch = (action: Action) => void;
 
-type Store = {
+interface Store {
   state: State;
   dispatch: Dispatch;
-};
+}
 
 type Reducer = (state: State, action: Action) => State;
 
-type Context = {
+interface Context {
   store: Store;
   dispatch: Dispatch;
-};
+}
 
-type ProviderProps = {
+interface ProviderProps {
   children: ReactNode;
-};
+}
 
-type Route = {
+interface Route {
   path: string;
   component: ReactNode;
-};
+}
 
-type Routes = {
-  [key: string]: Route;
-};
+type Routes = Record<string, Route>;
 
-type RouteProps = {
+interface RouteProps {
   path: string;
   component: ReactNode;
-};
+}
 
-type RoutesProps = {
+interface RoutesProps {
   routes: Routes;
-};
+}
 
-type LinkProps = {
+interface LinkProps {
   to: string;
   children: ReactNode;
-};
+}
 
-type ProductProps = {
-  product: Product;
-};
+interface ProductProps {
+  product: Producto;
+}
 
-type CartItemProps = {
+interface CartItemProps {
   item: CartItem;
-};
+}
 
-type CartProps = {
+interface CartProps {
   isOpen: boolean;
   onClose: () => void;
   btnRef: any;
-};
-type SideBarProps = {
+}
+interface SideBarProps {
   isOpen: boolean;
   onClose: () => void;
-};
-type OrderProps = {
+}
+interface OrderProps {
   order: Order;
-};
+}
 
-type UserProps = {
-  user: User;
-};
+interface UserProps {
+  user: Usuario;
+}
 
-type ErrorBoundaryProps = {
+interface ErrorBoundaryProps {
   children?: React.ReactNode;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
-};
+}
 
-//export all types
+// export all types
 export type {
   ErrorBoundaryProps,
-  Product,
-  Insumo,
-  InsumoCarrito,
+  Producto,
   CartItem,
   Order,
   Direccion,
-  User,
+  Usuario,
+  Rol,
   State,
   Action,
   Dispatch,
   Store,
   Reducer,
   Context,
+  MeasureUnit,
+  ProductSupply,
   ProviderProps,
   Route,
   Routes,
@@ -236,12 +262,13 @@ export type {
   CartItemProps,
   CartProps,
   Carrito,
-  CarritoVanilla,
   OrderProps,
   UserProps,
-  Category,
+  Categoria,
   Landing,
-  Supply,
+  Insumo,
   AdminState,
   SideBarProps,
+  InsumoCarrito,
+  ReusableTableProps,
 };
