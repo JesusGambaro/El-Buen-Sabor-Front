@@ -17,6 +17,11 @@ import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useMainStore from "@store/mainStore";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { Tex } from "tabler-icons-react";
+import {
+  CartAddProduct,
+  CartEditItemProduct,
+  CreateCartFunc,
+} from "../CreateCartFunc";
 
 const CartItem = ({
   cartItem,
@@ -31,36 +36,46 @@ const CartItem = ({
     mutate: addProduct,
     data: addedData,
     isLoading: isLoadingAdd,
-  } = useApiMutation("PUT|cart/addProduct");
+  } = useApiMutation("PUT|cart/editProduct");
   const {
     mutate: delProducto,
     data: removedData,
     isLoading: isLoadingDel,
-  } = useApiMutation("PUT|cart/delProduct");
+  } = useApiMutation("DELETE|cart/editProduct");
+
+  const [isLoading, setisLoading] = useState(false);
+
   const handleDeleteItem = () => {
     delProducto({ id: cartItem.productoId });
+    if (cart) {
+      setCarrito(CartEditItemProduct(cart, cartItem.productoId, false));
+    }
   };
 
   const handleAddItem = () => {
     //updateCart({ ...item, quantity: item.quantity + 1 });
     addProduct({ id: cartItem.productoId });
+    if (cart) {
+      setCarrito(CartEditItemProduct(cart, cartItem.productoId, true));
+    }
   };
-  const discountValue = (price: number = 0, discount: number) =>
-    Math.floor(price - (price * discount) / 100);
-  const { setCarrito } = useMainStore();
+
+  const { setCarrito, cart } = useMainStore();
   const cancelRef = useRef() as any;
   //const { onOpen: onOpenDeleteItem } = useDisclosure();
   //const { mutate: removeFromCart } = useRemoveFromCart();
   //const { mutate: updateCart } = useUpdateCart();
 
   useEffect(() => {
-    if (addedData) {
-      setCarrito(addedData);
-    } else if (removedData) {
-      setCarrito(removedData);
-      console.log(removedData);
+    
+    if (cart) {
+      if (addedData) {
+        console.log("addedData: ", addedData);
+      } else if (removedData) {
+        console.log("removedData: ", removedData);
+      }
     }
-  }, [addedData, removedData]);
+  }, [addedData != null, removedData != null]);
 
   const useStyles = createStyles((theme) => ({
     buttonCantidad: {
@@ -98,35 +113,32 @@ const CartItem = ({
           <Title color="black" size="sm" mt="4">
             {cartItem.nombre}
           </Title>
-          <Text color="black" style={{gap:"1rem"}} display={"flex"}>
+          <Text color="black" style={{ gap: "1rem" }} display={"flex"}>
             <Text w={"2rem"}>c/u:</Text>
             <Text color="black" display={"flex"}>
               <Text color="orange">
-              <i className="fa-solid fa-dollar-sign"></i>
-            </Text>
-            <Text strikethrough={cartItem.descuento > 0}>
-              {cartItem.precioUnitario}
-            </Text>
+                <i className="fa-solid fa-dollar-sign"></i>
+              </Text>
+              <Text strikethrough={cartItem.descuento > 0}>
+                {cartItem.precioUnitarioSinDescuento}
+              </Text>
 
-            {cartItem.descuento > 0 && (
-              <>
-                <Text mr={"1rem"} ml={"1rem"} color="orange" component="span">
-                  <i className="fa-solid fa-chevron-right"></i>
-                </Text>
-                <Text color="orange">
-                  <i className="fa-solid fa-dollar-sign"></i>
-                </Text>
-                <Text color="black">
-                  {discountValue(cartItem.precioUnitario, cartItem.descuento)}
-                </Text>
-              </>
-            )}
+              {cartItem.descuento > 0 && (
+                <>
+                  <Text mr={"1rem"} ml={"1rem"} color="orange" component="span">
+                    <i className="fa-solid fa-chevron-right"></i>
+                  </Text>
+                  <Text color="orange">
+                    <i className="fa-solid fa-dollar-sign"></i>
+                  </Text>
+                  <Text color="black">{cartItem.precioUnitario}</Text>
+                </>
+              )}
             </Text>
-            
           </Text>
 
           <Flex direction="row" justify={"space-between"}>
-            <Text color="black" style={{gap:"1rem"}} display={"flex"}>
+            <Text color="black" style={{ gap: "1rem" }} display={"flex"}>
               <Text w={"2rem"}>Total:</Text>
               <Text color="black" display={"flex"}>
                 <Text color="orange">

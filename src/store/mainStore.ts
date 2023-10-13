@@ -27,6 +27,7 @@ const useMainStore = create<MainStore>((set, get) => ({
       token,
     })),
   setCarrito: (cart: Carrito) => {
+    
     set((state) => ({
       ...state,
       cart,

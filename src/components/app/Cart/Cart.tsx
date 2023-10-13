@@ -21,34 +21,40 @@ import {
   Category,
   Product,
   Carrito,
+  InsumoCarrito,
+  CarritoVanilla,
 } from "types/types";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useMainStore from "@store/mainStore";
 import { Await, Link } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { IconAlertCircle } from "@tabler/icons-react";
+import { CreateCartFunc } from "./CreateCartFunc";
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
   // const { data: cartItems, isLoading } = useCart() as {
   //   data: CartType[];
   //   isLoading: boolean;
   // };et: [0]
+  const { cart: carrito, loading, setCarrito, setLoading } = useMainStore();
   type QueryPropsCarrito = {
-    data: Carrito;
+    data: CarritoVanilla;
     error: any;
     isLoading: boolean;
+    refetch: () => void;
   };
-  const { cart: carrito, loading, setCarrito, setLoading } = useMainStore();
-  const { data, error, isLoading } = useApiQuery(
+  const { data, error, isLoading,refetch } = useApiQuery(
     "GET|cart/getCarrito",
     null
   ) as QueryPropsCarrito;
   // let data: Carrito = {productosComprados:[],totalCompra:0};
   // let isLoading = false;
+
+
   useEffect(() => {
     if (data && !carrito) {
       //console.log("holahgola");
-
-      setCarrito(data);
+      let nuevoCarrito = CreateCartFunc(data);
+      setCarrito(nuevoCarrito);
     }
   }, [data]);
   const { mutate: clearCart, data: clearCartData } =
@@ -68,8 +74,8 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
     //setCarrito(clearCartData);
     if (clearCartData) {
       setLoading(false);
-      setCarrito(clearCartData);
-      console.log("entre", clearCartData);
+      let nuevoCarrito = CreateCartFunc(data);
+      setCarrito(nuevoCarrito);
     }
   }, [clearCartData]);
   const useStyles = createStyles((theme) => ({
@@ -124,7 +130,7 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
                   <i className="fa-solid fa-dollar-sign"></i>
                 </Text>
                 <Text className={classes.text}>
-                  {carrito?.totalCompra.toFixed(2)}
+                  {carrito?.totalCompra?.toFixed(2)}
                 </Text>
               </Text>
             </Card>
@@ -173,7 +179,9 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
                   justify={"space-between"}
                   align={"center"}
                 >
-                  <Button onClick={handleClearCart}color="red" >Confirmar</Button>
+                  <Button onClick={handleClearCart} color="red">
+                    Confirmar
+                  </Button>
                   <Button onClick={close}>Cancelar</Button>
                 </Flex>
               </Menu.Dropdown>
@@ -195,3 +203,4 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
 };
 
 export default Cart;
+

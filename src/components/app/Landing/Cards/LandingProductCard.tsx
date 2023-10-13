@@ -22,6 +22,7 @@ import { useEffect } from "react";
 import useMainStore from "@store/mainStore";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
+import { CreateCartFunc } from "@components/app/Cart/CreateCartFunc";
 
 export const LandingCard = ({
   product,
@@ -33,9 +34,9 @@ export const LandingCard = ({
   const { isAuthenticated } = useAuth0();
   const { filter, setFilter } = useCatalogueStore();
   const { mutate: editCart, data: addedData } = useApiMutation(
-    "PUT|cart/addProduct"
+    "PUT|cart/editProduct"
   );
-  const { setCarrito, setLoading } = useMainStore();
+  const { setCarrito, setLoading, cart } = useMainStore();
   const addToCartHandler = async () => {
     if (!isAuthenticated) {
       return;
@@ -43,7 +44,7 @@ export const LandingCard = ({
     try {
       setLoading(true);
       notifications.show({
-        id: "adding-cartItem",
+        id: "adding-cartItem-"+product.id,
         loading: true,
         title: "Añadiendo al carrito",
         message: "Se esta guardando su producto al carrito",
@@ -52,7 +53,7 @@ export const LandingCard = ({
       });
       await addToCart().catch((err) => {
         notifications.update({
-          id: "adding-cartItem",
+          id: "adding-cartItem-"+product.id,
           title: "Ocurrio un error intente nuevamente",
           message: err,
           icon: (
@@ -67,7 +68,7 @@ export const LandingCard = ({
       console.log(error);
 
       notifications.update({
-        id: "adding-cartItem",
+        id: "adding-cartItem-"+product.id,
         title: "Ocurrio un error intente nuevamente",
         message: "",
         icon: (
@@ -83,14 +84,17 @@ export const LandingCard = ({
   //const { mutate: addToCart } = useAddToCart();
   const addToCart = async () => {
     //updateCart({ ...item, quantity: item.quantity + 1 });
-    await editCart({ id: product.id });
+    await editCart({
+      id: product.id,
+    });
   };
   useEffect(() => {
     //console.log("cartEdited", data);
     if (addedData) {
-      setCarrito(addedData);
+      let nuevoCarrito = CreateCartFunc(addedData);
+      setCarrito(nuevoCarrito);
       notifications.update({
-        id: "adding-cartItem",
+        id: "adding-cartItem-"+product.id,
         title: "Se añadio al carrito correctamente",
         message: "",
         icon: (
@@ -241,7 +245,6 @@ export const LandingCard = ({
               </Tooltip>
             </Flex>
           </Flex>
-          
         </Card.Section>
 
         {product.descuento > 0 && (

@@ -72,15 +72,17 @@ export const postPutFetch = async <T extends MutationFunction<any, any>>(
   const { query, data } = params as any;
 
   // Prepare the request options
-
+  console.log(data);
+  
   const { url, method } = prepareFetch(query, data);
   // FormData is used for images upload
-  const formData = data && "formData" in data ? data : null;
+  const formData = data && "formData" in data ? data.formData : null;
+  console.log("formData ",formData);
 
   // Get the token from the global state
   const { token } = useMainStore.getState();
 
-  //console.log(token);
+  console.log(token);
   
   // Prepare the request options
   const options: AxiosRequestConfig = {

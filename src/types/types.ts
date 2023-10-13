@@ -4,8 +4,7 @@ type Insumo = {
   nombre: string;
   stockMinimo: number;
   stockActual: number;
-  
-
+  urlIMG: string;
   estado: string;
   costo: number;
   id: number;
@@ -32,6 +31,7 @@ type Product = {
   insumosIDS: number[];
   id: number;
   precio: number;
+  precioUnitario: number;
   valoracion: number;
   descuento: number;
   insumos: Insumo[];
@@ -51,15 +51,20 @@ type CartItem = {
   productoId: number;
   cantidad: number;
   precioUnitario: number;
+  precioUnitarioSinDescuento: number;
   precioTotalSinDescuento: number;
   descuento: number;
   precioTotal: number;
-  urlIMG: string;
+  urlIMG?: string;
 };
 type Carrito = {
   productosComprados: CartItem[];
   productosAgregados: InsumoCarrito[];
   totalCompra: number;
+};
+type CarritoVanilla = {
+  productosComprados: Product[];
+  productosAdicionales: Insumo[];
 };
 interface Direccion {
   calleNombre: string;
@@ -231,6 +236,7 @@ export type {
   CartItemProps,
   CartProps,
   Carrito,
+  CarritoVanilla,
   OrderProps,
   UserProps,
   Category,

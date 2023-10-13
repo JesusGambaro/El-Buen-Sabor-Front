@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Checkbox,
@@ -17,6 +17,22 @@ import {
   Title,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
+import { useApiQuery } from "@hooks/useQueries";
+import { type } from "os";
+import { Carrito, Direccion } from "types/types";
+
+type Pedidos = {
+  pedidoID: number;
+  carritoDTO: Carrito;
+  direccionPedido: Direccion;
+  esDelivery: boolean;
+  esMercadoPago: boolean;
+  estado: string;
+  total: number;
+  fechaInicio: Date;
+  fechaFinal: Date;
+  fechaInicioString: string;
+};
 
 export const Pedidos = () => {
   const selectStyle = {
@@ -45,16 +61,41 @@ export const Pedidos = () => {
     text: {
       color: dark ? "white" : "black",
     },
-    tableHeadStyle : {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    flexBasis: "20%",
-    height: "2.5rem",
-    border: "none",
-    fontWeight: "bold",
-  }
+    tableHeadStyle: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexBasis: "20%",
+      height: "2.5rem",
+      border: "none",
+      fontWeight: "bold",
+    },
   }));
+
+  const {
+    data: pedidos,
+    error,
+    isLoading,
+  } = useApiQuery("GET|pedidos/getUserPedidos") as {
+    data: Pedidos[];
+    error: boolean;
+    isLoading: boolean;
+  };
+  const [pedidosParsed, setpedidosParsed] = useState<Pedidos[]>([]);
+  useEffect(() => {
+    let pds = pedidos.map((p) => {
+      const dateString = p.fechaInicio;
+      const dateObject = new Date(dateString);
+      p.fechaInicio = dateObject;
+      p.fechaInicioString = p.fechaInicio.toLocaleDateString("es-AR");
+      p.estado = p.estado.replace("_"," ")
+      return p;
+    });
+    console.log(pds);
+    
+    setpedidosParsed(pds);
+  }, [pedidos != null]);
+
   const { classes } = useStyles();
   return (
     <Flex
@@ -76,9 +117,11 @@ export const Pedidos = () => {
           Filtros
         </Title>
         <Flex gap={"1rem"} justify={"flex-start"} align={"flex-end"}>
-          <Select data={["Entregado","Cancelado","Enviando"]} {...selectStyle} placeholder="Buscar por estado..">
-            
-          </Select>
+          <Select
+            data={["Entregado", "Cancelado", "Enviando"]}
+            {...selectStyle}
+            placeholder="Buscar por estado.."
+          ></Select>
           <Input
             {...selectStyle}
             w={"20rem"}
@@ -110,59 +153,86 @@ export const Pedidos = () => {
           <Text className={classes.tableHeadStyle}>Estado</Text>
           <Text className={classes.tableHeadStyle}>Acciones</Text>
         </Flex>
-        <Flex>
-          <Card w={"100%"}>
-            <Flex align={"center"} w={"100%"}>
-              <Text className={classes.tableHeadStyle}>99</Text>
-              <Text className={classes.tableHeadStyle}>24/04/2004</Text>
-              <Text className={classes.tableHeadStyle}>$999.9</Text>
-              <Flex className={classes.tableHeadStyle}>
-                <Box
-                  h={"2.3rem"}
-                  w={"10rem"}
-                  style={{color:"white",borderRadius:"10px",fontWeight:"bold",justifyContent:"center",alignItems:"center"}}
-                  display={"flex"}
-                  bg={"orange"}
-                >
-                  En Delivery
-                </Box>
-              </Flex>
+        <Stack>
+          {pedidos?.map((p) => {
+            return (
+              <Card w={"100%"}>
+                <Flex align={"center"} w={"100%"}>
+                  <Text className={classes.tableHeadStyle}>{p.pedidoID}</Text>
+                  <Text className={classes.tableHeadStyle}>
+                    {/* {(p.fechaInicio.getDay() > 9
+                      ? p.fechaInicio.getDay()
+                      : "0" + p.fechaInicio.getDay()) +
+                      "-" +
+                      (p.fechaInicio.getMonth() > 9
+                        ? p.fechaInicio.getMonth()
+                        : "0" + p.fechaInicio.getMonth()) +
+                      "-" +
+                      p.fechaInicio.getFullYear()} */}
+                    {p.fechaInicioString}
+                  </Text>
+                  <Text className={classes.tableHeadStyle}>{p.total}</Text>
+                  <Flex className={classes.tableHeadStyle}>
+                    <Box
+                      h={"2.3rem"}
+                      w={"10rem"}
+                      style={{
+                        color: "white",
+                        borderRadius: "10px",
+                        fontWeight: "bold",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      display={"flex"}
+                      bg={"orange"}
+                    >
+                      {p.estado}
+                    </Box>
+                  </Flex>
 
-              <Flex
-                className={classes.tableHeadStyle}
-                h={"5rem"}
-                direction="column"
-                justify={"center"}
-                align={"center"}
-                gap={".5rem"}
-              >
-                <Button
-                  w={"12rem"}
-                  h={"2rem"}
-                  color={"orange"}
-                  style={{fontWeight:"bold",borderRadius:"10px",justifyContent:"center", alignItems:"center"}}
-                 
-                  display={"flex"}
-                  
-                 
-                  component={Link}
-                  to="/pedidos/1"
-                >
-                  Ver Detalle
-                </Button>
-                <Button
-                  w={"12rem"}
-                  h={"2rem"}
-                  color={"orange"}
-                   style={{fontWeight:"bold",borderRadius:"10px",justifyContent:"center", alignItems:"center"}}
-                 
-                >
-                  Ver Factura
-                </Button>
-              </Flex>
-            </Flex>
-          </Card>
-        </Flex>
+                  <Flex
+                    className={classes.tableHeadStyle}
+                    h={"5rem"}
+                    direction="column"
+                    justify={"center"}
+                    align={"center"}
+                    gap={".5rem"}
+                  >
+                    <Button
+                      w={"12rem"}
+                      h={"2rem"}
+                      color={"orange"}
+                      style={{
+                        fontWeight: "bold",
+                        borderRadius: "10px",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      display={"flex"}
+                      component={Link}
+                      to="/pedidos/1"
+                    >
+                      Ver Detalle
+                    </Button>
+                    <Button
+                      w={"12rem"}
+                      h={"2rem"}
+                      color={"orange"}
+                      style={{
+                        fontWeight: "bold",
+                        borderRadius: "10px",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      Ver Factura
+                    </Button>
+                  </Flex>
+                </Flex>
+              </Card>
+            );
+          })}
+        </Stack>
       </Stack>
     </Flex>
   );
