@@ -18,8 +18,8 @@ import {
   CartItem as cartItem,
   CartProps,
   CartItem as CartType,
-  Category,
-  Product,
+  Categoria,
+  Producto,
   Carrito,
   InsumoCarrito,
   CarritoVanilla,
@@ -55,6 +55,9 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
       //console.log("holahgola");
       let nuevoCarrito = CreateCartFunc(data);
       setCarrito(nuevoCarrito);
+    } else {
+      console.log(data,error);
+      
     }
   }, [data]);
   const { mutate: clearCart, data: clearCartData } =

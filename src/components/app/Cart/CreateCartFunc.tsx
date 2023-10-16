@@ -2,8 +2,8 @@ import React from "react";
 import {
   CartItem,
   CartProps,
-  Category,
-  Product,
+  Categoria,
+  Producto,
   Carrito,
   InsumoCarrito,
   CarritoVanilla,
@@ -74,7 +74,7 @@ export const CreateCartFunc = (data: CarritoVanilla) => {
   return nuevoCarrito;
 };
 
-export const CartAddProduct = (carrito: Carrito, productoData: Product) => {
+export const CartAddProduct = (carrito: Carrito, productoData: Producto) => {
   let productoFound = carrito.productosComprados.find(
     (x) => x.productoId == productoData.id
   );

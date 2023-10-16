@@ -12,14 +12,14 @@ import {
   getStylesRef,
   Flex,
 } from "@mantine/core";
-import { Category } from "types/types";
+import { Categoria } from "types/types";
 import { IconArrowRight, IconMathGreater } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import useCatalogueStore from "@store/catalogueStore";
-export const CategoryCard = ({ category }: { category: Category }) => {
+export const CategoryCard = ({ category }: { category: Categoria }) => {
   const navigate = useNavigate();
   const { filter, setFilter } = useCatalogueStore();
-  let handleSetFilter = (id_categoria?: number, nombre_like?: string) => {
+  let handleSetFilter = (id_categoria: number| undefined | null, nombre_like?: string) => {
     setFilter({
       ...filter,
       id_categoria,

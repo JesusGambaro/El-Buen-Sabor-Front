@@ -12,7 +12,7 @@ import {
   Loader,
 } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
-import { CartItem, Product } from "types/types";
+import { CartItem, Producto } from "types/types";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import useMainStore from "@store/mainStore";
 import { IconMinus, IconPlus } from "@tabler/icons-react";

@@ -14,7 +14,7 @@ import "./landing.scss";
 import Loader from "@app/Loader/Loader";
 import { LandingCard } from "./Cards/LandingProductCard";
 import { CategoryCard } from "./Cards/CategoryCard";
-import { Product, Category } from "types/types";
+import { Producto, Categoria } from "types/types";
 import useCatalogueStore from "@store/catalogueStore";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { Carousel } from "@mantine/carousel";
@@ -22,19 +22,19 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useEffect } from "react";
 const Landing = () => {
   type QueryProps = {
-    data: Product[];
+    data: Producto[];
     error: any;
     isLoading: boolean;
   };
   type QueryPropsCategorias = {
-    data: Category[];
+    data: Categoria[];
     error: any;
     isLoading: boolean;
   };
   //--Temporal
-  // let products: Product[] = [];
+  // let products: Producto[] = [];
   // let isLoading: boolean = false;
-  // let categories: Category[] = [];
+  // let categories: Categoria[] = [];
   //--
   const { filter, setFilter, setProductos, productos } = useCatalogueStore();
   let isLoadingProds = false;

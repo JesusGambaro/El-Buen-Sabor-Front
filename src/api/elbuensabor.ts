@@ -55,6 +55,8 @@ export const getFetch = async <T extends QueryFunctionContext>(
           response.data.totalPages
         );
         return response.data.content;
+      } else {
+        return response.data;
       }
     }
     // If the response is incorrect, throw an error

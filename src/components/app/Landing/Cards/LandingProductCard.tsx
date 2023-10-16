@@ -17,7 +17,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
 import useCatalogueStore from "@store/catalogueStore";
 import { useApiMutation } from "@hooks/useQueries";
-import { Product } from "types/types";
+import { Producto } from "types/types";
 import { useEffect } from "react";
 import useMainStore from "@store/mainStore";
 import { notifications } from "@mantine/notifications";
@@ -28,7 +28,7 @@ export const LandingCard = ({
   product,
   isThemeBlack,
 }: {
-  product: Product;
+  product: Producto;
   isThemeBlack?: boolean;
 }) => {
   const { isAuthenticated } = useAuth0();

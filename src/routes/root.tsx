@@ -13,6 +13,7 @@ import ProductDetailPage from "@pages/ProductDetailPage";
 import { CartDetailPage } from "@pages/CartDetailPage";
 import { Pedidos } from "@components/app/Pedidos/Pedidos";
 import UserConfigPage from "@pages/AdminPages/UserConfigPage";
+import PedidoDetailPage from "@pages/PedidoDetailPage";
 
 const BrowserRouter = createBrowserRouter([
   {
@@ -51,7 +52,7 @@ const BrowserRouter = createBrowserRouter([
       },
       {
         path: "/pedidos/:id",
-        element: <Pedidos></Pedidos>,
+        element: <PedidoDetailPage></PedidoDetailPage>,
         errorElement: <ErrorPage />,
       },
     ],

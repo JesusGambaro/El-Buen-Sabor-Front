@@ -8,7 +8,7 @@ import {
   Title,
   useMantineColorScheme,
 } from "@mantine/core";
-import { Product } from "types/types";
+import { Producto } from "types/types";
 import { LandingCard } from "../Landing/Cards/LandingProductCard";
 import Loader from "../Loader/Loader";
 import useCatalogueStore from "@store/catalogueStore";
@@ -18,7 +18,7 @@ import { AlertCircle } from "tabler-icons-react";
 const CatalogueProductsContainer = () => {
   const { filter, setFilter, setProductos, productos } = useCatalogueStore();
   type QueryProps = {
-    data: Product[];
+    data: Producto[];
     error: any;
     isLoading: boolean;
   };
@@ -33,7 +33,7 @@ const CatalogueProductsContainer = () => {
       }`,
     null
   ) as QueryProps;
-  // let products: Product[] = [];
+  // let products: Producto[] = [];
   // let isLoading: boolean = false;
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const CatalogueProductsContainer = () => {
     >
       {productos?.length ? (
         <>
-          {productos.map((product: Product) => (
+          {productos.map((product: Producto) => (
             <LandingCard
               key={"landing-card-" + product.id}
               product={product}

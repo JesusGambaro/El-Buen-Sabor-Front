@@ -17,7 +17,7 @@ import {
   Transition,
 } from "@mantine/core";
 import { InputBase, RangeSlider, Title, Input } from "@mantine/core";
-import { Category } from "types/types";
+import { Categoria } from "types/types";
 import { useEffect, useState } from "react";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { CategoriaFilter } from "./LeftFilters/CategoriaFilter";
@@ -27,15 +27,15 @@ import { IconX } from "@tabler/icons-react";
 
 type Props = {
   handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
-  currentIdCategoria?: number;
+  currentIdCategoria?: number | undefined | null;
   opened: boolean;
 };
 type NestedAccordionProps = {
-  categories: Category[];
+  categories: Categoria[];
   isRecursive: boolean;
 };
 type QueryProps = {
-  data: Category[];
+  data: Categoria[];
   error: any;
   isLoading: boolean;
 };
@@ -45,18 +45,26 @@ const CatalogueLeftFilters = (props: Props) => {
     data: baseCategories,
     error,
     isLoading,
-  } = useApiQuery("GET|categoria/all", null) as QueryProps;
+  } = useApiQuery("GET|categoria/allWOPage", null) as QueryProps;
   
-  const { data: categoria } = useApiQuery(
-    "GET|categoria/" + props.currentIdCategoria,
-    null
-  ) as {
-    data: Category;
-    error: any;
-    isLoading: boolean;
-  };
-  //console.log(baseCategories);
-  //let baseCategories: Category[] = [];
+  const [categoria, setcategoria] = useState<Categoria|null|undefined>()
+  //props.currentIdCategoria
+
+  useEffect(() => {
+    
+    if (props.currentIdCategoria) {
+      setcategoria(baseCategories?.find(x=>x.id == props.currentIdCategoria))
+    } else {
+      setcategoria(null)
+    }
+    
+
+    return () => {
+      
+    }
+  }, [baseCategories,props.currentIdCategoria])
+  
+
   const [currentCategoriaName, setCurrentCategoriaName] = useState("");
   const [priceValues, serPriceValues] = useState({
     min: 1,

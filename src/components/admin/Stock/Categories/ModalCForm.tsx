@@ -19,7 +19,7 @@ import { ESTADO_DATA, TIPO_DATA } from "../dataConstants";
 interface ModalProps {
   opened: boolean; // Indicates if the modal is open.
   onClose: () => void; // Function to close the modal.
-  item: Categoria; // Category item data.
+  item: Categoria; // Categoria item data.
 }
 
 /**

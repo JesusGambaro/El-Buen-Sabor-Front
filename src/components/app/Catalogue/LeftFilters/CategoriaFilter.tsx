@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { Tex } from "tabler-icons-react";
-import { Category } from "types/types";
+import { Categoria } from "types/types";
 import { useApiQuery } from "@hooks/useQueries";
 const useStyles = createStyles((theme) => ({
   root: {
@@ -135,13 +135,13 @@ export const CategoriaFilter = (props: Props) => {
     error,
     isLoading,
   } = useApiQuery("GET|categoria/all", null) as {
-    data: Category[];
+    data: Categoria[];
     error: any;
     isLoading: boolean;
   };
   const hasCategorias = Array.isArray(categorias);
 
-  const simpleCategory = (categoryName: string, categoryId: number) => {
+  const simpleCategory = (categoryName: string, categoryId: number ) => {
     return (
       <Box
         display={"flex"}
@@ -161,7 +161,7 @@ export const CategoriaFilter = (props: Props) => {
     );
   };
 
-  const AcordionCategory = (category: Category) => {
+  const AcordionCategory = (category: Categoria) => {
     return (
       <Accordion
         variant="default"

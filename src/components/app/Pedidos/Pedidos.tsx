@@ -15,6 +15,7 @@ import {
   useMantineColorScheme,
   createStyles,
   Title,
+  Mark,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { useApiQuery } from "@hooks/useQueries";
@@ -65,7 +66,7 @@ export const Pedidos = () => {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      flexBasis: "20%",
+      flexBasis: "25%",
       height: "2.5rem",
       border: "none",
       fontWeight: "bold",
@@ -75,7 +76,7 @@ export const Pedidos = () => {
   const {
     data: pedidos,
     error,
-    isLoading,
+    isLoading: isLoadingPedidos,
   } = useApiQuery("GET|pedidos/getUserPedidos") as {
     data: Pedidos[];
     error: boolean;
@@ -83,16 +84,16 @@ export const Pedidos = () => {
   };
   const [pedidosParsed, setpedidosParsed] = useState<Pedidos[]>([]);
   useEffect(() => {
-    let pds = pedidos.map((p) => {
+    let pds = pedidos?.map((p) => {
       const dateString = p.fechaInicio;
       const dateObject = new Date(dateString);
       p.fechaInicio = dateObject;
       p.fechaInicioString = p.fechaInicio.toLocaleDateString("es-AR");
-      p.estado = p.estado.replace("_"," ")
+      p.estado = p.estado.replace("_", " ");
       return p;
     });
-    console.log(pds);
-    
+    //console.log(pds);
+
     setpedidosParsed(pds);
   }, [pedidos != null]);
 
@@ -147,31 +148,26 @@ export const Pedidos = () => {
           </Flex>
         </Flex>
         <Flex w={"100%"} bg={"re"} align={"center"}>
-          <Text className={classes.tableHeadStyle}>Id del pedido</Text>
           <Text className={classes.tableHeadStyle}>Fecha entrega</Text>
           <Text className={classes.tableHeadStyle}>Precio total</Text>
           <Text className={classes.tableHeadStyle}>Estado</Text>
           <Text className={classes.tableHeadStyle}>Acciones</Text>
         </Flex>
         <Stack>
-          {pedidos?.map((p) => {
+          {pedidosParsed?.map((p) => {
             return (
               <Card w={"100%"}>
                 <Flex align={"center"} w={"100%"}>
-                  <Text className={classes.tableHeadStyle}>{p.pedidoID}</Text>
                   <Text className={classes.tableHeadStyle}>
-                    {/* {(p.fechaInicio.getDay() > 9
-                      ? p.fechaInicio.getDay()
-                      : "0" + p.fechaInicio.getDay()) +
-                      "-" +
-                      (p.fechaInicio.getMonth() > 9
-                        ? p.fechaInicio.getMonth()
-                        : "0" + p.fechaInicio.getMonth()) +
-                      "-" +
-                      p.fechaInicio.getFullYear()} */}
                     {p.fechaInicioString}
                   </Text>
-                  <Text className={classes.tableHeadStyle}>{p.total}</Text>
+                  <Text className={classes.tableHeadStyle}>
+                    <Mark bg={"none"} style={{color:"orange"}}>$</Mark>
+                    {p.total.toLocaleString("es-AR", {
+                      style: "currency",
+                      currency: "ARS",
+                    }).replace("$","")}
+                  </Text>
                   <Flex className={classes.tableHeadStyle}>
                     <Box
                       h={"2.3rem"}

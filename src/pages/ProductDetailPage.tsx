@@ -4,7 +4,7 @@ import { useProduct } from "@hooks/useProducts";
 import useCatalogueStore from "@store/catalogueStore";
 import { useEffect, useState } from "react";
 import { useParams, Link, redirect, useNavigate } from "react-router-dom";
-import { Product } from "types/types";
+import { Producto } from "types/types";
 import { useMediaQuery } from "@mantine/hooks";
 import { useAuth0 } from "@auth0/auth0-react";
 import useMainStore from "@store/mainStore";
@@ -101,7 +101,7 @@ const ProductDetailPage = () => {
   const { filter, setFilter } = useCatalogueStore();
   const [currentFilter, setCurrentFilter] = useState(filter);
   type QueryProps = {
-    data: Product;
+    data: Producto;
     error: any;
     isLoading: boolean;
   };

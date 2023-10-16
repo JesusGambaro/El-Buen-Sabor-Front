@@ -1,27 +1,27 @@
 import { create } from "zustand";
 import { mountStoreDevtool } from "simple-zustand-devtools";
-import { type Product } from "types/types";
+import { type Producto } from "types/types";
 
 interface FilterCategory {
-  nombre_like?: string;
-  id_categoria?: number;
+  nombre_like?: string | undefined | null;
+  id_categoria?: number | undefined | null;
 }
 
 interface CatalogueStore {
   filter: FilterCategory;
   setFilter: (filter: FilterCategory) => void;
-  setProductos: (productos: Product[]) => void;
-  productos: Product[];
+  setProductos: (productos: Producto[]) => void;
+  productos: Producto[];
 }
 
 const initialState = {
   filter: {} as FilterCategory,
-  productos: [] as Product[],
+  productos: [] as Producto[],
 };
 
 const useCatalogueStore = create<CatalogueStore>((set, get) => ({
   ...initialState,
-  setFilter: (filter: FilterCategory) => {
+  setFilter: (filter: FilterCategory | undefined | null) => {
     set((state) => ({
       ...state,
       filter: {
@@ -30,7 +30,7 @@ const useCatalogueStore = create<CatalogueStore>((set, get) => ({
       },
     }));
   },
-  setProductos: (productos: Product[]) => {
+  setProductos: (productos: Producto[]) => {
     set((state) => ({
       ...state,
       productos,

@@ -32,7 +32,7 @@ interface Producto {
 }
 
 interface Categoria {
-  id?: number | null;
+  id: number;
   nombre: string;
   categoriaPadre?: Categoria;
   img?: string;
@@ -89,7 +89,12 @@ interface CartItem {
 
 interface Carrito {
   productosComprados: CartItem[];
+  productosAgregados: InsumoCarrito[];
   totalCompra: number;
+}
+interface CarritoVanilla {
+  productosComprados: Producto[];
+  productosAdicionales: Insumo[];
 }
 
 interface Direccion {
@@ -262,6 +267,7 @@ export type {
   CartItemProps,
   CartProps,
   Carrito,
+  CarritoVanilla,
   OrderProps,
   UserProps,
   Categoria,

@@ -16,8 +16,8 @@ import {
   CartItem as cartItem,
   CartProps,
   CartItem as CartType,
-  Category,
-  Product,
+  Categoria,
+  Producto,
   Carrito,
   Direccion,
   CartItem,
@@ -82,7 +82,7 @@ interface responsePrefId {
 export const CartDetailPage = () => {
   const { cart: carrito, setCarrito, token } = useMainStore();
   type QueryPropsProductos = {
-    data: Product[];
+    data: Producto[];
     error: any;
     isLoading: boolean;
   };
@@ -92,10 +92,10 @@ export const CartDetailPage = () => {
   ) as QueryPropsProductos;
   const mobile = useMediaQuery(`(max-width: 700px)`);
   function obtenerElementosAlAzar(
-    array: Product[],
+    array: Producto[],
     cantidad: number
-  ): Product[] {
-    const elementosAlAzar: Product[] = [];
+  ): Producto[] {
+    const elementosAlAzar: Producto[] = [];
 
     // Copia el array original para no modificarlo
 
@@ -117,7 +117,7 @@ export const CartDetailPage = () => {
   const [loading, setLoading] = useState(false);
   const [tipoEntrega, setTipoEntrega] = useState(0);
   const [tipoPago, setTipoPago] = useState(0);
-  const [elementosAlAzar, setelementosAlAzar] = useState([] as Product[]);
+  const [elementosAlAzar, setelementosAlAzar] = useState([] as Producto[]);
   useEffect(() => {
     if (productos && productos.length) {
       setelementosAlAzar(obtenerElementosAlAzar(productos, 5));
@@ -262,7 +262,11 @@ export const CartDetailPage = () => {
         setShowPaymentButton(true);
       } else {
         if (buyCartData.exito) {
-          setCarrito({productosAgregados:[],productosComprados:[],totalCompra:0})
+          setCarrito({
+            productosAgregados: [],
+            productosComprados: [],
+            totalCompra: 0,
+          });
           navigate("/");
         }
       }
@@ -327,40 +331,57 @@ export const CartDetailPage = () => {
                 direction={"column"}
               >
                 <Flex gap={"1rem"} direction={"column"}>
-                  {carrito?.productosComprados?.map((p, i) => {
-                    return (
-                      <CartDetailItemCard
-                        key={i}
-                        producto={p}
-                        editCartRuta="cart/editProduct"
-                        delCompletoRuta="PUT|cart/delProductCompleto"
-                        setLoading={setLoading}
-                        loading={loading}
-                      ></CartDetailItemCard>
-                    );
-                  })}
+                  {carrito?.productosComprados?.length ? (
+                    <>
+                      {carrito?.productosComprados?.map((p, i) => {
+                        return (
+                          <CartDetailItemCard
+                            key={i}
+                            producto={p}
+                            editCartRuta="cart/editProduct"
+                            delCompletoRuta="PUT|cart/delProductCompleto"
+                            setLoading={setLoading}
+                            loading={loading}
+                          ></CartDetailItemCard>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <>
+                      <Title  order={4} className={classes.textInverted}>
+                          No hay productos{" "}
+                          <Link to={"/catálogo"} style={{color:"orange"}}>Click aqui para Agregar</Link>
+                      </Title>
+                    </>
+                  )}
                 </Flex>
-                <Title order={4} className={classes.textInverted}>
-                  Productos Agregados
-                </Title>
-                <Flex gap={"1rem"} direction={"column"}>
-                  {carrito?.productosAgregados?.map((insumo, i) => {
-                    return (
-                      // <CartComplementItem
-                      //   key={i}
-                      //   insumo={insumo}
-                      // ></CartComplementItem>
-                      <CartDetailItemCard
-                        key={i}
-                        producto={insumo}
-                        editCartRuta="cart/editCompleto"
-                        delCompletoRuta="PUT|cart/delComplementoCompleto"
-                        setLoading={setLoading}
-                        loading={loading}
-                      ></CartDetailItemCard>
-                    );
-                  })}
-                </Flex>
+                {carrito?.productosAgregados?.length ? (
+                  <>
+                    <Title order={4} className={classes.textInverted}>
+                      Productos Agregados
+                    </Title>
+                    <Flex gap={"1rem"} direction={"column"}>
+                      {carrito.productosAgregados.map((insumo, i) => {
+                        return (
+                          // <CartComplementItem
+                          //   key={i}
+                          //   insumo={insumo}
+                          // ></CartComplementItem>
+                          <CartDetailItemCard
+                            key={i}
+                            producto={insumo}
+                            editCartRuta="cart/editCompleto"
+                            delCompletoRuta="PUT|cart/delComplementoCompleto"
+                            setLoading={setLoading}
+                            loading={loading}
+                          ></CartDetailItemCard>
+                        );
+                      })}
+                    </Flex>
+                  </>
+                ) : (
+                  <></>
+                )}
               </Flex>
             </Container>
           </Tabs.Panel>
@@ -403,293 +424,301 @@ export const CartDetailPage = () => {
             </Container>
           </Tabs.Panel>
         </Tabs>
-        {!carrito?.productosComprados.length ?<></> : 
-        <Container m={0}>
-          <Flex
-            miw={"5rem"}
-            bg={"white"}
-            p={"1rem"}
-            m={0}
-            style={{
-              flexDirection: "column",
-              borderRadius: "15px",
-              gap: "1rem",
-              flexGrow: 0,
-            }}
-            className={classes.detailContainer}
-          >
-            <Title order={3} className={classes.textInverted}>
-              Resumen del pedido
-            </Title>
-            <Flex gap={"1.5rem"} direction={"column"}>
-              <Flex justify={"space-between"}>
-                <Text className={classes.textInverted}>
-                  Productos{` (${sumatoriaCantidad})`}
-                </Text>
-                <Text
-                  color="black"
-                  w={"5rem"}
-                  display={"flex"}
-                  style={{ justifyContent: "center", alignItems: "end" }}
-                >
-                  <Text color="orange">
-                    <i className="fa-solid fa-dollar-sign"></i>
-                  </Text>
-                  <Text className={classes.textInverted}>
-                    {carrito?.totalCompra}
-                  </Text>
-                </Text>
-              </Flex>
-              <Flex justify={"space-between"} align={"center"}>
-                <Text className={classes.textInverted}>Tipo de entrega</Text>
-                <Flex gap={"1rem"}>
-                  <Stack className={classes.checkContainer} align="center">
-                    <Text
-                      className={classes.textInverted}
-                      weight={"bold"}
-                      size={10}
-                    >
-                      Delivery
-                    </Text>
-                    <ActionIcon
-                      onClick={() => {
-                        setTipoEntrega(0);
-                        setPedido({
-                          ...pedido,
-                          esDelivery: true,
-                          costoEnvio: 100,
-                        });
-                      }}
-                      disabled={!pedido.esMercadoPago}
-                      color="orange"
-                      className={
-                        pedido.esDelivery
-                          ? classes.tipoEntregaCheckActive
-                          : classes.tipoEntregaCheck
-                      }
-                    >
-                      <IconTruckDelivery></IconTruckDelivery>
-                    </ActionIcon>
-                  </Stack>
-                  <Stack className={classes.checkContainer} align="center">
-                    <Text
-                      size={10}
-                      className={classes.textInverted}
-                      weight={"bold"}
-                    >
-                      Local
-                    </Text>
-                    <ActionIcon
-                      onClick={() => {
-                        setTipoEntrega(1);
-                        setPedido({
-                          ...pedido,
-                          esDelivery: false,
-                          costoEnvio: 0,
-                        });
-                      }}
-                      color="orange"
-                      className={
-                        !pedido.esDelivery
-                          ? classes.tipoEntregaCheckActive
-                          : classes.tipoEntregaCheck
-                      }
-                    >
-                      <IconBuildingStore></IconBuildingStore>
-                    </ActionIcon>
-                  </Stack>
-                </Flex>
-              </Flex>
-              <Flex justify={"space-between"} align={"center"}>
-                <Text className={classes.textInverted}>Tipo de pago</Text>
-                <Flex gap={"1rem"}>
-                  <Stack className={classes.checkContainer} align="center">
-                    <Text
-                      size={10}
-                      className={classes.textInverted}
-                      weight={"bold"}
-                    >
-                      Tarjeta
-                    </Text>
-                    <ActionIcon
-                      onClick={() => {
-                        setTipoPago(0);
-                        setPedido({
-                          ...pedido,
-                          esMercadoPago: true,
-                          descuentoPagoEfectivo: 0,
-                        });
-                      }}
-                      color="orange"
-                      className={
-                        tipoPago == 0
-                          ? classes.tipoEntregaCheckActive
-                          : classes.tipoEntregaCheck
-                      }
-                    >
-                      <IconCreditCard></IconCreditCard>
-                    </ActionIcon>
-                  </Stack>
-                  <Stack className={classes.checkContainer} align="center">
-                    <Text
-                      size={10}
-                      className={classes.textInverted}
-                      weight={"bold"}
-                    >
-                      Efectivo
-                    </Text>
-                    <ActionIcon
-                      onClick={() => {
-                        setTipoPago(1);
-                        setPedido({
-                          ...pedido,
-                          esMercadoPago: false,
-                          descuentoPagoEfectivo: 15,
-                        });
-                      }}
-                      disabled={pedido.esDelivery}
-                      color="orange"
-                      className={
-                        tipoPago == 1
-                          ? classes.tipoEntregaCheckActive
-                          : classes.tipoEntregaCheck
-                      }
-                    >
-                      <IconCash></IconCash>
-                    </ActionIcon>
-                  </Stack>
-                </Flex>
-              </Flex>
+        {!carrito?.productosComprados.length ? (
+          <></>
+        ) : (
+          <>
+            <Container m={0}>
               <Flex
-                pos={"relative"}
-                h={pedido?.costoEnvio > 0 ? "min-content" : 0}
-                w={"100%"}
+                miw={"5rem"}
+                bg={"white"}
+                p={"1rem"}
+                m={0}
+                style={{
+                  flexDirection: "column",
+                  borderRadius: "15px",
+                  gap: "1rem",
+                  flexGrow: 0,
+                }}
+                className={classes.detailContainer}
               >
-                <Flex
-                  className={
-                    pedido?.costoEnvio > 0
-                      ? classes.pedidoInfoActive
-                      : classes.pedidoInfo
-                  }
-                  w={"100%"}
-                  justify={"space-between"}
-                >
-                  <Text className={classes.textInverted}>Costo Envio</Text>
+                <Title order={3} className={classes.textInverted}>
+                  Resumen del pedido
+                </Title>
+                <Flex gap={"1.5rem"} direction={"column"}>
+                  <Flex justify={"space-between"}>
+                    <Text className={classes.textInverted}>
+                      Productos{` (${sumatoriaCantidad})`}
+                    </Text>
+                    <Text
+                      color="black"
+                      w={"5rem"}
+                      display={"flex"}
+                      style={{ justifyContent: "center", alignItems: "end" }}
+                    >
+                      <Text color="orange">
+                        <i className="fa-solid fa-dollar-sign"></i>
+                      </Text>
+                      <Text className={classes.textInverted}>
+                        {carrito?.totalCompra}
+                      </Text>
+                    </Text>
+                  </Flex>
+                  <Flex justify={"space-between"} align={"center"}>
+                    <Text className={classes.textInverted}>
+                      Tipo de entrega
+                    </Text>
+                    <Flex gap={"1rem"}>
+                      <Stack className={classes.checkContainer} align="center">
+                        <Text
+                          className={classes.textInverted}
+                          weight={"bold"}
+                          size={10}
+                        >
+                          Delivery
+                        </Text>
+                        <ActionIcon
+                          onClick={() => {
+                            setTipoEntrega(0);
+                            setPedido({
+                              ...pedido,
+                              esDelivery: true,
+                              costoEnvio: 100,
+                            });
+                          }}
+                          disabled={!pedido.esMercadoPago}
+                          color="orange"
+                          className={
+                            pedido.esDelivery
+                              ? classes.tipoEntregaCheckActive
+                              : classes.tipoEntregaCheck
+                          }
+                        >
+                          <IconTruckDelivery></IconTruckDelivery>
+                        </ActionIcon>
+                      </Stack>
+                      <Stack className={classes.checkContainer} align="center">
+                        <Text
+                          size={10}
+                          className={classes.textInverted}
+                          weight={"bold"}
+                        >
+                          Local
+                        </Text>
+                        <ActionIcon
+                          onClick={() => {
+                            setTipoEntrega(1);
+                            setPedido({
+                              ...pedido,
+                              esDelivery: false,
+                              costoEnvio: 0,
+                            });
+                          }}
+                          color="orange"
+                          className={
+                            !pedido.esDelivery
+                              ? classes.tipoEntregaCheckActive
+                              : classes.tipoEntregaCheck
+                          }
+                        >
+                          <IconBuildingStore></IconBuildingStore>
+                        </ActionIcon>
+                      </Stack>
+                    </Flex>
+                  </Flex>
+                  <Flex justify={"space-between"} align={"center"}>
+                    <Text className={classes.textInverted}>Tipo de pago</Text>
+                    <Flex gap={"1rem"}>
+                      <Stack className={classes.checkContainer} align="center">
+                        <Text
+                          size={10}
+                          className={classes.textInverted}
+                          weight={"bold"}
+                        >
+                          Tarjeta
+                        </Text>
+                        <ActionIcon
+                          onClick={() => {
+                            setTipoPago(0);
+                            setPedido({
+                              ...pedido,
+                              esMercadoPago: true,
+                              descuentoPagoEfectivo: 0,
+                            });
+                          }}
+                          color="orange"
+                          className={
+                            tipoPago == 0
+                              ? classes.tipoEntregaCheckActive
+                              : classes.tipoEntregaCheck
+                          }
+                        >
+                          <IconCreditCard></IconCreditCard>
+                        </ActionIcon>
+                      </Stack>
+                      <Stack className={classes.checkContainer} align="center">
+                        <Text
+                          size={10}
+                          className={classes.textInverted}
+                          weight={"bold"}
+                        >
+                          Efectivo
+                        </Text>
+                        <ActionIcon
+                          onClick={() => {
+                            setTipoPago(1);
+                            setPedido({
+                              ...pedido,
+                              esMercadoPago: false,
+                              descuentoPagoEfectivo: 15,
+                            });
+                          }}
+                          disabled={pedido.esDelivery}
+                          color="orange"
+                          className={
+                            tipoPago == 1
+                              ? classes.tipoEntregaCheckActive
+                              : classes.tipoEntregaCheck
+                          }
+                        >
+                          <IconCash></IconCash>
+                        </ActionIcon>
+                      </Stack>
+                    </Flex>
+                  </Flex>
+                  <Flex
+                    pos={"relative"}
+                    h={pedido?.costoEnvio > 0 ? "min-content" : 0}
+                    w={"100%"}
+                  >
+                    <Flex
+                      className={
+                        pedido?.costoEnvio > 0
+                          ? classes.pedidoInfoActive
+                          : classes.pedidoInfo
+                      }
+                      w={"100%"}
+                      justify={"space-between"}
+                    >
+                      <Text className={classes.textInverted}>Costo Envio</Text>
+                      <Text
+                        color="black"
+                        w={"5rem"}
+                        display={"flex"}
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "end",
+                        }}
+                      >
+                        <Text color="orange">
+                          <i className="fa-solid fa-dollar-sign"></i>
+                        </Text>
+                        <Text className={classes.textInverted}>
+                          {pedido?.costoEnvio}
+                        </Text>
+                      </Text>
+                    </Flex>
+                  </Flex>
+
+                  <Flex
+                    pos={"relative"}
+                    h={pedido?.descuentoPagoEfectivo > 0 ? "min-content" : 0}
+                    w={"100%"}
+                  >
+                    <Flex
+                      className={
+                        pedido?.descuentoPagoEfectivo > 0
+                          ? classes.pedidoInfoActive
+                          : classes.pedidoInfo
+                      }
+                      w={"100%"}
+                      justify={"space-between"}
+                    >
+                      <Text className={classes.textInverted}>
+                        Descuento pago efectivo
+                      </Text>
+                      <Text
+                        color="black"
+                        w={"5rem"}
+                        display={"flex"}
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "end",
+                        }}
+                      >
+                        <Text color="orange">%</Text>
+                        <Text className={classes.textInverted}>
+                          {pedido?.descuentoPagoEfectivo}
+                        </Text>
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Flex>
+                <Box w={"100%"} h={"1px"} bg={"black"}></Box>
+                <Flex justify={"space-between"}>
+                  <Text className={classes.textInverted} weight={"bold"}>
+                    Total
+                  </Text>
                   <Text
                     color="black"
                     w={"5rem"}
                     display={"flex"}
-                    style={{
-                      justifyContent: "center",
-                      alignItems: "end",
-                    }}
+                    style={{ justifyContent: "center", alignItems: "end" }}
                   >
                     <Text color="orange">
                       <i className="fa-solid fa-dollar-sign"></i>
                     </Text>
-                    <Text className={classes.textInverted}>
-                      {pedido?.costoEnvio}
-                    </Text>
+                    <Text>{totalCarrito}</Text>
                   </Text>
                 </Flex>
+                {carrito?.productosComprados.length ? (
+                  isLoadingBuyCart ? (
+                    <Flex w={""}>
+                      <Loader></Loader>
+                    </Flex>
+                  ) : showPaymentButton && prefId != "" ? (
+                    <Flex id="wallet_container">
+                      <Wallet initialization={{ preferenceId: prefId }} />
+                    </Flex>
+                  ) : (
+                    <Button
+                      h={"3rem"}
+                      p={".5rem"}
+                      onClick={() => {
+                        if (activeTab == "productos") {
+                          setActiveTab("detalle-pedido");
+                        } else {
+                          handleComprar();
+                        }
+                      }}
+                    >
+                      <Text size={20} weight={"bold"}>
+                        {activeTab == "productos" ? "Continuar" : "Comprar"}
+                      </Text>
+                    </Button>
+                  )
+                ) : (
+                  <></>
+                )}
               </Flex>
-
-              <Flex
-                pos={"relative"}
-                h={pedido?.descuentoPagoEfectivo > 0 ? "min-content" : 0}
-                w={"100%"}
-              >
-                <Flex
-                  className={
-                    pedido?.descuentoPagoEfectivo > 0
-                      ? classes.pedidoInfoActive
-                      : classes.pedidoInfo
-                  }
-                  w={"100%"}
-                  justify={"space-between"}
-                >
-                  <Text className={classes.textInverted}>
-                    Descuento pago efectivo
-                  </Text>
-                  <Text
-                    color="black"
-                    w={"5rem"}
-                    display={"flex"}
-                    style={{
-                      justifyContent: "center",
-                      alignItems: "end",
-                    }}
-                  >
-                    <Text color="orange">%</Text>
-                    <Text className={classes.textInverted}>
-                      {pedido?.descuentoPagoEfectivo}
-                    </Text>
-                  </Text>
-                </Flex>
+            </Container>
+            <Container
+              w={"100%"}
+              style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            >
+              <Title order={3} className={classes.text}>
+                Quiza te puede interesar
+              </Title>
+              <Flex>
+                {insumosAgregados?.map((insumo) => {
+                  return (
+                    <CartComplementItem insumo={insumo}></CartComplementItem>
+                  );
+                })}
               </Flex>
-            </Flex>
-            <Box w={"100%"} h={"1px"} bg={"black"}></Box>
-            <Flex justify={"space-between"}>
-              <Text className={classes.textInverted} weight={"bold"}>
-                Total
-              </Text>
-              <Text
-                color="black"
-                w={"5rem"}
-                display={"flex"}
-                style={{ justifyContent: "center", alignItems: "end" }}
-              >
-                <Text color="orange">
-                  <i className="fa-solid fa-dollar-sign"></i>
-                </Text>
-                <Text>{totalCarrito}</Text>
-              </Text>
-            </Flex>
-            {carrito?.productosComprados.length ? (
-              isLoadingBuyCart ? (
-                <Flex w={""}>
-                  <Loader></Loader>
-                </Flex>
-              ) : showPaymentButton && prefId != "" ? (
-                <Flex id="wallet_container">
-                  <Wallet initialization={{ preferenceId: prefId }} />
-                </Flex>
-              ) : (
-                <Button
-                  h={"3rem"}
-                  p={".5rem"}
-                  onClick={() => {
-                    if (activeTab == "productos") {
-                      setActiveTab("detalle-pedido");
-                    } else {
-                      handleComprar();
-                    }
-                  }}
-                >
-                  <Text size={20} weight={"bold"}>
-                    {activeTab == "productos" ? "Continuar" : "Comprar"}
-                  </Text>
-                </Button>
-              )
-            ) : (
-              <></>
-            )}
-          </Flex>
-        </Container>
-        }
-        <Container
-          w={"100%"}
-          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-        >
-          <Title order={3} className={classes.text}>
-            Quiza te puede interesar
-          </Title>
-          <Flex>
-            {insumosAgregados?.map((insumo) => {
-              return <CartComplementItem insumo={insumo}></CartComplementItem>;
-            })}
-          </Flex>
-        </Container>
+            </Container>
+          </>
+        )}
       </Flex>
     </Flex>
   );
