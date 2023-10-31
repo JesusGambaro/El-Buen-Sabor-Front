@@ -109,10 +109,10 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
         {isLoading || loading ? (
           <Loader />
         ) : carrito &&
-          carrito.productosComprados &&
-          carrito.productosComprados.length > 0 ? (
+          carrito.productosManufacturados &&
+          carrito.productosManufacturados.length > 0 ? (
           <>
-            {carrito.productosComprados?.map(
+            {carrito.productosManufacturados?.map(
               (cartItem: cartItem, i: number) => (
                 <CartItem
                   key={"cart-item-" + i}

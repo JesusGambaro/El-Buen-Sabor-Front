@@ -16,11 +16,13 @@ import {
   createStyles,
   Title,
   Mark,
+  Skeleton,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { useApiQuery } from "@hooks/useQueries";
 import { type } from "os";
 import { Carrito, Direccion } from "types/types";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type Pedidos = {
   pedidoID: number;
@@ -96,7 +98,10 @@ export const Pedidos = () => {
 
     setpedidosParsed(pds);
   }, [pedidos != null]);
-
+  const { user, isAuthenticated } = useAuth0();
+  if (!isAuthenticated) {
+    window.location.href = "/";
+  }
   const { classes } = useStyles();
   return (
     <Flex
@@ -154,80 +159,98 @@ export const Pedidos = () => {
           <Text className={classes.tableHeadStyle}>Acciones</Text>
         </Flex>
         <Stack>
-          {pedidosParsed?.map((p) => {
-            return (
-              <Card w={"100%"}>
-                <Flex align={"center"} w={"100%"}>
-                  <Text className={classes.tableHeadStyle}>
-                    {p.fechaInicioString}
-                  </Text>
-                  <Text className={classes.tableHeadStyle}>
-                    <Mark bg={"none"} style={{color:"orange"}}>$</Mark>
-                    {p.total.toLocaleString("es-AR", {
-                      style: "currency",
-                      currency: "ARS",
-                    }).replace("$","")}
-                  </Text>
-                  <Flex className={classes.tableHeadStyle}>
-                    <Box
-                      h={"2.3rem"}
-                      w={"10rem"}
-                      style={{
-                        color: "white",
-                        borderRadius: "10px",
-                        fontWeight: "bold",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      display={"flex"}
-                      bg={"orange"}
-                    >
-                      {p.estado}
-                    </Box>
-                  </Flex>
+          
+          {isLoadingPedidos ? (
+            <>
+              <Skeleton h={"7rem"} w={"100%"} radius={"5px"} />
+              <Skeleton h={"7rem"} w={"100%"} radius={"5px"} />
+              <Skeleton h={"7rem"}  w={"100%"} radius={"5px"} />
+            </>
+          ) : (
+            pedidosParsed?.map((p) => {
+              return (
+                <Card w={"100%"}>
+                  <Flex align={"center"} w={"100%"}>
+                    <Text className={classes.tableHeadStyle}>
+                      {p.fechaInicioString}
+                    </Text>
+                    <Text className={classes.tableHeadStyle}>
+                      <Mark bg={"none"} style={{ color: "orange" }}>
+                        $
+                      </Mark>
+                      {p.total
+                        .toLocaleString("es-AR", {
+                          style: "currency",
+                          currency: "ARS",
+                        })
+                        .replace("$", "")}
+                    </Text>
+                    <Flex className={classes.tableHeadStyle}>
+                      <Box
+                        h={"2.3rem"}
+                        w={"10rem"}
+                        style={{
+                          color: "white",
+                          borderRadius: "10px",
+                          fontWeight: "bold",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        display={"flex"}
+                        bg={"orange"}
+                      >
+                        {p.estado}
+                      </Box>
+                    </Flex>
 
-                  <Flex
-                    className={classes.tableHeadStyle}
-                    h={"5rem"}
-                    direction="column"
-                    justify={"center"}
-                    align={"center"}
-                    gap={".5rem"}
-                  >
-                    <Button
-                      w={"12rem"}
-                      h={"2rem"}
-                      color={"orange"}
-                      style={{
-                        fontWeight: "bold",
-                        borderRadius: "10px",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      display={"flex"}
-                      component={Link}
-                      to="/pedidos/1"
+                    <Flex
+                      className={classes.tableHeadStyle}
+                      h={"5rem"}
+                      direction="column"
+                      justify={"center"}
+                      align={"center"}
+                      gap={".5rem"}
                     >
-                      Ver Detalle
-                    </Button>
-                    <Button
-                      w={"12rem"}
-                      h={"2rem"}
-                      color={"orange"}
-                      style={{
-                        fontWeight: "bold",
-                        borderRadius: "10px",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      Ver Factura
-                    </Button>
+                      <Button
+                        w={"12rem"}
+                        h={"2rem"}
+                        color={"orange"}
+                        style={{
+                          fontWeight: "bold",
+                          borderRadius: "10px",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        display={"flex"}
+                        component={Link}
+                        onClick={
+                          () => {
+                            window.scrollTo(0, 0);
+                          }
+                        }
+                        to={"/pedidos/" + p.pedidoID}
+                      >
+                        Ver Detalle
+                      </Button>
+                      <Button
+                        w={"12rem"}
+                        h={"2rem"}
+                        color={"orange"}
+                        style={{
+                          fontWeight: "bold",
+                          borderRadius: "10px",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        Ver Factura
+                      </Button>
+                    </Flex>
                   </Flex>
-                </Flex>
-              </Card>
-            );
-          })}
+                </Card>
+              );
+            })
+          )}
         </Stack>
       </Stack>
     </Flex>

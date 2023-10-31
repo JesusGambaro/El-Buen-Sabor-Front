@@ -25,7 +25,7 @@ interface Producto {
   productoCategoria: Categoria;
   insumosIDS: number[];
   id: number;
-  precio: number;
+  precioUnitario: number;
   valoracion: number;
   descuento: number;
   insumos: Insumo[];
@@ -60,7 +60,7 @@ interface InsumoCarrito {
   precioUnitario: number;
   costo: number;
   precioTotal: number;
-  id: number;
+  id?: number | null;
   urlIMG?: string;
   urlImg?: string;
 }
@@ -77,18 +77,19 @@ interface MeasureUnit {
   estado: string;
 }
 interface CartItem {
-  producto: string;
+  nombre: string;
   productoId: number;
   cantidad: number;
   precioUnitario: number;
+  precioUnitarioSinDescuento: number;
   precioTotalSinDescuento: number;
   descuento: number;
   precioTotal: number;
-  imgURL: string;
+  urlIMG?: string;
 }
 
 interface Carrito {
-  productosComprados: CartItem[];
+  productosManufacturados: CartItem[];
   productosAgregados: InsumoCarrito[];
   totalCompra: number;
 }

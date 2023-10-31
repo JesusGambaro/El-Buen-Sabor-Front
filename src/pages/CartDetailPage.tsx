@@ -198,23 +198,23 @@ export const CartDetailPage = () => {
     estado: "EN_PROCESO",
   });
 
-  // Función para calcular la sumatoria de la propiedad "cantidad" en el arreglo de "productosComprados"
+  // Función para calcular la sumatoria de la propiedad "cantidad" en el arreglo de "productosManufacturados"
   function calcularSumaCantidad() {
-    // Verificamos que el objeto "carrito" no sea nulo y que el arreglo "productosComprados" exista
+    // Verificamos que el objeto "carrito" no sea nulo y que el arreglo "productosManufacturados" exista
     if (
       carrito &&
-      carrito.productosComprados &&
-      carrito.productosComprados.length > 0
+      carrito.productosManufacturados &&
+      carrito.productosManufacturados.length > 0
     ) {
       let sumaCantidad = 0;
-      // Iteramos sobre los objetos dentro del arreglo "productosComprados"
-      for (const producto of carrito.productosComprados) {
+      // Iteramos sobre los objetos dentro del arreglo "productosManufacturados"
+      for (const producto of carrito.productosManufacturados) {
         // Sumamos la propiedad "cantidad" de cada objeto al total
         sumaCantidad += producto.cantidad;
       }
       return sumaCantidad;
     } else {
-      // Si el objeto "carrito" es nulo o no tiene elementos en "productosComprados", devolvemos 0
+      // Si el objeto "carrito" es nulo o no tiene elementos en "productosManufacturados", devolvemos 0
       return 0;
     }
   }
@@ -264,7 +264,7 @@ export const CartDetailPage = () => {
         if (buyCartData.exito) {
           setCarrito({
             productosAgregados: [],
-            productosComprados: [],
+            productosManufacturados: [],
             totalCompra: 0,
           });
           navigate("/");
@@ -331,9 +331,9 @@ export const CartDetailPage = () => {
                 direction={"column"}
               >
                 <Flex gap={"1rem"} direction={"column"}>
-                  {carrito?.productosComprados?.length ? (
+                  {carrito?.productosManufacturados?.length ? (
                     <>
-                      {carrito?.productosComprados?.map((p, i) => {
+                      {carrito?.productosManufacturados?.map((p, i) => {
                         return (
                           <CartDetailItemCard
                             key={i}
@@ -424,7 +424,7 @@ export const CartDetailPage = () => {
             </Container>
           </Tabs.Panel>
         </Tabs>
-        {!carrito?.productosComprados.length ? (
+        {!carrito?.productosManufacturados?.length ? (
           <></>
         ) : (
           <>
@@ -671,7 +671,7 @@ export const CartDetailPage = () => {
                     <Text>{totalCarrito}</Text>
                   </Text>
                 </Flex>
-                {carrito?.productosComprados.length ? (
+                {carrito?.productosManufacturados.length ? (
                   isLoadingBuyCart ? (
                     <Flex w={""}>
                       <Loader></Loader>

@@ -12,7 +12,7 @@ import {
 export const CreateCartFunc = (data: CarritoVanilla) => {
   let nuevoCarrito: Carrito = {
     productosAgregados: [],
-    productosComprados: [],
+    productosManufacturados: [],
     totalCompra: 0,
   };
   let productosComprados: CartItem[] = [];
@@ -62,20 +62,19 @@ export const CreateCartFunc = (data: CarritoVanilla) => {
         id: pAdicional.id,
         nombre: pAdicional.nombre,
         precioUnitario: pAdicional.costo,
-        urlIMG: pAdicional.urlIMG,
+        urlIMG: pAdicional.imagen,
       };
       nuevoCarrito.totalCompra += nuevoProducto.precioUnitario;
       productosAgregados = [...productosAgregados, nuevoProducto];
     }
   });
-  nuevoCarrito.productosComprados = productosComprados;
+  nuevoCarrito.productosManufacturados = productosComprados;
   nuevoCarrito.productosAgregados = productosAgregados;
-  console.log(productosComprados);
   return nuevoCarrito;
 };
 
 export const CartAddProduct = (carrito: Carrito, productoData: Producto) => {
-  let productoFound = carrito.productosComprados.find(
+  let productoFound = carrito.productosManufacturados.find(
     (x) => x.productoId == productoData.id
   );
 
@@ -103,7 +102,7 @@ export const CartAddProduct = (carrito: Carrito, productoData: Producto) => {
       urlIMG: productoData.imgURL,
     };
     carrito.totalCompra += valorCalculado;
-    carrito.productosComprados = [...carrito.productosComprados, nuevoProducto];
+    carrito.productosManufacturados = [...carrito.productosManufacturados, nuevoProducto];
   }
   return carrito;
 };
@@ -112,7 +111,7 @@ export const CartEditItemProduct = (
   productID: number,
   agregar: boolean
 ) => {
-  let productoFound = carrito.productosComprados.find(
+  let productoFound = carrito.productosManufacturados.find(
     (x) => x.productoId == productID
   );
 
@@ -122,11 +121,10 @@ export const CartEditItemProduct = (
     } else {
       productoFound.cantidad--;
       if (productoFound.cantidad <= 0) {
-        carrito.productosComprados = carrito.productosComprados.filter(
+        carrito.productosManufacturados = carrito.productosManufacturados.filter(
           (x) => x.productoId != productoFound?.productoId
         );
       }
-      console.log(carrito);
       
       return carrito;
     }
