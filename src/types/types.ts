@@ -26,6 +26,7 @@ interface Producto {
   insumosIDS: number[];
   id: number;
   precioUnitario: number;
+  precio: number;
   valoracion: number;
   descuento: number;
   insumos: Insumo[];

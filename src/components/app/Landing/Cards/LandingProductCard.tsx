@@ -187,7 +187,7 @@ export const LandingCard = ({
                 color={isThemeBlack ? "white" : "black"}
                 strikethrough={product.descuento > 0}
               >
-                {product.precioUnitario}
+                {product.precio}
               </Text>
               {product.descuento > 0 && (
                 <>
@@ -198,7 +198,7 @@ export const LandingCard = ({
                     <i className="fa-solid fa-dollar-sign"></i>
                   </Text>
                   <Text color={isThemeBlack ? "white" : "black"}>
-                    {discountValue(product.precioUnitario, product.descuento)}
+                    {discountValue(product.precio, product.descuento)}
                   </Text>
                 </>
               )}
