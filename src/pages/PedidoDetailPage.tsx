@@ -13,10 +13,11 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Line, Tex } from "tabler-icons-react";
 import { Carrito, Direccion } from "types/types";
 import "./GeneralStyles.scss";
+import useMainStore from "@store/mainStore";
 type Pedidos = {
   pedidoID: number;
   carritoDTO: Carrito;
@@ -32,7 +33,8 @@ type Pedidos = {
   fechaInicioString: string;
 };
 const PedidoDetailPage = () => {
-  useMantineColorScheme;
+  const { isMobile } = useMainStore();
+
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
   const { id } = useParams<{ id: string }>();
@@ -81,6 +83,16 @@ const PedidoDetailPage = () => {
       width: "100%",
       minHeight: "6rem",
     },
+    productCard: {
+      width: isMobile ? "20rem" : "30rem",
+      display: "flex",
+      borderRadius: "15px",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: "1rem",
+      overflow: "visible",
+      height: "6rem",
+    },
     detalleCard: {
       width: "100%",
       height: "3rem",
@@ -110,17 +122,13 @@ const PedidoDetailPage = () => {
           text: pedido?.fechaInicio.split("T")[0],
           faIconClassName: "fa-solid fa-calendar-days",
         },
-        {
-          label: "Estado del pedido",
-          text: pedido?.estado.replace("_", " "),
-          faIconClassName: "fa-solid fa-bag-shopping",
-        },
       ]
     : [];
+  console.log(isMobile);
+
   return (
     <Flex
-      maw="container.2xl"
-      miw={"100vh"}
+      miw={"100%"}
       display="flex"
       direction="column"
       c="start"
@@ -133,112 +141,140 @@ const PedidoDetailPage = () => {
         Detalle Pedido
       </Title>
       {pedido ? (
-        <>
+        <Flex justify={"center"} gap={"2rem"} w={"100%"} wrap={"wrap"}>
+          <Flex
+            gap={"1rem"}
+            style={{ flexBasis: "30rem" }}
+            align={isMobile ? "center" : "flex-start"}
+            direction="column"
+          >
+            <Title color={dark ? "white" : "black"} order={1} mb="2rem">
+              Productos
+            </Title>
+            <Flex
+              h={"27rem"}
+              pr={"0.5rem"}
+              style={{ overflowY: "scroll" }}
+              direction="column"
+              gap={"1rem"}
+            >
+              {pedido.carritoDTO?.productosManufacturados?.map((producto) => {
+                return (
+                  <Card className={classes.productCard} withBorder>
+                    <Image
+                      src={producto.urlIMG}
+                      width={60}
+                      alt="imagen producto"
+                    />
+                    <Link to={"/product/" + producto.productoId}>
+                      <Text
+                        style={{
+                          textOverflow: "ellipsis",
+                          whiteSpace: isMobile ? "nowrap" : "break-spaces",
+                          overflow: "hidden",
+                        }}
+                        w={isMobile ? "5rem" : "15rem"}
+                      >
+                        {producto.nombre}
+                      </Text>
+                    </Link>
+
+                    <Stack
+                      w={"10rem"}
+                      spacing={3}
+                      justify="center"
+                      align="center"
+                    >
+                      {/* descuento */}
+                      {producto.descuento > 0 && (
+                        <Text
+                          display={"flex"}
+                          w={"5rem"}
+                          size={10}
+                          style={{
+                            gap: "0.5rem",
+                            justifyContent: "center",
+                            alignItems: "end",
+                          }}
+                        >
+                          <Text color="orange">-{10}%</Text>
+                          <Text
+                            display={"flex"}
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text color="orange">
+                              <i className="fa-solid fa-dollar-sign"></i>
+                            </Text>
+                            <Text strikethrough>
+                              {/* Total */}
+                              {producto.precioTotalSinDescuento}
+                            </Text>
+                          </Text>
+                        </Text>
+                      )}
+
+                      <Text
+                        w={"5rem"}
+                        display={"flex"}
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "end",
+                        }}
+                      >
+                        <Text color="orange">
+                          <i className="fa-solid fa-dollar-sign"></i>
+                        </Text>
+                        <Text>{producto.precioTotal}</Text>
+                      </Text>
+                      <Flex
+                        direction="row"
+                        bg={"orange"}
+                        justify={"center"}
+                        align={"center"}
+                        gap={5}
+                        w={"5rem"}
+                        style={{ borderRadius: "5px", padding: "0.1rem" }}
+                      >
+                        <Text color="white">{producto.cantidad}</Text>
+                      </Flex>
+                    </Stack>
+                  </Card>
+                );
+              })}
+            </Flex>
+          </Flex>
           <Accordion
-            w={"35rem"}
+            style={{ flexBasis: "35rem", gap: "2rem" }}
             color="black"
             variant="contained"
             transitionDuration={500}
             p={0}
-            defaultValue={"Productos"}
+            defaultValue={"DetallesPedido"}
           >
-            <Accordion.Item value={"Productos"}>
-              <Accordion.Control className={classes.control}>
-                Productos
-              </Accordion.Control>
-              <Accordion.Panel bg={"#fd7e14"}>
-                <Flex className={classes.panel}>
-                  {pedido.carritoDTO?.productosManufacturados?.map(
-                    (producto) => {
-                      return (
-                        <Card
-                          w={"100%"}
-                          h={"5.5rem"}
-                          withBorder
-                          style={{
-                            display: "flex",
-                            borderRadius: "15px",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            gap: "1rem",
-                            overflow: "visible",
-                          }}
-                        >
-                          <Image
-                            src={producto.urlIMG}
-                            width={60}
-                            alt="imagen producto"
-                          />
-                          <Text>{producto.nombre}</Text>
-                          <Stack
-                            w={"10rem"}
-                            spacing={3}
-                            justify="center"
-                            align="center"
-                          >
-                            {/* descuento */}
-                            {producto.descuento > 0 && (
-                              <Text
-                                display={"flex"}
-                                w={"5rem"}
-                                size={10}
-                                style={{
-                                  gap: "0.5rem",
-                                  justifyContent: "center",
-                                  alignItems: "end",
-                                }}
-                              >
-                                <Text color="orange">-{10}%</Text>
-                                <Text
-                                  display={"flex"}
-                                  style={{
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <Text color="orange">
-                                    <i className="fa-solid fa-dollar-sign"></i>
-                                  </Text>
-                                  <Text strikethrough>
-                                    {/* Total */}
-                                    {producto.precioTotalSinDescuento}
-                                  </Text>
-                                </Text>
-                              </Text>
-                            )}
-
-                            <Text
-                              w={"5rem"}
-                              display={"flex"}
-                              style={{
-                                justifyContent: "center",
-                                alignItems: "end",
-                              }}
-                            >
-                              <Text color="orange">
-                                <i className="fa-solid fa-dollar-sign"></i>
-                              </Text>
-                              <Text>{producto.precioTotal}</Text>
-                            </Text>
-                            <Flex
-                              direction="row"
-                              bg={"orange"}
-                              justify={"center"}
-                              align={"center"}
-                              gap={5}
-                              w={"5rem"}
-                              style={{ borderRadius: "5px", padding: "0.1rem" }}
-                            >
-                              <Text color="white">{producto.cantidad}</Text>
-                            </Flex>
-                          </Stack>
-                        </Card>
-                      );
-                    }
-                  )}
+            <Title color={dark ? "white" : "black"} order={1} mb="3rem">
+              Detalle
+            </Title>
+            <Flex mb={"1rem"} w={"100%"} gap={"2rem"} justify={"center"}>
+              <Card w={"10rem"} className={classes.detalleCard}>
+                <i className={"fa-solid fa-bag-shopping"}></i>
+                <Flex direction={"column"} justify={"center"}>
+                  <Text size={"10px"} weight={"normal"}>
+                    {"Estado del pedido"}
+                  </Text>
+                  <Text size={"15px"} weight={"bold"}>
+                    {pedido?.estado.replace("_", " ")}
+                  </Text>
                 </Flex>
-              </Accordion.Panel>
-            </Accordion.Item>
+              </Card>
+              <Card w={"10rem"} className={classes.detalleCard} style={{justifyContent:"center"}} bg={"orange"} >
+                <Text size={"20px"} weight={"bold"} color="white">
+                    Ver Factura
+                  </Text>
+              </Card>
+            </Flex>
             <Accordion.Item value={"DetallesPedido"}>
               <Accordion.Control className={classes.control}>
                 Detalles del pedido
@@ -331,7 +367,7 @@ const PedidoDetailPage = () => {
               </Flex>
             </Card>
           </Accordion>
-        </>
+        </Flex>
       ) : (
         <></>
       )}

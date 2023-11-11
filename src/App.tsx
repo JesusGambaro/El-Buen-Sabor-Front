@@ -6,9 +6,10 @@ import {
   Container,
   MantineProvider,
 } from "@mantine/core";
-import { useHotkeys, useLocalStorage } from "@mantine/hooks";
+import { useHotkeys, useLocalStorage, useMediaQuery } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
-import { type JSX } from "react";
+import { useEffect, type JSX } from "react";
+import useMainStore from "@store/mainStore";
 
 function App(): JSX.Element {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -28,7 +29,13 @@ function App(): JSX.Element {
       },
     ],
   ]);
-
+  const { setIsMobile} = useMainStore();
+  const matches = useMediaQuery('(max-width: 700px)');
+  
+  useEffect(() => {
+    setIsMobile(matches);
+  }, [matches])
+  
   return (
     <ColorSchemeProvider
       colorScheme={colorScheme}
