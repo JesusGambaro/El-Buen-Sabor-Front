@@ -43,7 +43,7 @@ interface Categoria {
 }
 
 interface Insumo {
-  id?: number | null;
+  id: number;
   nombre: string;
   imagen: string;
   stock_minimo: number;
@@ -61,7 +61,7 @@ interface InsumoCarrito {
   precioUnitario: number;
   costo: number;
   precioTotal: number;
-  id?: number | null;
+  id: number;
   urlIMG?: string;
   urlImg?: string;
 }

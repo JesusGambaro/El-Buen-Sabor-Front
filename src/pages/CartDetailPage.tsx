@@ -74,7 +74,13 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import axios from "axios";
-import { CreateCartFunc } from "@components/app/Cart/CreateCartFunc";
+import {
+  CartDeleteItem,
+  CartEditItemProduct,
+  CreateCartFunc,
+  CreateItemComplementoCarrito,
+} from "@hooks/CarritoFunc";
+import { GuardarEnLocalStorage } from "@hooks/LocalStorageFunc";
 interface responsePrefId {
   preferenceId: string;
 }
@@ -251,7 +257,20 @@ export const CartDetailPage = () => {
     if (pedido.esMercadoPago) {
       initMercadoPago("TEST-50126389-bcb6-4e53-a669-c8620ea69726");
     }
-    buyCart(pedido);
+    const formData = new FormData();
+    formData.append(
+      "pedido",
+      new Blob([JSON.stringify(pedido)], {
+        type: "application/json",
+      })
+    );
+    formData.append(
+      "carrito",
+      new Blob([JSON.stringify(carrito)], {
+        type: "application/json",
+      })
+    );
+    buyCart(formData);
   };
   const navigate = useNavigate();
   useEffect(() => {
@@ -338,19 +357,19 @@ export const CartDetailPage = () => {
                           <CartDetailItemCard
                             key={i}
                             producto={p}
-                            editCartRuta="cart/editProduct"
-                            delCompletoRuta="PUT|cart/delProductCompleto"
-                            setLoading={setLoading}
                             loading={loading}
+                            cart={carrito}
                           ></CartDetailItemCard>
                         );
                       })}
                     </>
                   ) : (
                     <>
-                      <Title  order={4} className={classes.textInverted}>
-                          No hay productos{" "}
-                          <Link to={"/catálogo"} style={{color:"orange"}}>Click aqui para Agregar</Link>
+                      <Title order={4} className={classes.textInverted}>
+                        No hay productos{" "}
+                        <Link to={"/catálogo"} style={{ color: "orange" }}>
+                          Click aqui para Agregar
+                        </Link>
                       </Title>
                     </>
                   )}
@@ -370,10 +389,8 @@ export const CartDetailPage = () => {
                           <CartDetailItemCard
                             key={i}
                             producto={insumo}
-                            editCartRuta="cart/editCompleto"
-                            delCompletoRuta="PUT|cart/delComplementoCompleto"
-                            setLoading={setLoading}
                             loading={loading}
+                            cart={carrito}
                           ></CartDetailItemCard>
                         );
                       })}
@@ -725,6 +742,7 @@ export const CartDetailPage = () => {
 };
 
 const CartComplementItem = ({ insumo }: { insumo: InsumoCarrito }) => {
+  const { setCarrito, setLoading, cart } = useMainStore();
   const {
     mutate: addProduct,
     data: addedData,
@@ -739,16 +757,25 @@ const CartComplementItem = ({ insumo }: { insumo: InsumoCarrito }) => {
     //delProducto({ id: producto.productoId });
   };
   const handleAddItem = () => {
-    //addProduct({ id: producto.productoId });
-  };
-  const { setCarrito, setLoading } = useMainStore();
-  useEffect(() => {
-    if (addedData) {
-      //setCarrito(addedData);
-    } else if (removedData) {
-      //setCarrito(removedData);
+    if (!cart) return;
+
+    if (cart?.productosAgregados.find((x) => x.id == insumo.id)) {
+      let carrito = CartEditItemProduct(cart, insumo.id, true, false);
+      GuardarEnLocalStorage("Carrito", carrito);
+      setCarrito(carrito);
+    } else {
+      if (!cart) return;
+      let cartCopia = cart;
+      let cartItem = CreateItemComplementoCarrito(insumo);
+      cartCopia.productosAgregados = [
+        ...cartCopia.productosAgregados,
+        cartItem,
+      ];
+      cartCopia.totalCompra += cartItem.precioTotal;
+      setCarrito(cartCopia);
+      GuardarEnLocalStorage("Carrito", cartCopia);
     }
-  }, [addedData, removedData]);
+  };
 
   const useStyles = createStyles((theme) => ({
     buttonCantidad: {
@@ -800,98 +827,15 @@ const CartComplementItem = ({ insumo }: { insumo: InsumoCarrito }) => {
           </Text>
           <Text>{insumo.precioTotal ? insumo.precioTotal : insumo.costo}</Text>
         </Text>
-        {!insumo.costo ? (
-          <Flex
-            direction="row"
-            bg={"orange"}
-            justify={"center"}
-            align={"center"}
-            gap={5}
-            w={"5rem"}
-            style={{ borderRadius: "5px", padding: "0.1rem" }}
-          >
-            {isLoadingAdd || isLoadingDel ? (
-              <Loader color="white" variant="dots" />
-            ) : (
-              <>
-                {insumo?.cantidad == 1 ? (
-                  <Menu
-                    transitionProps={{
-                      transition: "rotate-right",
-                      duration: 150,
-                    }}
-                    withArrow
-                    width={300}
-                    position="bottom-end"
-                    shadow="md"
-                  >
-                    <Menu.Target>
-                      <ActionIcon className={classes.buttonCantidad} size={20}>
-                        <IconMinus color="white"></IconMinus>
-                      </ActionIcon>
-                    </Menu.Target>
-
-                    <Menu.Dropdown w={"100%"}>
-                      <Menu.Label>
-                        <Text align="center">
-                          ¿Esta seguro de eliminar el item del carrito?
-                        </Text>{" "}
-                      </Menu.Label>
-                      <Menu.Item
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                        display={"flex"}
-                        dir="row"
-                      >
-                        <Flex
-                          w={"100%"}
-                          justify={"space-between"}
-                          align={"center"}
-                        >
-                          <Button
-                            onClick={() => {
-                              handleDeleteItem();
-                            }}
-                          >
-                            Confirmar
-                          </Button>
-                          <Button color="red">Cancelar</Button>
-                        </Flex>
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                ) : (
-                  <ActionIcon
-                    onClick={() => {
-                      handleDeleteItem();
-                    }}
-                    className={classes.buttonCantidad}
-                    size={20}
-                  >
-                    <IconMinus color="white"></IconMinus>
-                  </ActionIcon>
-                )}
-
-                <Text color="white">{insumo.cantidad}</Text>
-                <ActionIcon
-                  onClick={() => {
-                    handleAddItem();
-                  }}
-                  className={classes.buttonCantidad}
-                  size={20}
-                >
-                  <IconPlus color="white"></IconPlus>
-                </ActionIcon>
-              </>
-            )}
-          </Flex>
-        ) : (
-          <Button w={"5rem"} color="orange">
-            <Text size={11}>Agregar</Text>{" "}
-          </Button>
-        )}
+        <Button
+          w={"5rem"}
+          color="orange"
+          onClick={() => {
+            handleAddItem();
+          }}
+        >
+          <Text size={11}>Agregar</Text>
+        </Button>
       </Stack>
     </Card>
   );
@@ -899,136 +843,36 @@ const CartComplementItem = ({ insumo }: { insumo: InsumoCarrito }) => {
 
 const CartDetailItemCard = ({
   producto,
-  editCartRuta,
-  delCompletoRuta,
-  setLoading,
   loading,
+  cart,
 }: {
   producto: any;
-  editCartRuta: string;
-  delCompletoRuta: string;
-  setLoading: (val: boolean) => void;
   loading: boolean;
+  cart: Carrito;
 }) => {
   const [delCompleteMenu, setdelCompleteMenu] = useState(false);
-  const [rutaAdicional, setRutaAdicional] = useState("PUT|");
-  const {
-    mutate: editCarrito,
-    data: editCarritoData,
-    isLoading: isLoadingCarrito,
-  } = useApiMutation(rutaAdicional + editCartRuta);
-
-  const {
-    mutate: delProductoCompleto,
-    data: removedDataCompleta,
-    isLoading: isLoadingDelCompleto,
-  } = useApiMutation(delCompletoRuta);
 
   const handleDeleteComplete = async () => {
-    setLoading(true);
-    notifications.cleanQueue();
-    notifications.show({
-      id: "deliting-cartItem",
-      loading: true,
-      title: "Eliminando del carrito",
-      message: "Se esta eliminando su producto del carrito",
-      autoClose: false,
-      withCloseButton: false,
-    });
-    const DelProduct = async () => {
-      return delProductoCompleto({
-        id: producto.productoId ? producto.productoId : producto.id,
-      });
-    };
-    await DelProduct().catch((err) => {
-      notifications.update({
-        id: "deliting-cartItem",
-        title: "Ocurrio un error intente nuevamente",
-        message: err,
-        icon: (
-          <ActionIcon color="white" bg={"red"} radius={"50%"}>
-            <IconX color="white"></IconX>
-          </ActionIcon>
-        ),
-        autoClose: 2000,
-      });
-    });
+    let carrito = CartDeleteItem(
+      cart,
+      producto.productoId ? producto.productoId : producto.id,
+      producto.productoId ? true : false
+    );
+    setCarrito(carrito);
+    GuardarEnLocalStorage("Carrito", carrito);
   };
 
   const handleEditCart = async (agregando: boolean) => {
-    setLoading(true);
-    notifications.clean();
-
-    notifications.show({
-      id: "edit-cartItem",
-      loading: true,
-      title: agregando ? "Añadiendo al carrito" : "Eliminando del carrito",
-      message: agregando
-        ? "Se esta guardando su producto al carrito"
-        : "Se esta eliminando su producto del carrito",
-      autoClose: false,
-      withCloseButton: false,
-    });
-    const EditCart = async () => {
-      return editCarrito({
-        id: producto.productoId ? producto.productoId : producto.id,
-      });
-    };
-    await EditCart()
-      .then(() => {})
-      .catch((err) => {
-        notifications.update({
-          id: "edit-cartItem",
-          title: "Ocurrio un error intente nuevamente",
-          message: err,
-          icon: (
-            <ActionIcon color="white" bg={"red"} radius={"50%"}>
-              <IconX color="white"></IconX>
-            </ActionIcon>
-          ),
-          autoClose: 2000,
-        });
-      });
+    let carrito = CartEditItemProduct(
+      cart,
+      producto.productoId ? producto.productoId : producto.id,
+      agregando,
+      producto.productoId ? true : false
+    );
+    setCarrito(carrito);
+    GuardarEnLocalStorage("Carrito", carrito);
   };
   const { setCarrito } = useMainStore();
-  useEffect(() => {
-    const SetearCarritoEditado = async () => {
-      if (editCarritoData) {
-        let nuevoCarrito = CreateCartFunc(editCarritoData);
-        await setCarrito(nuevoCarrito);
-        setLoading(false);
-        notifications.clean();
-        notifications.show({
-          id: "edit-cartItem",
-          title: "Se edito el carrito correctamente",
-          message: "",
-          icon: (
-            <ActionIcon color="white" bg={"orange"} radius={"50%"}>
-              <IconCheck color="white"></IconCheck>
-            </ActionIcon>
-          ),
-          autoClose: 500,
-        });
-      } else if (removedDataCompleta) {
-        let nuevoCarrito = CreateCartFunc(removedDataCompleta);
-        await setCarrito(nuevoCarrito);
-        setLoading(false);
-        notifications.cleanQueue();
-        notifications.show({
-          id: "deliting-cartItem",
-          title: "Se elimino del carrito correctamente",
-          message: "",
-          icon: (
-            <ActionIcon color="white" bg={"orange"} radius={"50%"}>
-              <IconCheck color="white"></IconCheck>
-            </ActionIcon>
-          ),
-          autoClose: 500,
-        });
-      }
-    };
-    SetearCarritoEditado();
-  }, [editCarritoData, removedDataCompleta]);
 
   const useStyles = createStyles((theme) => ({
     buttonCantidad: {
@@ -1042,10 +886,12 @@ const CartDetailItemCard = ({
       },
     },
     card: {
-      marginTop: "1rem",
-      backgroundColor: "white",
-      boxShadow: "0 0 10px -5px black",
-      overflow: "visible",
+      display: "flex",
+      borderRadius: "15px",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: "1rem",
+      overflow: "visible !important",
     },
   }));
   const { classes } = useStyles();
@@ -1055,19 +901,7 @@ const CartDetailItemCard = ({
       <Skeleton w={"100%"} h={"5.5rem"} radius={"15px"} />
     </>
   ) : (
-    <Card
-      w={"100%"}
-      h={"5.5rem"}
-      withBorder
-      style={{
-        display: "flex",
-        borderRadius: "15px",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "1rem",
-        overflow: "visible",
-      }}
-    >
+    <Card w={"100%"} className={classes.card}>
       <Image src={producto.urlIMG} width={60} alt="imagen producto" />
       <Stack w={"20rem"} justify="center" align="start">
         <Text>{producto.nombre}</Text>
@@ -1178,7 +1012,7 @@ const CartDetailItemCard = ({
               }}
               withArrow
               width={300}
-              position="bottom-end"
+              position="bottom"
               shadow="md"
             >
               <Menu.Target>
@@ -1204,7 +1038,6 @@ const CartDetailItemCard = ({
                   <Flex w={"100%"} justify={"space-between"} align={"center"}>
                     <Button
                       onClick={() => {
-                        setRutaAdicional("DELETE|");
                         handleEditCart(false);
                       }}
                     >
@@ -1218,7 +1051,6 @@ const CartDetailItemCard = ({
           ) : (
             <ActionIcon
               onClick={() => {
-                setRutaAdicional("DELETE|");
                 handleEditCart(false);
               }}
               className={classes.buttonCantidad}
@@ -1231,7 +1063,6 @@ const CartDetailItemCard = ({
           <Text color="white">{producto.cantidad}</Text>
           <ActionIcon
             onClick={() => {
-              setRutaAdicional("PUT|");
               handleEditCart(true);
             }}
             className={classes.buttonCantidad}

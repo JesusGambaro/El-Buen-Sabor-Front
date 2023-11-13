@@ -73,68 +73,108 @@ export const CreateCartFunc = (data: CarritoVanilla) => {
   return nuevoCarrito;
 };
 
-export const CartAddProduct = (carrito: Carrito, productoData: Producto) => {
-  let productoFound = carrito.productosManufacturados.find(
-    (x) => x.productoId == productoData.id
-  );
-
-  if (productoFound) {
-    productoFound.cantidad++;
-    let valorCalculado =
-      productoData.precioUnitario -
-      (productoData.precioUnitario * productoData.descuento) / 100;
-    productoFound.precioTotal += valorCalculado;
-    productoFound.precioTotalSinDescuento += productoData.precioUnitario;
-    carrito.totalCompra += valorCalculado;
+export const CartDeleteItem = (
+  carrito: Carrito,
+  productID: number,
+  esManufacturado: boolean
+) => {
+  let item; 
+  if (esManufacturado) {
+    item = carrito.productosManufacturados.find(x => x.productoId == productID);
+    carrito.productosManufacturados = carrito.productosManufacturados.filter(
+      (x) => x.productoId != productID
+    );
   } else {
-    let valorCalculado =
-      productoData.precioUnitario -
-      (productoData.precioUnitario * productoData.descuento) / 100;
-    let nuevoProducto: CartItem = {
-      cantidad: 1,
-      descuento: productoData.descuento,
-      nombre: productoData.nombre,
-      precioTotal: valorCalculado,
-      precioTotalSinDescuento: productoData.precioUnitario,
-      precioUnitario: valorCalculado,
-      precioUnitarioSinDescuento: productoData.precioUnitario,
-      productoId: productoData.id,
-      urlIMG: productoData.imgURL,
-    };
-    carrito.totalCompra += valorCalculado;
-    carrito.productosManufacturados = [...carrito.productosManufacturados, nuevoProducto];
+    item = carrito.productosAgregados.find(x => x.id == productID);
+    carrito.productosAgregados = carrito.productosAgregados.filter(
+      (x) => x.id != productID
+    );
   }
+  if(item) carrito.totalCompra -= item.precioTotal;
   return carrito;
 };
+
 export const CartEditItemProduct = (
   carrito: Carrito,
   productID: number,
-  agregar: boolean
+  agregar: boolean,
+  esManufacturado: boolean
 ) => {
   let productoFound = carrito.productosManufacturados.find(
     (x) => x.productoId == productID
   );
-
-  if (productoFound) {
+  let complementoFound = carrito.productosAgregados.find(
+    (x) => x.id == productID
+  );
+  if (productoFound && esManufacturado) {
+    carrito.totalCompra -= productoFound.precioTotal;
     if (agregar) {
       productoFound.cantidad++;
     } else {
       productoFound.cantidad--;
       if (productoFound.cantidad <= 0) {
-        carrito.productosManufacturados = carrito.productosManufacturados.filter(
-          (x) => x.productoId != productoFound?.productoId
-        );
+        carrito.productosManufacturados =
+          carrito.productosManufacturados.filter(
+            (x) => x.productoId != productoFound?.productoId
+          );
+        return carrito;
       }
-      
-      return carrito;
     }
 
     let valorCalculado =
       productoFound.precioUnitario -
       (productoFound.precioUnitario * productoFound.descuento) / 100;
-    productoFound.precioTotal += valorCalculado;
-    productoFound.precioTotalSinDescuento += productoFound.precioUnitario;
-    carrito.totalCompra += valorCalculado;
+    productoFound.precioTotal = valorCalculado * productoFound.cantidad;
+    productoFound.precioTotalSinDescuento =
+      productoFound.precioUnitario * productoFound.cantidad;
+    carrito.totalCompra += productoFound.precioTotal;
+  } else if (complementoFound && !esManufacturado) {
+    carrito.totalCompra -= complementoFound.precioTotal;
+    if (agregar) {
+      complementoFound.cantidad++;
+    } else {
+      complementoFound.cantidad--;
+      if (complementoFound.cantidad <= 0) {
+        carrito.productosAgregados = carrito.productosAgregados.filter(
+          (x) => x.id != complementoFound?.id
+        );
+        return carrito;
+      }
+    }
+    complementoFound.precioTotal =
+      complementoFound.precioUnitario * complementoFound.cantidad;
+    carrito.totalCompra += complementoFound.precioTotal;
   }
   return carrito;
+};
+export const CreateItemCarrito = (product: Producto) => {
+  let valorCalculado =
+    product.precio - (product.precio * product.descuento) / 100;
+  let cartItem: CartItem = {
+    cantidad: 1,
+    descuento: product.descuento,
+    nombre: product.nombre,
+    precioTotal: valorCalculado,
+    precioTotalSinDescuento: product.precio,
+    precioUnitario: valorCalculado,
+    precioUnitarioSinDescuento: product.precio,
+    productoId: product.id,
+    urlIMG: product.imgURL,
+  };
+  return cartItem;
+};
+export const CreateItemComplementoCarrito = (
+  productComplemento: InsumoCarrito
+) => {
+  let cartItemComplemento: InsumoCarrito = {
+    cantidad: 1,
+    costo: productComplemento.costo,
+    precioTotal: productComplemento.costo,
+    id: productComplemento.id,
+    nombre: productComplemento.nombre,
+    precioUnitario: productComplemento.costo,
+    urlIMG: productComplemento.urlIMG,
+    urlImg: productComplemento.urlImg,
+  };
+  return cartItemComplemento;
 };

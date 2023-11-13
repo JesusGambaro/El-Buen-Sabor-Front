@@ -22,7 +22,12 @@ import { useEffect } from "react";
 import useMainStore from "@store/mainStore";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import { CreateCartFunc } from "@components/app/Cart/CreateCartFunc";
+import {
+  CartEditItemProduct,
+  CreateCartFunc,
+  CreateItemCarrito,
+} from "@hooks/CarritoFunc";
+import { GuardarEnLocalStorage } from "@hooks/LocalStorageFunc";
 
 export const LandingCard = ({
   product,
@@ -38,37 +43,51 @@ export const LandingCard = ({
   );
   const { setCarrito, setLoading, cart } = useMainStore();
   const addToCartHandler = async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !cart) {
       return;
     }
     try {
-      setLoading(true);
       notifications.show({
-        id: "adding-cartItem-"+product.id,
+        id: "adding-cartItem-" + product.id,
         loading: true,
         title: "Añadiendo al carrito",
         message: "Se esta guardando su producto al carrito",
         autoClose: false,
         withCloseButton: false,
       });
-      await addToCart().catch((err) => {
-        notifications.update({
-          id: "adding-cartItem-"+product.id,
-          title: "Ocurrio un error intente nuevamente",
-          message: err,
-          icon: (
-            <ActionIcon color="white" bg={"red"} radius={"50%"}>
-              <IconX color="white"></IconX>
-            </ActionIcon>
-          ),
-          autoClose: 2000,
-        });
+      
+      if (
+        cart?.productosManufacturados.find((x) => x.productoId == product.id)
+      ) {
+        GuardarEnLocalStorage("Carrito", CartEditItemProduct(cart, product.id, true, true));
+      } else {
+        if (!cart) return;
+        let cartCopia = cart;
+        let cartItem = CreateItemCarrito(product);
+        cartCopia.productosManufacturados = [
+          ...cartCopia.productosManufacturados,
+          cartItem,
+        ];
+        cartCopia.totalCompra += cartItem.precioTotal;
+        setCarrito(cartCopia);
+        GuardarEnLocalStorage("Carrito", cartCopia);
+      }
+      notifications.update({
+        id: "adding-cartItem-" + product.id,
+        title: "Se añadio al carrito correctamente",
+        message: "",
+        icon: (
+          <ActionIcon color="white" bg={"orange"} radius={"50%"}>
+            <IconCheck color="white"></IconCheck>
+          </ActionIcon>
+        ),
+        autoClose: 2000,
       });
     } catch (error) {
       console.log(error);
 
       notifications.update({
-        id: "adding-cartItem-"+product.id,
+        id: "adding-cartItem-" + product.id,
         title: "Ocurrio un error intente nuevamente",
         message: "",
         icon: (
@@ -81,32 +100,6 @@ export const LandingCard = ({
     }
   };
 
-  //const { mutate: addToCart } = useAddToCart();
-  const addToCart = async () => {
-    //updateCart({ ...item, quantity: item.quantity + 1 });
-    await editCart({
-      id: product.id,
-    });
-  };
-  useEffect(() => {
-    //console.log("cartEdited", data);
-    if (addedData) {
-      let nuevoCarrito = CreateCartFunc(addedData);
-      setCarrito(nuevoCarrito);
-      notifications.update({
-        id: "adding-cartItem-"+product.id,
-        title: "Se añadio al carrito correctamente",
-        message: "",
-        icon: (
-          <ActionIcon color="white" bg={"orange"} radius={"50%"}>
-            <IconCheck color="white"></IconCheck>
-          </ActionIcon>
-        ),
-        autoClose: 2000,
-      });
-      setLoading(false);
-    }
-  }, [addedData]);
   const discountValue = (price: number = 0, discount: number) =>
     Math.floor(price - (price * discount) / 100);
   return (

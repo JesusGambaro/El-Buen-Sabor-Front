@@ -29,7 +29,11 @@ import useMainStore from "@store/mainStore";
 import { Await, Link } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { IconAlertCircle } from "@tabler/icons-react";
-import { CreateCartFunc } from "./CreateCartFunc";
+import { CreateCartFunc } from "../../../hooks/CarritoFunc";
+import {
+  GuardarEnLocalStorage,
+  ObtenerDeLocalStorage,
+} from "@hooks/LocalStorageFunc";
 const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
   // const { data: cartItems, isLoading } = useCart() as {
   //   data: CartType[];
@@ -42,45 +46,42 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
     isLoading: boolean;
     refetch: () => void;
   };
-  const { data, error, isLoading,refetch } = useApiQuery(
+  const { data, error, isLoading, refetch } = useApiQuery(
     "GET|cart/getCarrito",
     null
   ) as QueryPropsCarrito;
   // let data: Carrito = {productosComprados:[],totalCompra:0};
   // let isLoading = false;
 
-
   useEffect(() => {
-    if (data && !carrito) {
-      //console.log("holahgola");
-      let nuevoCarrito = CreateCartFunc(data);
-      setCarrito(nuevoCarrito);
-    } else {
-      console.log(data,error);
+    let carritoLocalStorage = ObtenerDeLocalStorage("Carrito");
+    if (carritoLocalStorage) {
+      console.log(carritoLocalStorage);
       
+      setCarrito(carritoLocalStorage);
+    } else {
+      setCarrito({
+        productosAgregados: [],
+        productosManufacturados: [],
+        totalCompra: 0,
+      });
     }
-  }, [data]);
+  }, []);
+
   const { mutate: clearCart, data: clearCartData } =
     useApiMutation("PUT|cart/clearCart");
   const handleClearCart = async () => {
-    //emptyCart();
-    setLoading(true);
-    await ClearCart();
+    setCarrito({
+      productosAgregados: [],
+      productosManufacturados: [],
+      totalCompra: 0,
+    });
+    GuardarEnLocalStorage("Carrito", {
+      productosAgregados: [],
+      productosManufacturados: [],
+      totalCompra: 0,
+    });
   };
-  const ClearCart = async () => {
-    //updateCart({ ...item, quantity: item.quantity + 1 });
-    try {
-      await clearCart(null);
-    } catch (error) {}
-  };
-  useEffect(() => {
-    //setCarrito(clearCartData);
-    if (clearCartData) {
-      setLoading(false);
-      let nuevoCarrito = CreateCartFunc(data);
-      setCarrito(nuevoCarrito);
-    }
-  }, [clearCartData]);
   const useStyles = createStyles((theme) => ({
     text: {
       color: theme.colorScheme !== "dark" ? theme.colors.dark[6] : theme.white,
@@ -106,9 +107,7 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
       bg={"#f9f6f6"}
     >
       <Flex direction={"column"} gap={3} align="center" h="100%" pr={2}>
-        {isLoading || loading ? (
-          <Loader />
-        ) : carrito &&
+        {carrito &&
           carrito.productosManufacturados &&
           carrito.productosManufacturados.length > 0 ? (
           <>
@@ -182,7 +181,13 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
                   justify={"space-between"}
                   align={"center"}
                 >
-                  <Button onClick={handleClearCart} color="red">
+                  <Button
+                    onClick={() => {
+                      close();
+                      handleClearCart();
+                    }}
+                    color="red"
+                  >
                     Confirmar
                   </Button>
                   <Button onClick={close}>Cancelar</Button>
@@ -206,4 +211,3 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
 };
 
 export default Cart;
-

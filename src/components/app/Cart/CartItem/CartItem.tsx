@@ -18,10 +18,9 @@ import useMainStore from "@store/mainStore";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { Tex } from "tabler-icons-react";
 import {
-  CartAddProduct,
   CartEditItemProduct,
-  CreateCartFunc,
-} from "../CreateCartFunc";
+} from "../../../../hooks/CarritoFunc";
+import { GuardarEnLocalStorage } from "@hooks/LocalStorageFunc";
 
 const CartItem = ({
   cartItem,
@@ -43,39 +42,28 @@ const CartItem = ({
     isLoading: isLoadingDel,
   } = useApiMutation("DELETE|cart/editProduct");
 
-  const [isLoading, setisLoading] = useState(false);
-
   const handleDeleteItem = () => {
-    delProducto({ id: cartItem.productoId });
+    //delProducto({ id: cartItem.productoId });
     if (cart) {
-      setCarrito(CartEditItemProduct(cart, cartItem.productoId, false));
+      let carrito = CartEditItemProduct(cart, cartItem.productoId, false, true);
+      setCarrito(carrito);
+      GuardarEnLocalStorage("Carrito", carrito);
     }
   };
 
   const handleAddItem = () => {
     //updateCart({ ...item, quantity: item.quantity + 1 });
-    addProduct({ id: cartItem.productoId });
+    //addProduct({ id: cartItem.productoId });
     if (cart) {
-      setCarrito(CartEditItemProduct(cart, cartItem.productoId, true));
+      let carrito = CartEditItemProduct(cart, cartItem.productoId, true, true);
+      setCarrito(carrito);
+      GuardarEnLocalStorage("Carrito", carrito);
     }
   };
 
   const { setCarrito, cart } = useMainStore();
   const cancelRef = useRef() as any;
-  //const { onOpen: onOpenDeleteItem } = useDisclosure();
-  //const { mutate: removeFromCart } = useRemoveFromCart();
-  //const { mutate: updateCart } = useUpdateCart();
-
-  useEffect(() => {
-    
-    if (cart) {
-      if (addedData) {
-        console.log("addedData: ", addedData);
-      } else if (removedData) {
-        console.log("removedData: ", removedData);
-      }
-    }
-  }, [addedData != null, removedData != null]);
+  
 
   const useStyles = createStyles((theme) => ({
     buttonCantidad: {

@@ -29,7 +29,7 @@ function App(): JSX.Element {
       },
     ],
   ]);
-  const { setIsMobile} = useMainStore();
+  const { setIsMobile,cart} = useMainStore();
   const matches = useMediaQuery('(max-width: 700px)');
   
   useEffect(() => {
