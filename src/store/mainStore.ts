@@ -9,17 +9,20 @@ type MainStore = {
   direcciones?: Direccion[];
   loading: boolean;
   isMobile: boolean;
+  sideBarOpen: boolean;
   setToken: (token: string) => void;
   setCarrito: (cart: Carrito) => void;
   setLoading: (loading: boolean) => void;
   setIsMobile: (loading: boolean) => void;
   setDirecciones: (direcciones: Direccion[]) => void;
+  setSideBarOpen:(sideBarOpen: boolean) => void;
 };
 
 const initialState = {
   token: "",
   loading: false,
   isMobile: false,
+  sideBarOpen: false,
 };
 
 const useMainStore = create<MainStore>((set, get) => ({
@@ -39,6 +42,12 @@ const useMainStore = create<MainStore>((set, get) => ({
     set((state) => ({
       ...state,
       loading,
+    }));
+  },
+  setSideBarOpen:(sideBarOpen: boolean) => {
+    set((state) => ({
+      ...state,
+      sideBarOpen,
     }));
   },
   setDirecciones: (direcciones: Direccion[]) => {

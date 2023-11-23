@@ -64,7 +64,7 @@ const NavBar = () => {
   useEffect(() => {
     setInCartDetail(location.pathname == "/carrito");
   }, [location.pathname]);
-  const { setToken, token } = useMainStore();
+  const { setToken, token, isMobile,setSideBarOpen} = useMainStore();
 
   const navigate = useNavigate();
   const {
@@ -143,7 +143,7 @@ const NavBar = () => {
     badgeAuth: {
       backgroundColor: "#fd7e14",
       color: "white",
-      width: isAuthenticated ? "15rem" : "8rem",
+      width: isAuthenticated ? (isMobile ? "5rem" : "15rem") : "8rem",
       cursor: !isAuthenticated ? "pointer" : "default",
       minHeight: isAuthenticated ? "2.5rem" : "2rem",
       display: "flex",
@@ -158,8 +158,8 @@ const NavBar = () => {
     },
   }));
   const { classes } = useStyles();
+
   return (
-    
     <>
       <Navbar
         bg={dark ? "#181818" : "white"}
@@ -179,7 +179,10 @@ const NavBar = () => {
             color="black"
             bg="transparent"
             onDragStart={(e) => e.preventDefault()}
-            onClick={(e) => e.preventDefault()}
+            onClick={(e) => {
+              if (!isMobile) return;
+              setSideBarOpen(true);
+            }}
           >
             <Image
               maw={"70px"}
@@ -217,7 +220,7 @@ const NavBar = () => {
             }}
           />
         </Flex>
-        <Flex px={"1rem"} align={"center"} gap={20}>
+        <Flex px={"1rem"} align={"center"} gap={10}>
           <Badge
             className={classes.badgeAuth}
             fullWidth={false}
@@ -226,7 +229,6 @@ const NavBar = () => {
                 <Avatar
                   alt="Avatar for badge"
                   size={35}
-                  mr={5}
                   style={{ borderRadius: "50%" }}
                   src={user?.picture}
                 />
@@ -234,7 +236,12 @@ const NavBar = () => {
             }
             rightSection={
               isAuthenticated && (
-                <Menu shadow="md" position="bottom-end" offset={20}>
+                <Menu
+                  shadow="md"
+                  position={"bottom-end"}
+                  offset={20}
+                  
+                >
                   <Menu.Target>
                     <IconChevronDown
                       cursor={"pointer"}
@@ -268,6 +275,27 @@ const NavBar = () => {
                     >
                       Configuración de cuenta
                     </Menu.Item>
+                    {!isMobile ? (
+                      <></>
+                    ) : (
+                      <Menu.Item
+                        onClick={() => toggleColorScheme()}
+                        icon={
+                          <ActionIcon
+                            variant="outline"
+                            color={dark ? "yellow" : "blue"}
+                          >
+                            {dark ? (
+                              <IconSun size="1.1rem" />
+                            ) : (
+                              <IconMoonStars size="1.1rem" />
+                            )}
+                          </ActionIcon>
+                        }
+                      >
+                        Cambiar tema
+                      </Menu.Item>
+                    )}
                     <Menu.Divider />
                     <Menu.Label>Danger zone</Menu.Label>
                     <Menu.Item
@@ -294,16 +322,28 @@ const NavBar = () => {
               }}
               color="white"
             >
-              {isAuthenticated ? trimName(user?.name) : "Iniciar sesión"}
+              {isAuthenticated
+                ? !isMobile
+                  ? trimName(user?.name)
+                  : ""
+                : "Iniciar sesión"}
             </Text>
           </Badge>
-          <ActionIcon
-            variant="outline"
-            color={dark ? "yellow" : "blue"}
-            onClick={() => toggleColorScheme()}
-          >
-            {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
-          </ActionIcon>
+          {isMobile ? (
+            <></>
+          ) : (
+            <ActionIcon
+              variant="outline"
+              color={dark ? "yellow" : "blue"}
+              onClick={() => toggleColorScheme()}
+            >
+              {dark ? (
+                <IconSun size="1.1rem" />
+              ) : (
+                <IconMoonStars size="1.1rem" />
+              )}
+            </ActionIcon>
+          )}
           {!inCartDetail && (
             <ActionIcon
               variant="transparent"

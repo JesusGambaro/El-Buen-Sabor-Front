@@ -19,9 +19,12 @@ import { useDisclosure } from "@mantine/hooks";
 const Catalogue = () => {
   //const { data: categories } = useCategories();
   const { filter, setFilter } = useCatalogueStore();
-  let handleSetFilter = (id_categoria?: number, nombre_like?: string) => {
+  let handleSetFilter = (precioMin: number,precioMax: number,descuento: boolean,id_categoria?: number | null, nombre_like?: string | null,) => {
     setFilter({
       ...filter,
+      precioMin,
+      precioMax,
+      descuento,
       id_categoria,
       nombre_like,
     });
@@ -68,7 +71,8 @@ const Catalogue = () => {
           w={"100%"}
           direction={"row"}
           justify={"flex-start"}
-          
+          pos={"relative"}
+          style={{zIndex:999}}
         >
           <CatalogueLeftFilters
             currentIdCategoria={filter.id_categoria}

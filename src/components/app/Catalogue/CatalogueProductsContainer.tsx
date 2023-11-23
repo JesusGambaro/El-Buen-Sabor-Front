@@ -28,9 +28,11 @@ const CatalogueProductsContainer = () => {
     isLoading,
   } = useApiQuery(
     "GET|producto/search" +
-      `?${filter.id_categoria ? `id=${filter.id_categoria}&` : ""}${
-        filter.nombre_like ? "nombre=" + filter.nombre_like : ""
-      }`,
+      `?idCategoria=${filter.id_categoria ? filter.id_categoria : ""}&` +
+      `nombre=${filter.nombre_like ? filter.nombre_like : ""}&` +
+      `precioMin=${filter.precioMin}&` +
+      `precioMax=${filter.precioMax}&` +
+      `descuento=${filter.descuento}`,
     null
   ) as QueryProps;
   // let products: Producto[] = [];
@@ -54,6 +56,8 @@ const CatalogueProductsContainer = () => {
       justify={"start"}
       align={"top"}
       style={{ transition: "1s ease all" }}
+      pos={"relative"}
+      w={"100%"}
     >
       {productos?.length ? (
         <>
@@ -67,8 +71,7 @@ const CatalogueProductsContainer = () => {
         </>
       ) : (
         <Flex
-          w={"100%"}
-          bg={"orange"}
+          w={"20rem"}
           sx={{ borderRadius: "20px" }}
           h={"5rem"}
           justify={"center"}

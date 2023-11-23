@@ -1,19 +1,79 @@
 import "./sidebar.scss";
-import { Box, Flex, useMantineColorScheme } from "@mantine/core";
+import {
+  Box,
+  Drawer,
+  Flex,
+  Text,
+  Title,
+  useMantineColorScheme,
+} from "@mantine/core";
 import SideIcon from "./SideIcon/SideIcon";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 
 import { SideBarProps } from "types/types";
+import useMainStore from "@store/mainStore";
 
 const SideBar = () => {
   const { isAuthenticated } = useAuth0();
   const mobile = useMediaQuery(`(max-width: 700px)`);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
+  const [opened, { open, close }] = useDisclosure(false);
+  const {sideBarOpen,setSideBarOpen} = useMainStore()
   return mobile ? (
-    <></>
+    <Drawer
+      opened={sideBarOpen}
+      onClose={() => {
+        setSideBarOpen(false);
+      }}
+      size={"50%"}
+      position="left"
+      transitionProps={{
+        transition: "slide-right",
+        duration: 200,
+        timingFunction: "ease-in-out",
+      }}
+      overlayProps={{ opacity: 0.5, blur: 4 }}
+      bg={"#f9f6f6"}
+    >
+      <Flex
+        h="90vh"
+        justify={"center"}
+        align="left"
+        w="100%"
+        direction={"column"}
+        gap={"3rem"}
+      >
+        <Flex gap={"1rem"} align={"center"}>
+          <SideIcon label="Home" />
+          <Title order={5}>Inicio</Title>
+        </Flex>
+        <Flex gap={"1rem"} align={"center"}>
+          <SideIcon label="Catálogo" />
+          <Title order={5}>Catálogo</Title>
+        </Flex>
+
+        {isAuthenticated && (
+          <>
+          
+            <Flex gap={"1rem"} align={"center"}>
+              <SideIcon label="Carrito" />
+              <Title order={5}>Carrito</Title>
+            </Flex>
+            <Flex gap={"1rem"} align={"center"}>
+              <SideIcon label="Configuración" />
+              <Title order={5}>Configuración</Title>
+            </Flex>
+            <Flex gap={"1rem"} align={"center"}>
+              <SideIcon label="Pedidos" />
+              <Title order={5}>Pedidos</Title>
+            </Flex>
+          </>
+        )}
+      </Flex>
+    </Drawer>
   ) : (
     <Flex
       h="calc(100vh - 5.5rem)"
@@ -22,8 +82,8 @@ const SideBar = () => {
       justify="space-between"
       align="center"
       pos="fixed"
-        top="5.5rem"
-        style={{zIndex:99}}
+      top="5.5rem"
+      style={{ zIndex: 99 }}
     >
       <Flex
         h="50%"

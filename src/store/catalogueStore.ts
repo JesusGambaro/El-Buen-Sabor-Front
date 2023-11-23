@@ -5,6 +5,9 @@ import { type Producto } from "types/types";
 interface FilterCategory {
   nombre_like?: string | undefined | null;
   id_categoria?: number | undefined | null;
+  precioMin: number;
+  precioMax: number;
+  descuento: boolean;
 }
 
 interface CatalogueStore {
@@ -15,7 +18,7 @@ interface CatalogueStore {
 }
 
 const initialState = {
-  filter: {} as FilterCategory,
+  filter: { precioMax: 5000, precioMin: 0, descuento: false } as FilterCategory,
   productos: [] as Producto[],
 };
 

@@ -24,9 +24,17 @@ import { CategoriaFilter } from "./LeftFilters/CategoriaFilter";
 import { useDisclosure } from "@mantine/hooks";
 import { number } from "yup";
 import { IconX } from "@tabler/icons-react";
+import useCatalogueStore from "@store/catalogueStore";
+import useMainStore from "@store/mainStore";
 
 type Props = {
-  handleSetFilter: (_id_categoria?: number, _nombre_like?: string) => void;
+  handleSetFilter: (
+    precioMin: number,
+    precioMax: number,
+    descuento: boolean,
+    _id_categoria?: number | null,
+    _nombre_like?: string | null
+  ) => void;
   currentIdCategoria?: number | undefined | null;
   opened: boolean;
 };
@@ -46,30 +54,39 @@ const CatalogueLeftFilters = (props: Props) => {
     error,
     isLoading,
   } = useApiQuery("GET|categoria/allWOPage", null) as QueryProps;
-  
-  const [categoria, setcategoria] = useState<Categoria|null|undefined>()
+
+  const [categoria, setcategoria] = useState<Categoria | null | undefined>();
   //props.currentIdCategoria
 
   useEffect(() => {
-    
     if (props.currentIdCategoria) {
-      setcategoria(baseCategories?.find(x=>x.id == props.currentIdCategoria))
+      setcategoria(
+        baseCategories?.find((x) => x.id == props.currentIdCategoria)
+      );
     } else {
-      setcategoria(null)
+      setcategoria(null);
     }
-    
 
-    return () => {
-      
-    }
-  }, [baseCategories,props.currentIdCategoria])
-  
+    return () => {};
+  }, [baseCategories, props.currentIdCategoria]);
 
   const [currentCategoriaName, setCurrentCategoriaName] = useState("");
   const [priceValues, serPriceValues] = useState({
     min: 1,
     max: 5000,
   });
+
+  useEffect(() => {
+    if (Number.isNaN(priceValues.min) || Number.isNaN(priceValues.max)) return;
+    props.handleSetFilter(
+      priceValues.min,
+      priceValues.max,
+      filter.descuento,
+      filter.id_categoria,
+      filter.nombre_like
+    );
+  }, [priceValues]);
+
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
 
@@ -117,21 +134,26 @@ const CatalogueLeftFilters = (props: Props) => {
     },
   }));
   const { classes: RangeSliderClasses } = RangeSliderStyle();
+  const { filter } = useCatalogueStore();
+  const { isMobile } = useMainStore();
   return (
     <Transition
       mounted={props.opened}
       transition="slide-right"
       duration={200}
       timingFunction="ease"
+      
     >
       {(styles) => (
-        <div style={styles}>
+        <div  style={{...styles,zIndex: isMobile ? 999 : 0}} >
           <Flex
-            style={{ borderRadius: "10px" }}
             direction={"column"}
             p={"1rem"}
             gap={"1rem"}
             w={"15rem"}
+            pos={isMobile ? "fixed" : "unset"}
+            bg={isMobile ? "#b44509" : ""}
+            style={{ borderRadius: "10px"}}
           >
             <Flex mb={"1rem"}>
               {props.currentIdCategoria && categoria ? (
@@ -144,7 +166,7 @@ const CatalogueLeftFilters = (props: Props) => {
                     justify={"space-between"}
                     align={"center"}
                     bg={"orange"}
-                  > 
+                  >
                     <Title color="white" align="left" weight={"500"} order={4}>
                       {categoria?.nombre}
                     </Title>
@@ -160,7 +182,13 @@ const CatalogueLeftFilters = (props: Props) => {
                         transition: "0.5s ease-in-out background",
                       }}
                       onClick={() => {
-                        props.handleSetFilter(undefined);
+                        props.handleSetFilter(
+                          filter.precioMin,
+                          filter.precioMax,
+                          filter.descuento,
+                          null,
+                          filter.nombre_like
+                        );
                       }}
                     >
                       <IconX></IconX>
@@ -183,7 +211,22 @@ const CatalogueLeftFilters = (props: Props) => {
               <Title className={classes.filterTitle + " " + classes.text}>
                 En Oferta
               </Title>
-              <Switch size="md" onLabel="SI" offLabel="NO" />
+              <Switch
+                size="md"
+                onLabel="SI"
+                offLabel="NO"
+                checked={filter.descuento}
+                onChange={(e) => {
+                  
+                  props.handleSetFilter(
+                    filter.precioMin,
+                    filter.precioMax,
+                    e.target.checked,
+                    filter.id_categoria,
+                    filter.nombre_like
+                  );
+                }}
+              />
             </Flex>
             <Flex
               gap={"1rem"}
@@ -217,6 +260,14 @@ const CatalogueLeftFilters = (props: Props) => {
                         min: Number.parseInt(e.target.value),
                       });
                     }}
+                    onBlur={(e) => {
+                      if (e.target.value == "") {
+                        serPriceValues({
+                          ...priceValues,
+                          min: 1,
+                        });
+                      }
+                    }}
                   ></Input>
                 </Stack>
                 <Stack w={"4rem"}>
@@ -236,6 +287,14 @@ const CatalogueLeftFilters = (props: Props) => {
                         ...priceValues,
                         max: Number.parseInt(e.target.value),
                       });
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value == "") {
+                        serPriceValues({
+                          ...priceValues,
+                          max: 5000,
+                        });
+                      }
                     }}
                   ></Input>
                 </Stack>

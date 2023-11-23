@@ -38,16 +38,23 @@ const Landing = () => {
   //--
   const { filter, setFilter, setProductos, productos } = useCatalogueStore();
   let isLoadingProds = false;
+  let url = `GET|producto/search?
+      ${filter.id_categoria ? `idCategoria=${filter.id_categoria}&` : ""}
+      ${filter.nombre_like ? "nombre=" + filter.nombre_like : ""}
+      &precioMin=${filter.precioMin}&precioMax=${filter.precioMax}&descuento=${
+        filter.descuento
+      }
+      `;
+
   const {
     data: products,
     error,
     isLoading,
   } = useApiQuery(
-    "GET|producto/search" +
-      `?${filter.id_categoria ? `id=${filter.id_categoria}&` : ""}${
-        filter.nombre_like ? "nombre=" + filter.nombre_like : ""
-      }`,
-    filter
+    `GET|producto/search?
+      &precioMin=${0}&precioMax=${50000}&descuento=${true}
+      `,
+    null
   ) as QueryProps;
   const { data: categories } = useApiQuery(
     "GET|categoria/all",
@@ -164,12 +171,48 @@ const Landing = () => {
           >
             {isLoading ? (
               <>
-                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
-                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
-                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
-                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
-                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
-                <Skeleton  mt="3rem" bg={"red"} mih={"13rem"} w="10rem" radius={"1rem"} />
+                <Skeleton
+                  mt="3rem"
+                  bg={"red"}
+                  mih={"13rem"}
+                  w="10rem"
+                  radius={"1rem"}
+                />
+                <Skeleton
+                  mt="3rem"
+                  bg={"red"}
+                  mih={"13rem"}
+                  w="10rem"
+                  radius={"1rem"}
+                />
+                <Skeleton
+                  mt="3rem"
+                  bg={"red"}
+                  mih={"13rem"}
+                  w="10rem"
+                  radius={"1rem"}
+                />
+                <Skeleton
+                  mt="3rem"
+                  bg={"red"}
+                  mih={"13rem"}
+                  w="10rem"
+                  radius={"1rem"}
+                />
+                <Skeleton
+                  mt="3rem"
+                  bg={"red"}
+                  mih={"13rem"}
+                  w="10rem"
+                  radius={"1rem"}
+                />
+                <Skeleton
+                  mt="3rem"
+                  bg={"red"}
+                  mih={"13rem"}
+                  w="10rem"
+                  radius={"1rem"}
+                />
               </>
             ) : (
               productos?.map((product) => (

@@ -36,7 +36,7 @@ root.render(
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} position="top-left" />
+        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         <App />
       </QueryClientProvider>
     </Auth0Provider>
