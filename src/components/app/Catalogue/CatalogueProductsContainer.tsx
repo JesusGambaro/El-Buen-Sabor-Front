@@ -14,6 +14,7 @@ import Loader from "../Loader/Loader";
 import useCatalogueStore from "@store/catalogueStore";
 import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { AlertCircle } from "tabler-icons-react";
+import useMainStore from "@store/mainStore";
 
 const CatalogueProductsContainer = () => {
   const { filter, setFilter, setProductos, productos } = useCatalogueStore();
@@ -45,15 +46,14 @@ const CatalogueProductsContainer = () => {
   }, [products]);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-
+  const { isMobile } = useMainStore();
   return isLoading ? (
     <Loader />
   ) : (
     <Flex
       wrap={"wrap"}
       gap={"2rem"}
-      h={"50vh"}
-      justify={"start"}
+      justify={isMobile ? "center" : "start"}
       align={"top"}
       style={{ transition: "1s ease all" }}
       pos={"relative"}
@@ -68,31 +68,45 @@ const CatalogueProductsContainer = () => {
               isThemeBlack={dark}
             />
           ))}
+          {productos.map((product: Producto) => (
+            <LandingCard
+              key={"landing-card-" + product.id}
+              product={product}
+              isThemeBlack={dark}
+            />
+          ))}
+          {productos.map((product: Producto) => (
+            <LandingCard
+              key={"landing-card-" + product.id}
+              product={product}
+              isThemeBlack={dark}
+            />
+          ))}
         </>
       ) : (
         <Flex
           w={"20rem"}
           sx={{ borderRadius: "20px" }}
-          h={"5rem"}
           justify={"center"}
-          align={"center"}
+          align={"flex-start"}
           p={"1rem"}
           gap={"1rem"}
           direction={"column"}
+          h={"6rem"}
         >
           <Flex
-            h={"4rem"}
+            h={"100%"}
             w={"100%"}
             gap={"1rem"}
             justify={"flex-start"}
             align={"center"}
           >
-            <AlertCircle color="white"></AlertCircle>
-            <Title color="white" order={3} weight={500}>
+            <AlertCircle color={dark ? "white" : "black"}></AlertCircle>
+            <Title color={dark ? "white" : "black"} order={3} weight={500}>
               Lo sentimos
             </Title>
           </Flex>
-          <Title color="white" order={4} weight={500}>
+          <Title color={dark ? "white" : "black"} order={4} weight={500}>
             No se encontraron productos
           </Title>
         </Flex>

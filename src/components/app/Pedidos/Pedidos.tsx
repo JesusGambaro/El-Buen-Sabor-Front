@@ -18,7 +18,7 @@ import {
   Mark,
   Skeleton,
 } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useApiQuery } from "@hooks/useQueries";
 import { type } from "os";
 import { Carrito, Direccion } from "types/types";
@@ -79,11 +79,14 @@ export const Pedidos = () => {
     data: pedidos,
     error,
     isLoading: isLoadingPedidos,
+    refetch,
   } = useApiQuery("GET|pedidos/getUserPedidos") as {
     data: Pedidos[];
     error: boolean;
     isLoading: boolean;
+    refetch: () => void;
   };
+
   const [pedidosParsed, setpedidosParsed] = useState<Pedidos[]>([]);
   useEffect(() => {
     let pds = pedidos?.map((p) => {
@@ -99,8 +102,9 @@ export const Pedidos = () => {
     setpedidosParsed(pds);
   }, [pedidos != null]);
   const { user, isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
   if (!isAuthenticated) {
-    window.location.href = "/";
+    navigate("/");
   }
   const { classes } = useStyles();
   return (
@@ -159,12 +163,11 @@ export const Pedidos = () => {
           <Text className={classes.tableHeadStyle}>Acciones</Text>
         </Flex>
         <Stack>
-          
           {isLoadingPedidos ? (
             <>
               <Skeleton h={"7rem"} w={"100%"} radius={"5px"} />
               <Skeleton h={"7rem"} w={"100%"} radius={"5px"} />
-              <Skeleton h={"7rem"}  w={"100%"} radius={"5px"} />
+              <Skeleton h={"7rem"} w={"100%"} radius={"5px"} />
             </>
           ) : (
             pedidosParsed?.map((p) => {
@@ -223,11 +226,9 @@ export const Pedidos = () => {
                         }}
                         display={"flex"}
                         component={Link}
-                        onClick={
-                          () => {
-                            window.scrollTo(0, 0);
-                          }
-                        }
+                        onClick={() => {
+                          window.scrollTo(0, 0);
+                        }}
                         to={"/pedidos/" + p.pedidoID}
                       >
                         Ver Detalle

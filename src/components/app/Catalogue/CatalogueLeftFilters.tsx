@@ -145,7 +145,7 @@ const CatalogueLeftFilters = (props: Props) => {
       
     >
       {(styles) => (
-        <div  style={{...styles,zIndex: isMobile ? 999 : 0}} >
+        <div  style={{...styles,zIndex: isMobile ? 999 : 0,position:isMobile ? "absolute" : "unset"}} >
           <Flex
             direction={"column"}
             p={"1rem"}

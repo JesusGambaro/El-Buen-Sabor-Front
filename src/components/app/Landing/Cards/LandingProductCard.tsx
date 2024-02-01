@@ -102,10 +102,11 @@ export const LandingCard = ({
 
   const discountValue = (price: number = 0, discount: number) =>
     Math.floor(price - (price * discount) / 100);
+  const { isMobile } = useMainStore()
   return (
     <>
       <Card
-        w="10rem"
+        w={isMobile ? "8rem" : "10rem"}
         style={{
           overflow: "visible",
         }}
@@ -132,7 +133,7 @@ export const LandingCard = ({
             to={`/product/${product.id}`}
             style={{
               textDecoration: "none",
-              maxWidth: "6rem",
+              maxWidth: isMobile ? "5rem" : "6rem",
               height: "5rem",
               margin: ".5rem auto",
               zIndex: 2,
@@ -148,7 +149,7 @@ export const LandingCard = ({
             />
           </Link>
           <Flex
-            w="10rem"
+            w={isMobile ? "8rem" : "10rem"}
             style={{
               display: "flex",
               padding: "1rem",
@@ -162,7 +163,7 @@ export const LandingCard = ({
               size=".7rem"
               mt="4"
               p={"0 2rem 0  0"}
-              w="10rem"
+              w={isMobile ? "8rem" : "10rem"}
               style={{
                 textOverflow: "ellipsis",
                 overflow: "hidden",
@@ -196,7 +197,7 @@ export const LandingCard = ({
                 </>
               )}
             </Text>
-            <Flex w={"100%"} justify={"space-between"}>
+            <Flex w={"100%"} gap={"0.2rem"} justify={"space-around"}>
               <Tooltip
                 openDelay={500}
                 transitionProps={{ transition: "skew-up", duration: 300 }}
@@ -210,7 +211,7 @@ export const LandingCard = ({
                   value={product.valoracion}
                   fractions={2}
                   readOnly
-                  size="1rem"
+                  size={isMobile ? ".8rem" : "1rem"}
                 />
               </Tooltip>
 

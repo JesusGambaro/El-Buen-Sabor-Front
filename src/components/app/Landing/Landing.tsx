@@ -20,6 +20,7 @@ import { useApiMutation, useApiQuery } from "@hooks/useQueries";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect } from "react";
+import useMainStore from "@store/mainStore";
 const Landing = () => {
   type QueryProps = {
     data: Producto[];
@@ -65,12 +66,7 @@ const Landing = () => {
       setProductos(products);
     }
   }, [products]);
-  const slides = categories?.map((category) => (
-    <Carousel.Slide key={category.id}>
-      <CategoryCard key={category.id} category={category} />
-    </Carousel.Slide>
-  ));
-  const mobile = useMediaQuery(`(max-width: 700px)`);
+  
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
   const useStyles = createStyles((theme) => ({
@@ -79,10 +75,15 @@ const Landing = () => {
     },
   }));
   const { classes } = useStyles();
+  const { isMobile } = useMainStore();
+  const slides = categories?.map((category) => (
+    <Carousel.Slide key={category.id}>
+      <CategoryCard key={category.id} category={category} />
+    </Carousel.Slide>
+  ));
   return (
     <Flex
-      maw="container.2xl"
-      miw={"100vh"}
+      miw={"100%"}
       display="flex"
       direction="column"
       c="start"
@@ -99,7 +100,7 @@ const Landing = () => {
           Categorías
         </Heading>
         <Carousel
-          slideSize="20%"
+          slideSize="25%"
           maw={"100%"}
           height={60}
           align="start"
@@ -112,30 +113,18 @@ const Landing = () => {
           slidesToScroll={1}
           inViewThreshold={0}
           loop
-          px={"3rem"}
+          px={isMobile ? "1rem" : "3rem"}
           styles={{
-            // indicator: {
-            //   top: "5rem",
-            //   width: rem(12),
-            //   height: rem(4),
-            //   transition: "width 250ms ease",
-            //   background: "orange",
-            //   "&[data-active]": {
-            //     width: rem(40),
-            //   },
-            // },
             control: {
-              // "&[data-inactive]": {
-              //   opacity: 0,
-              //   cursor: "default",
-              // },
               background: "#fd7e14",
               color: "white",
-              width: "2rem",
-              height: "2rem",
+              width:isMobile ? "1rem" : "2rem",
+              height: isMobile ? "1rem" : "2rem",
               boxShadow: "none",
               border: "none",
               marginTop: "-0.55rem",
+              marginLeft: isMobile ? "-1.5rem" : "",
+              marginRight:isMobile ? "-1.5rem" : "",
             },
           }}
         >
@@ -166,7 +155,7 @@ const Landing = () => {
           <Flex
             wrap={"wrap"}
             gap={"2rem"}
-            justify={"flex-start"}
+            justify={isMobile ? "center" :"flex-start"}
             align={"start"}
           >
             {isLoading ? (

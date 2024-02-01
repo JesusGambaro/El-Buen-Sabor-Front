@@ -16,6 +16,7 @@ import { Categoria } from "types/types";
 import { IconArrowRight, IconMathGreater } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import useCatalogueStore from "@store/catalogueStore";
+import useMainStore from "@store/mainStore";
 export const CategoryCard = ({ category }: { category: Categoria }) => {
   const navigate = useNavigate();
   const { filter, setFilter } = useCatalogueStore();
@@ -26,6 +27,7 @@ export const CategoryCard = ({ category }: { category: Categoria }) => {
       nombre_like,
     });
   };
+  const {isMobile} = useMainStore()
   return (
     <Flex
       h={"3rem"}

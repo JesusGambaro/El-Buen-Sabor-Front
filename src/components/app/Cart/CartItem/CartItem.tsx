@@ -79,13 +79,13 @@ const CartItem = ({
     card: {
       marginTop: "1rem",
       backgroundColor: "white",
-      boxShadow: "0 0 10px -5px black",
+      boxShadow: "10px 10px 10px -7px orange",
       overflow: "visible",
     },
   }));
   const { classes } = useStyles();
   return (
-    <Card w={"100%"} p={"1rem"} className={classes.card} dir="row">
+    <Card w={"100%"} p={"1rem"} mb={"2rem"} className={classes.card} dir="row">
       <Flex direction={"row"} gap={10} justify={"flex-start"} align={"center"}>
         <Box bg={"#eeebeb"} style={{ borderRadius: "10px" }}>
           <Image

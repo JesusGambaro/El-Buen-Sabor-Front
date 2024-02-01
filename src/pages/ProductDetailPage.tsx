@@ -21,6 +21,8 @@ import {
   Text,
   Button,
   ActionIcon,
+  Skeleton,
+  Rating,
 } from "@mantine/core";
 
 import { notifications } from "@mantine/notifications";
@@ -31,7 +33,7 @@ const ProductDetailPage = () => {
   const { mutate: editCart, data: addedData } = useApiMutation(
     "PUT|cart/addProduct"
   );
-  const { setCarrito, setLoading } = useMainStore();
+  const { setCarrito, setLoading, isMobile } = useMainStore();
   const addToCartHandler = async () => {
     if (!isAuthenticated) {
       return;
@@ -159,19 +161,49 @@ const ProductDetailPage = () => {
       <Title className={classes.text} order={1} mb="2rem">
         Detalle del producto
       </Title>
-      <Flex gap={"3rem"} justify={"flex-start"} w="100%" wrap={"wrap"} direction={"row"}>
+      <Flex
+        gap={"3rem"}
+        justify={"center"}
+        w="100%"
+        wrap={"wrap"}
+        direction={"row"}
+      >
         <Flex
-          mih={"20rem"}
           gap={"3rem"}
           maw={"40rem"}
           wrap={"wrap"}
           justify={"flex-start"}
-          align={"center"}
+          align={"start"}
+          pos={"relative"}
+          style={{ overflow: "hidden" }}
         >
+          {currentProduct?.descuento > 0 ? (
+            <Box
+              pos={"absolute"}
+              bg={"orange"}
+              px={"3rem"}
+              py={".5rem"}
+              top={20}
+              right={-45}
+              style={{ rotate: "30deg" }}
+            >
+              <Title className={classes.text} order={5}>
+                {currentProduct?.descuento}% DESCUENTO
+              </Title>
+            </Box>
+          ) : (
+            <></>
+          )}
           <Box
-            w={"15rem"}
-            h={"15rem"}
-            style={{ borderRadius: "20px", backgroundColor: "#DF8300" }}
+            w={"20rem"}
+            h={"20rem"}
+            style={{
+              borderRadius: "20px",
+              backgroundColor: "#DF8300",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
             p={"0.5rem"}
           >
             <Image
@@ -181,11 +213,93 @@ const ProductDetailPage = () => {
               src={currentProduct?.imgURL}
             />
           </Box>
-          <Stack mih={"15rem"} align="start" justify="space-between">
-            <Title className={classes.text} order={2} mb="2rem">
-              {currentProduct?.nombre}
-            </Title>
-            <Text>{currentProduct?.descripcion}</Text>
+        </Flex>
+        <Flex
+          gap={"5rem"}
+          maw={"40rem"}
+          wrap={"wrap"}
+          align={"center"}
+          justify={"flex-start"}
+        >
+          <Stack align="start" justify="space-between">
+            {isLoading ? (
+              <Skeleton w={"100%"} h={"2rem"}></Skeleton>
+            ) : (
+              <Title className={classes.text} order={2}>
+                {currentProduct?.nombre}
+              </Title>
+            )}
+            {isLoading ? (
+              <Skeleton w={"100%"} h={"3rem"}></Skeleton>
+            ) : (
+              <Text>{currentProduct?.descripcion}</Text>
+            )}
+            {isLoading ? (
+              <Skeleton w={"100%"} h={"2rem"}></Skeleton>
+            ) : (
+              <Title className={classes.text} order={2}>
+                Ingredientes
+              </Title>
+            )}
+
+            {isLoading ? (
+              <Flex gap={"1rem"} w={"100%"}>
+                <Skeleton
+                  w={"7rem"}
+                  h={"2rem"}
+                  style={{ borderRadius: "10px" }}
+                ></Skeleton>
+                <Skeleton
+                  w={"7rem"}
+                  h={"2rem"}
+                  style={{ borderRadius: "10px" }}
+                ></Skeleton>
+                <Skeleton
+                  w={"7rem"}
+                  h={"2rem"}
+                  style={{ borderRadius: "10px" }}
+                ></Skeleton>
+              </Flex>
+            ) : (
+              <Flex
+                justify={"flex-start"}
+                maw={"30rem"}
+                wrap={"wrap"}
+                gap={"1rem"}
+              >
+                {currentProduct?.insumos?.map((insumoProducto: any) => {
+                  return (
+                    <>
+                      <Box
+                        style={{ borderRadius: "10px" }}
+                        w={"7rem"}
+                        p={".5rem"}
+                        bg={"orange"}
+                      >
+                        <Text
+                          style={{
+                            textOverflow: "ellipsis",
+                            overflow: "hidden",
+                            whiteSpace: "nowrap",
+                          }}
+                          color="white"
+                          size={13}
+                        >
+                          {insumoProducto.insumo.nombre}
+                        </Text>
+                      </Box>
+                    </>
+                  );
+                })}
+              </Flex>
+            )}
+            <Rating
+              color="orange"
+              value={currentProduct?.valoracion}
+              fractions={2}
+              readOnly
+              size="1.2rem"
+            />
             <Flex w={"100%"} align="center" gap={"2rem"}>
               <Text size="md" color="black" display="flex" align="center">
                 <Text color="orange">
@@ -222,35 +336,6 @@ const ProductDetailPage = () => {
               <Button h={"3rem"} color="orange" onClick={addToCartHandler}>
                 Añadir al carrito
               </Button>
-            </Flex>
-          </Stack>
-        </Flex>
-        <Flex
-          gap={"5rem"}
-          maw={"40rem"}
-          mih={"20rem"}
-          wrap={"wrap"}
-          align={"center"}
-          justify={"flex-start"}
-        >
-          <Stack mih={"15rem"} align="start" justify="flex-start">
-            <Title className={classes.text} order={2} mb="2rem">
-              Ingredientes
-            </Title>
-            <Flex w={"100%"} justify={"center"} gap={"1rem"}>
-              {currentProduct?.insumos?.map((insumoProducto: any) => {
-                return (
-                  <>
-                    <Box
-                      style={{ borderRadius: "10px" }}
-                      p={"1rem"}
-                      bg={"orange"}
-                    >
-                      <Text color="white">{insumoProducto.insumo.nombre}</Text>
-                    </Box>
-                  </>
-                );
-              })}
             </Flex>
           </Stack>
         </Flex>

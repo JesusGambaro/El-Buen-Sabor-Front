@@ -103,9 +103,10 @@ const Cart = ({ isOpen, onClose, btnRef }: CartProps) => {
         duration: 200,
         timingFunction: "ease-in-out",
       }}
-      overlayProps={{ opacity: 0.5, blur: 4 }}
-      bg={"#f9f6f6"}
+      overlayProps={{ opacity: 0.5, blur: 5 }}
+      
     >
+      
       <Flex direction={"column"} gap={3} align="center" h="100%" pr={2}>
         {carrito &&
           carrito.productosManufacturados &&

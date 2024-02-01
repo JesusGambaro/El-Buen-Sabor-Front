@@ -170,10 +170,10 @@ const PedidoDetailPage = () => {
                       <Text
                         style={{
                           textOverflow: "ellipsis",
-                          whiteSpace: isMobile ? "nowrap" : "break-spaces",
+                          whiteSpace: "nowrap",
                           overflow: "hidden",
                         }}
-                        w={isMobile ? "5rem" : "15rem"}
+                        w={isMobile ? "5rem" : "10rem"}
                       >
                         {producto.nombre}
                       </Text>
@@ -244,6 +244,63 @@ const PedidoDetailPage = () => {
                   </Card>
                 );
               })}
+              <Title color={dark ? "white" : "black"} order={3} my=".5rem">
+                Productos Adicionales
+              </Title>
+              {pedido.carritoDTO?.productosAgregados?.map((producto) => {
+                return (
+                  <Card className={classes.productCard} withBorder>
+                    <Image
+                      src={producto.urlImg}
+                      width={60}
+                      alt="imagen producto"
+                    />
+                    <Text
+                      style={{
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                      }}
+                      w={isMobile ? "5rem" : "10rem"}
+                    >
+                      {producto.nombre}
+                    </Text>
+
+                    <Stack
+                      w={"10rem"}
+                      spacing={3}
+                      justify="center"
+                      align="center"
+                    >
+                      {/* descuento */}
+                      <Text
+                        w={"5rem"}
+                        display={"flex"}
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "end",
+                        }}
+                      >
+                        <Text color="orange">
+                          <i className="fa-solid fa-dollar-sign"></i>
+                        </Text>
+                        <Text>{producto.precioTotal}</Text>
+                      </Text>
+                      <Flex
+                        direction="row"
+                        bg={"orange"}
+                        justify={"center"}
+                        align={"center"}
+                        gap={5}
+                        w={"5rem"}
+                        style={{ borderRadius: "5px", padding: "0.1rem" }}
+                      >
+                        <Text color="white">{producto.cantidad}</Text>
+                      </Flex>
+                    </Stack>
+                  </Card>
+                );
+              })}
             </Flex>
           </Flex>
           <Accordion
@@ -269,10 +326,15 @@ const PedidoDetailPage = () => {
                   </Text>
                 </Flex>
               </Card>
-              <Card w={"10rem"} className={classes.detalleCard} style={{justifyContent:"center"}} bg={"orange"} >
+              <Card
+                w={"10rem"}
+                className={classes.detalleCard}
+                style={{ justifyContent: "center" }}
+                bg={"orange"}
+              >
                 <Text size={"20px"} weight={"bold"} color="white">
-                    Ver Factura
-                  </Text>
+                  Ver Factura
+                </Text>
               </Card>
             </Flex>
             <Accordion.Item value={"DetallesPedido"}>

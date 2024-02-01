@@ -141,6 +141,7 @@ export const CartDetailPage = () => {
       width: ".5rem",
       height: ".5rem",
       transition: "0.2s ease all",
+      color: "orange",
       "&:hover": {
         scale: "1.3",
         background: "orange",
@@ -274,7 +275,6 @@ export const CartDetailPage = () => {
   };
   const navigate = useNavigate();
   useEffect(() => {
-    console.log("Buy Cart", buyCartData);
     if (buyCartData) {
       if (pedido.esMercadoPago) {
         setPrefId(buyCartData.preferenceId);
@@ -282,15 +282,34 @@ export const CartDetailPage = () => {
       } else {
         if (buyCartData.exito) {
           setCarrito({
-            productosAgregados: [],
             productosManufacturados: [],
+            productosAgregados: [],
             totalCompra: 0,
           });
+          GuardarEnLocalStorage("Carrito", {
+            productosManufacturados: [],
+            productosAgregados: [],
+            totalCompra: 0,
+          });
+          notifications.show({
+            title: "Carrito Comprado",
+            message: "",
+            autoClose: 2000,
+            withCloseButton: false,
+            icon: (
+              <ActionIcon color="white" bg={"orange"} radius={"50%"}>
+                <IconCheck color="white"></IconCheck>
+              </ActionIcon>
+            ),
+          });
+
           navigate("/");
         }
       }
     }
   }, [buyCartData]);
+
+  const { isMobile } = useMainStore();
 
   return (
     <Flex
@@ -331,8 +350,8 @@ export const CartDetailPage = () => {
         <Tabs value={activeTab} onTabChange={setActiveTab}>
           <Tabs.Panel value="productos">
             <Container
-              w={"40rem"}
-              bg={"white"}
+              w={isMobile ? "auto" : "40rem"}
+              bg={dark ? "black" : "white"}
               p={"1rem"}
               style={{
                 display: "flex",
@@ -342,14 +361,16 @@ export const CartDetailPage = () => {
                 gap: "1rem",
               }}
             >
-              <Title className={classes.textInverted}>Productos</Title>
+              <Title order={isMobile ? 3 : 1} className={classes.text}>
+                Productos
+              </Title>
               <Flex
                 mah={"30rem"}
                 pr={".5rem"}
                 style={{ overflowY: "scroll" }}
                 direction={"column"}
               >
-                <Flex gap={"1rem"} direction={"column"}>
+                <Flex gap={"1rem"} direction={"column"} pos={"relative"}>
                   {carrito?.productosManufacturados?.length ? (
                     <>
                       {carrito?.productosManufacturados?.map((p, i) => {
@@ -359,13 +380,14 @@ export const CartDetailPage = () => {
                             producto={p}
                             loading={loading}
                             cart={carrito}
+                            isMobile={isMobile}
                           ></CartDetailItemCard>
                         );
                       })}
                     </>
                   ) : (
                     <>
-                      <Title order={4} className={classes.textInverted}>
+                      <Title order={4} className={classes.text}>
                         No hay productos{" "}
                         <Link to={"/catálogo"} style={{ color: "orange" }}>
                           Click aqui para Agregar
@@ -376,10 +398,10 @@ export const CartDetailPage = () => {
                 </Flex>
                 {carrito?.productosAgregados?.length ? (
                   <>
-                    <Title order={4} className={classes.textInverted}>
+                    <Title mt={"0.5rem"} order={4} className={classes.text}>
                       Productos Agregados
                     </Title>
-                    <Flex gap={"1rem"} direction={"column"}>
+                    <Flex mt={"0.5rem"} gap={"1rem"} direction={"column"}>
                       {carrito.productosAgregados.map((insumo, i) => {
                         return (
                           // <CartComplementItem
@@ -391,6 +413,7 @@ export const CartDetailPage = () => {
                             producto={insumo}
                             loading={loading}
                             cart={carrito}
+                            isMobile={isMobile}
                           ></CartDetailItemCard>
                         );
                       })}
@@ -400,12 +423,29 @@ export const CartDetailPage = () => {
                   <></>
                 )}
               </Flex>
+              {isMobile ? (
+                <Button
+                  h={"3rem"}
+                  w={"100%"}
+                  p={".5rem"}
+                  mt={"1rem"}
+                  onClick={() => {
+                    setActiveTab("detalle-pedido");
+                  }}
+                >
+                  <Text size={20} weight={"bold"}>
+                    {activeTab == "productos" ? "Continuar" : "Comprar"}
+                  </Text>
+                </Button>
+              ) : (
+                <></>
+              )}
             </Container>
           </Tabs.Panel>
           <Tabs.Panel value="detalle-pedido">
             <Container
-              w={"40rem"}
-              bg={"white"}
+              w={isMobile ? "auto" : "40rem"}
+              bg={dark ? "black" : "white"}
               p={"1rem"}
               style={{
                 display: "flex",
@@ -415,7 +455,7 @@ export const CartDetailPage = () => {
                 gap: "1rem",
               }}
             >
-              <Title className={classes.textInverted}>
+              <Title order={isMobile ? 3 : 1} className={classes.text}>
                 Informacion Adicional
               </Title>
               <Flex gap={"1rem"} direction={"column"}>
@@ -423,10 +463,28 @@ export const CartDetailPage = () => {
                   setDireccion={(direccion?: number) => {
                     setPedido({ ...pedido, direccionId: direccion });
                   }}
+                  isMobile={isMobile}
                 ></CartForm>
               </Flex>
+              {isMobile ? (
+                <Button
+                  h={"3rem"}
+                  p={".5rem"}
+                  mt={"1rem"}
+                  type="reset"
+                  onClick={() => {
+                    setActiveTab("pagar");
+                  }}
+                >
+                  <Text size={20} weight={"bold"}>
+                    Continuar
+                  </Text>
+                </Button>
+              ) : (
+                <></>
+              )}
               <Button
-                h={"3rem"}
+                h={"2rem"}
                 p={".5rem"}
                 type="reset"
                 onClick={() => {
@@ -434,21 +492,22 @@ export const CartDetailPage = () => {
                 }}
                 color="red"
               >
-                <Text size={20} weight={"bold"}>
+                <Text size={10} weight={"bold"}>
                   Volver
                 </Text>
               </Button>
             </Container>
           </Tabs.Panel>
         </Tabs>
-        {!carrito?.productosManufacturados?.length ? (
+        {!carrito?.productosManufacturados?.length ||
+        (isMobile && activeTab != "pagar") ? (
           <></>
         ) : (
           <>
             <Container m={0}>
               <Flex
                 miw={"5rem"}
-                bg={"white"}
+                bg={dark ? "black" : "white"}
                 p={"1rem"}
                 m={0}
                 style={{
@@ -459,16 +518,15 @@ export const CartDetailPage = () => {
                 }}
                 className={classes.detailContainer}
               >
-                <Title order={3} className={classes.textInverted}>
+                <Title order={3} className={classes.text}>
                   Resumen del pedido
                 </Title>
                 <Flex gap={"1.5rem"} direction={"column"}>
                   <Flex justify={"space-between"}>
-                    <Text className={classes.textInverted}>
+                    <Text className={classes.text}>
                       Productos{` (${sumatoriaCantidad})`}
                     </Text>
                     <Text
-                      color="black"
                       w={"5rem"}
                       display={"flex"}
                       style={{ justifyContent: "center", alignItems: "end" }}
@@ -476,19 +534,17 @@ export const CartDetailPage = () => {
                       <Text color="orange">
                         <i className="fa-solid fa-dollar-sign"></i>
                       </Text>
-                      <Text className={classes.textInverted}>
+                      <Text className={classes.text}>
                         {carrito?.totalCompra}
                       </Text>
                     </Text>
                   </Flex>
                   <Flex justify={"space-between"} align={"center"}>
-                    <Text className={classes.textInverted}>
-                      Tipo de entrega
-                    </Text>
+                    <Text className={classes.text}>Tipo de entrega</Text>
                     <Flex gap={"1rem"}>
                       <Stack className={classes.checkContainer} align="center">
                         <Text
-                          className={classes.textInverted}
+                          className={classes.text}
                           weight={"bold"}
                           size={10}
                         >
@@ -504,7 +560,6 @@ export const CartDetailPage = () => {
                             });
                           }}
                           disabled={!pedido.esMercadoPago}
-                          color="orange"
                           className={
                             pedido.esDelivery
                               ? classes.tipoEntregaCheckActive
@@ -517,7 +572,7 @@ export const CartDetailPage = () => {
                       <Stack className={classes.checkContainer} align="center">
                         <Text
                           size={10}
-                          className={classes.textInverted}
+                          className={classes.text}
                           weight={"bold"}
                         >
                           Local
@@ -544,12 +599,12 @@ export const CartDetailPage = () => {
                     </Flex>
                   </Flex>
                   <Flex justify={"space-between"} align={"center"}>
-                    <Text className={classes.textInverted}>Tipo de pago</Text>
+                    <Text className={classes.text}>Tipo de pago</Text>
                     <Flex gap={"1rem"}>
                       <Stack className={classes.checkContainer} align="center">
                         <Text
                           size={10}
-                          className={classes.textInverted}
+                          className={classes.text}
                           weight={"bold"}
                         >
                           Tarjeta
@@ -576,7 +631,7 @@ export const CartDetailPage = () => {
                       <Stack className={classes.checkContainer} align="center">
                         <Text
                           size={10}
-                          className={classes.textInverted}
+                          className={classes.text}
                           weight={"bold"}
                         >
                           Efectivo
@@ -617,7 +672,7 @@ export const CartDetailPage = () => {
                       w={"100%"}
                       justify={"space-between"}
                     >
-                      <Text className={classes.textInverted}>Costo Envio</Text>
+                      <Text className={classes.text}>Costo Envio</Text>
                       <Text
                         color="black"
                         w={"5rem"}
@@ -630,7 +685,7 @@ export const CartDetailPage = () => {
                         <Text color="orange">
                           <i className="fa-solid fa-dollar-sign"></i>
                         </Text>
-                        <Text className={classes.textInverted}>
+                        <Text className={classes.text}>
                           {pedido?.costoEnvio}
                         </Text>
                       </Text>
@@ -651,7 +706,7 @@ export const CartDetailPage = () => {
                       w={"100%"}
                       justify={"space-between"}
                     >
-                      <Text className={classes.textInverted}>
+                      <Text className={classes.text}>
                         Descuento pago efectivo
                       </Text>
                       <Text
@@ -664,7 +719,7 @@ export const CartDetailPage = () => {
                         }}
                       >
                         <Text color="orange">%</Text>
-                        <Text className={classes.textInverted}>
+                        <Text className={classes.text}>
                           {pedido?.descuentoPagoEfectivo}
                         </Text>
                       </Text>
@@ -673,11 +728,11 @@ export const CartDetailPage = () => {
                 </Flex>
                 <Box w={"100%"} h={"1px"} bg={"black"}></Box>
                 <Flex justify={"space-between"}>
-                  <Text className={classes.textInverted} weight={"bold"}>
+                  <Text className={classes.text} weight={"bold"}>
                     Total
                   </Text>
                   <Text
-                    color="black"
+                    className={classes.text}
                     w={"5rem"}
                     display={"flex"}
                     style={{ justifyContent: "center", alignItems: "end" }}
@@ -698,21 +753,40 @@ export const CartDetailPage = () => {
                       <Wallet initialization={{ preferenceId: prefId }} />
                     </Flex>
                   ) : (
-                    <Button
-                      h={"3rem"}
-                      p={".5rem"}
-                      onClick={() => {
-                        if (activeTab == "productos") {
-                          setActiveTab("detalle-pedido");
-                        } else {
-                          handleComprar();
-                        }
-                      }}
-                    >
-                      <Text size={20} weight={"bold"}>
-                        {activeTab == "productos" ? "Continuar" : "Comprar"}
-                      </Text>
-                    </Button>
+                    <>
+                      <Button
+                        h={"3rem"}
+                        p={".5rem"}
+                        onClick={() => {
+                          if (activeTab == "productos") {
+                            setActiveTab("detalle-pedido");
+                          } else {
+                            handleComprar();
+                          }
+                        }}
+                      >
+                        <Text size={20} weight={"bold"}>
+                          {activeTab == "productos" ? "Continuar" : "Comprar"}
+                        </Text>
+                      </Button>
+                      {isMobile ? (
+                        <Button
+                          h={"2rem"}
+                          p={".5rem"}
+                          type="reset"
+                          onClick={() => {
+                            setActiveTab("productos");
+                          }}
+                          color="red"
+                        >
+                          <Text size={10} weight={"bold"}>
+                            Volver
+                          </Text>
+                        </Button>
+                      ) : (
+                        <></>
+                      )}
+                    </>
                   )
                 ) : (
                   <></>
@@ -845,10 +919,12 @@ const CartDetailItemCard = ({
   producto,
   loading,
   cart,
+  isMobile,
 }: {
   producto: any;
   loading: boolean;
   cart: Carrito;
+  isMobile: boolean;
 }) => {
   const [delCompleteMenu, setdelCompleteMenu] = useState(false);
 
@@ -891,110 +967,134 @@ const CartDetailItemCard = ({
       alignItems: "center",
       justifyContent: "space-between",
       gap: "1rem",
-      overflow: "visible !important",
+      position: "relative",
+      flexDirection: isMobile ? "column" : "row",
     },
   }));
   const { classes } = useStyles();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
 
   return loading ? (
     <>
       <Skeleton w={"100%"} h={"5.5rem"} radius={"15px"} />
     </>
   ) : (
-    <Card w={"100%"} className={classes.card}>
-      <Image src={producto.urlIMG} width={60} alt="imagen producto" />
-      <Stack w={"20rem"} justify="center" align="start">
-        <Text>{producto.nombre}</Text>
-        <Menu
-          transitionProps={{
-            transition: "rotate-right",
-            duration: 150,
-          }}
-          withArrow
-          width={300}
-          position="bottom"
-          shadow="md"
-          opened={delCompleteMenu}
-        >
-          <Menu.Target>
-            <Anchor
-              onClick={() => {
-                setdelCompleteMenu(true);
-              }}
-              component="button"
-              type="button"
-            >
-              Eliminar
-            </Anchor>
-          </Menu.Target>
-
-          <Menu.Dropdown w={"100%"}>
-            <Menu.Label>
-              <Text align="center">
-                ¿Esta seguro de eliminar el item del carrito?
-              </Text>
-            </Menu.Label>
-            <Flex
-              w={"100%"}
-              p={"1rem"}
-              justify={"space-between"}
-              align={"center"}
-            >
-              <Button
-                onClick={() => {
-                  setdelCompleteMenu(false);
-                  handleDeleteComplete();
-                }}
-              >
-                Confirmar
-              </Button>
-              <Button
-                color="red"
-                onClick={() => {
-                  setdelCompleteMenu(false);
-                }}
-              >
-                Cancelar
-              </Button>
-            </Flex>
-          </Menu.Dropdown>
-        </Menu>
-      </Stack>
-      <Stack w={"10rem"} spacing={3} justify="center" align="center">
-        {producto.descuento > 0 && (
+    <Card
+      w={"100%"}
+      miw={"15rem"}
+      className={classes.card}
+      bg={dark ? "#343a40" : "#e6e6e6"}
+    >
+      <Flex
+        w={isMobile ? "100%" : "min-content"}
+        align={"flex-start"}
+        gap={"1rem"}
+      >
+        <Image src={producto.urlIMG} width={60} alt="imagen producto" />
+        {!isMobile ? (
+          <></>
+        ) : (
           <Text
-            display={"flex"}
-            w={"5rem"}
-            size={10}
+            w={"8rem"}
             style={{
-              gap: "0.5rem",
-              justifyContent: "center",
-              alignItems: "end",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
             }}
           >
-            <Text color="orange">-{producto.descuento}%</Text>
-            <Text
-              display={"flex"}
-              style={{ justifyContent: "center", alignItems: "center" }}
-            >
-              <Text color="orange">
-                <i className="fa-solid fa-dollar-sign"></i>
-              </Text>
-              <Text strikethrough>{producto.precioTotalSinDescuento}</Text>
-            </Text>
+            {producto.nombre}
           </Text>
         )}
-
-        <Text
-          w={"5rem"}
-          display={"flex"}
-          style={{ justifyContent: "center", alignItems: "end" }}
-        >
-          <Text color="orange">
-            <i className="fa-solid fa-dollar-sign"></i>
+      </Flex>
+      {isMobile ? (
+        <></>
+      ) : (
+        <Stack w={isMobile ? "100%" : "20rem"} justify="center" align="start">
+          <Text>{producto.nombre}</Text>
+          <Anchor
+            onClick={() => {
+              if (delCompleteMenu) {
+                setdelCompleteMenu(false);
+                handleDeleteComplete();
+              } else {
+                setdelCompleteMenu(true);
+              }
+            }}
+            onBlur={() => {
+              setdelCompleteMenu(false);
+            }}
+            component="button"
+            type="button"
+          >
+            {!delCompleteMenu ? "Eliminar" : "¿Confirmar?"}
+          </Anchor>
+        </Stack>
+      )}
+      <Flex
+        w={"10rem"}
+        direction={isMobile ? "row" : "column"}
+        gap={3}
+        justify="center"
+        align="center"
+      >
+        {!isMobile ? (
+          <></>
+        ) : (
+          <Anchor
+            onClick={() => {
+              if (delCompleteMenu) {
+                setdelCompleteMenu(false);
+                handleDeleteComplete();
+              } else {
+                setdelCompleteMenu(true);
+              }
+            }}
+            onBlur={() => {
+              setdelCompleteMenu(false);
+            }}
+            component="button"
+            type="button"
+          >
+            {!delCompleteMenu ? "Eliminar" : "¿Confirmar?"}
+          </Anchor>
+        )}
+        <Stack spacing={"0"}>
+          {producto.descuento > 0 && (
+            <Text
+              display={"flex"}
+              w={"5rem"}
+              size={10}
+              style={{
+                gap: "0.5rem",
+                justifyContent: "center",
+                alignItems: "end",
+              }}
+            >
+              <Text color="orange">-{producto.descuento}%</Text>
+              <Text
+                display={"flex"}
+                style={{ justifyContent: "center", alignItems: "center" }}
+              >
+                <Text color="orange">
+                  <i className="fa-solid fa-dollar-sign"></i>
+                </Text>
+                <Text strikethrough>{producto.precioTotalSinDescuento}</Text>
+              </Text>
+            </Text>
+          )}
+          <Text
+            w={"5rem"}
+            display={"flex"}
+            style={{ justifyContent: "center", alignItems: "end" }}
+          >
+            <Text color="orange">
+              <i className="fa-solid fa-dollar-sign"></i>
+            </Text>
+            <Text>{producto.precioTotal}</Text>
           </Text>
-          <Text>{producto.precioTotal}</Text>
-        </Text>
+        </Stack>
+
         <Flex
           direction="row"
           bg={"orange"}
@@ -1002,64 +1102,17 @@ const CartDetailItemCard = ({
           align={"center"}
           gap={5}
           w={"5rem"}
-          style={{ borderRadius: "5px", padding: "0.1rem" }}
+          style={{ borderRadius: "5px", padding: "0.1rem", zIndex: 99 }}
         >
-          {producto?.cantidad == 1 ? (
-            <Menu
-              transitionProps={{
-                transition: "rotate-right",
-                duration: 150,
-              }}
-              withArrow
-              width={300}
-              position="bottom"
-              shadow="md"
-            >
-              <Menu.Target>
-                <ActionIcon className={classes.buttonCantidad} size={20}>
-                  <IconMinus color="white"></IconMinus>
-                </ActionIcon>
-              </Menu.Target>
-
-              <Menu.Dropdown w={"100%"}>
-                <Menu.Label>
-                  <Text align="center">
-                    ¿Esta seguro de eliminar el item del carrito?
-                  </Text>{" "}
-                </Menu.Label>
-                <Menu.Item
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                  display={"flex"}
-                  dir="row"
-                >
-                  <Flex w={"100%"} justify={"space-between"} align={"center"}>
-                    <Button
-                      onClick={() => {
-                        handleEditCart(false);
-                      }}
-                    >
-                      Confirmar
-                    </Button>
-                    <Button color="red">Cancelar</Button>
-                  </Flex>
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          ) : (
-            <ActionIcon
-              onClick={() => {
-                handleEditCart(false);
-              }}
-              className={classes.buttonCantidad}
-              size={20}
-            >
-              <IconMinus color="white"></IconMinus>
-            </ActionIcon>
-          )}
-
+          <ActionIcon
+            onClick={() => {
+              handleEditCart(false);
+            }}
+            className={classes.buttonCantidad}
+            size={20}
+          >
+            <IconMinus color="white"></IconMinus>
+          </ActionIcon>
           <Text color="white">{producto.cantidad}</Text>
           <ActionIcon
             onClick={() => {
@@ -1071,16 +1124,18 @@ const CartDetailItemCard = ({
             <IconPlus color="white"></IconPlus>
           </ActionIcon>
         </Flex>
-      </Stack>
+      </Flex>
     </Card>
   );
 };
 const CartForm = ({
   setDireccion,
   faltaDireccion,
+  isMobile,
 }: {
   setDireccion: (dir?: number) => void;
   faltaDireccion?: boolean;
+  isMobile: boolean;
 }) => {
   const { user, isAuthenticated } = useAuth0();
   if (!isAuthenticated) {
@@ -1136,15 +1191,9 @@ const CartForm = ({
           mt={"0.5rem"}
           mb={"0.5rem"}
           order={4}
-          className={textClasses.textInverted}
+          className={textClasses.text}
         >
-          Direccion{" "}
-          <Mark
-            bg={"transparent"}
-            style={{ fontWeight: "bold", color: "orange" }}
-          >
-            *
-          </Mark>
+          Direccion
         </Title>
         {faltaDireccion ? (
           <Title style={{ fontWeight: "bold", color: "orange" }} order={6}>
@@ -1153,7 +1202,12 @@ const CartForm = ({
         ) : (
           <></>
         )}
-        <Flex w={"100%"} gap={30} justify={"space-between"}>
+        <Flex
+          w={"100%"}
+          wrap={isMobile ? "wrap" : "nowrap"}
+          gap={30}
+          justify={"space-between"}
+        >
           <Select
             placeholder="Elige una direccion"
             searchable

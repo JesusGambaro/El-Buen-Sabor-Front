@@ -7,6 +7,7 @@ import {
   Title,
   useMantineColorScheme,
   createStyles,
+  Text,
 } from "@mantine/core";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
@@ -16,10 +17,19 @@ import CatalogueLeftFilters from "./CatalogueLeftFilters";
 import CatalogueProductsContainer from "./CatalogueProductsContainer";
 import useCatalogueStore from "@store/catalogueStore";
 import { useDisclosure } from "@mantine/hooks";
+import useMainStore from "@store/mainStore";
 const Catalogue = () => {
   //const { data: categories } = useCategories();
   const { filter, setFilter } = useCatalogueStore();
-  let handleSetFilter = (precioMin: number,precioMax: number,descuento: boolean,id_categoria?: number | null, nombre_like?: string | null,) => {
+  const { isMobile } = useMainStore();
+
+  let handleSetFilter = (
+    precioMin: number,
+    precioMax: number,
+    descuento: boolean,
+    id_categoria?: number | null,
+    nombre_like?: string | null
+  ) => {
     setFilter({
       ...filter,
       precioMin,
@@ -39,49 +49,59 @@ const Catalogue = () => {
     },
   }));
   const { classes } = useStyles();
-  const [opened, { open, close }] = useDisclosure(true);
+  const [opened, { open, close }] = useDisclosure(isMobile ? false : true);
   return (
     <Flex
-      maw="container.2xl"
-      miw={"100vh"}
+      miw={"100%"}
       display="flex"
       direction="column"
       c="start"
       align="center"
       bg={dark ? "#3e3e3e" : "#e6e6e6"}
-      p={"1rem"}
+      pl={20}
       mih="100vh"
     >
-      <Stack spacing={3} w="100%" dir={"column"}>
-        <Title className={classes.text} order={1} mb="2rem">
-          Catálogo
-        </Title>
+      <Title w={"100%"} className={classes.text} order={1} mb="2rem">
+        Catálogo
+      </Title>
+      <Flex w={"100%"} align={"flex-start"}>
         <Title
           w={"min-content"}
           underline
           style={{ cursor: "pointer" }}
           order={2}
           className={classes.text}
-          onClick={!opened ? open : close}
+          onClick={() => {
+            if (!isMobile) return;
+            if (opened) {
+              close();
+            } else {
+              open();
+            }
+          }}
         >
           Filtros
         </Title>
-        <Flex
-          gap={"0rem 2rem"}
-          w={"100%"}
-          direction={"row"}
-          justify={"flex-start"}
-          pos={"relative"}
-          style={{zIndex:999}}
-        >
-          <CatalogueLeftFilters
-            currentIdCategoria={filter.id_categoria}
-            handleSetFilter={handleSetFilter}
-            opened={opened}
-          />
-          <CatalogueProductsContainer />
-        </Flex>
-      </Stack>
+        <Text color="orange">
+          <i className="fa-solid fa-dollar-sign"></i>
+        </Text>
+      </Flex>
+
+      <Flex
+        gap={"0rem 2rem"}
+        w={"100%"}
+        direction={"row"}
+        justify={"flex-start"}
+        pos={"relative"}
+        pb={"3rem"}
+      >
+        <CatalogueLeftFilters
+          currentIdCategoria={filter.id_categoria}
+          handleSetFilter={handleSetFilter}
+          opened={opened}
+        />
+        <CatalogueProductsContainer />
+      </Flex>
     </Flex>
   );
 };

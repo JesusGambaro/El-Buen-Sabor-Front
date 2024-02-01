@@ -28,7 +28,7 @@ const SideBar = () => {
       onClose={() => {
         setSideBarOpen(false);
       }}
-      size={"50%"}
+      size={"60%"}
       position="left"
       transitionProps={{
         transition: "slide-right",
@@ -39,9 +39,9 @@ const SideBar = () => {
       bg={"#f9f6f6"}
     >
       <Flex
-        h="90vh"
+        h="80vh"
         justify={"center"}
-        align="left"
+        align="flex-start"
         w="100%"
         direction={"column"}
         gap={"3rem"}
